@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### Creating Repository/Concrete
 
-## Getting Started
+## Repositories should bubble up error or data
 
-First, run the development server:
+- React Query convention: errors are supposed to bubble via rejected promises so React Query can put them into its error state.
+- Cleaner hooks: your component code can rely on isError / error from React Query, instead of always checking data?.error.
+- Consistency with Next.js APIs: Next.js fetch functions (fetch, getServerSideProps, getStaticProps) naturally throw on HTTP errors if you wrap them, so the pattern matches.
+- SWR too: same thing — it expects a rejected promise to set error.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Using Hooks with Repository Methods
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Action                            | Hook Type                           |
+| --------------------------------- | ----------------------------------- |
+| Fetch current user                | `useQuery` (React Query) / `useSWR` |
+| Login / register / logout / OAuth | `useMutation`                       |
+| Update profile or settings        | `useMutation`                       |
+| Fetch lists, posts, or data       | `useQuery` / `useSWR`               |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### Note: Using `useMutation` required implementation of `QueryClientProvider` wrapping the root layout
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`https://stackoverflow.com/questions/74992326/does-use-client-in-next-js-13-root-layout-make-whole-routes-client-component`
 
-## Learn More
+### Gne7WYPKexucdM5b
 
-To learn more about Next.js, take a look at the following resources:
+## Shadcn
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`npx shadcn@latest add --all`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Dealing with Root Layout and Root Layout Overrides
 
-## Deploy on Vercel
+- Auth pages has it's common root layout.
+- Dashboard pages has it's own common root layout.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`https://nextjs.org/docs/app/building-your-application/routing/route-groups`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Layouts, CLient side or server side
+
+Yes, layouts can be client components, but it’s discouraged unless you really don’t need server-side features.
+
+# SUPABASE 101
+
+### Supabase provides two client creation APIs
+
+1. createBrowserClient → client-side only
+2. createServerClient → server-side only
