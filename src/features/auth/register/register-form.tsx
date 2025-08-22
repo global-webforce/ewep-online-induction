@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { UserInfo } from "../shared/components/user-info";
 
 export default function RegisterForm() {
   const {
@@ -47,10 +48,10 @@ export default function RegisterForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {x?.firstName && (
+          {x?.email && (
             <p className="text-sm text-muted-foreground">
               You are logged in as{" "}
-              <span className="font-medium">{x.firstName}</span>
+              <span className="font-medium">{x.email}</span>
             </p>
           )}
 
@@ -115,11 +116,6 @@ export default function RegisterForm() {
           {error && (
             <p className="text-sm text-red-500 text-center">
               {(error as Error).message}
-            </p>
-          )}
-          {user && (
-            <p className="text-sm text-green-600 text-center">
-              Welcome, {user.email}
             </p>
           )}
         </form>

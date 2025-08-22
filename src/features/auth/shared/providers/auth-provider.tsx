@@ -8,11 +8,12 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { authRepository } from "../repository/auth-repository";
-import { AppUser } from "../models/app-user-schema";
+
+import { User } from "../models/user-schema";
+import { authRepository } from "../repository";
 
 interface AuthContextType {
-  user: AppUser | null;
+  user: User | null;
   loading: boolean;
   logout: () => Promise<void>;
 }
@@ -20,11 +21,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AppUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Initial fetch
     authRepository.getCurrentUser().then((u) => {
       setUser(u);
       setLoading(false);

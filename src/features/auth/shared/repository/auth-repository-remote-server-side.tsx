@@ -2,11 +2,19 @@ import { Provider } from "@supabase/supabase-js";
 import { RegisterSchema } from "../../register/register-schema";
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
-import { getSupabaseBrowserClient } from "@/supabase/getSupabaseClient";
+import { getSupabaseServerClient } from "@/supabase/getSupabaseServerClient";
 
-export class AuthRepositoryRemote implements AuthRepository {
+/// Implementation of AuthRepository for server-side operations using Supabase.
+/// Note: Some methods like onUserChange are not applicable on the server side.
+/// For server-side auth, fetch the session directly per request.
+/// See https://supabase.com/docs/guides/auth/auth-helpers/nextjs/server-side
+/// and https://supabase.com/docs/guides/auth/auth-helpers/nextjs/api-routes
+/// for more details.
+/// Usage: Middleware, API routes, getServerSideProps, etc.
+
+export class AuthRepositoryRemoteServerSide implements AuthRepository {
   async loginWithEmail(email: string, password: string): Promise<void> {
-    const supabase = getSupabaseBrowserClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -16,28 +24,28 @@ export class AuthRepositoryRemote implements AuthRepository {
     if (!data.user) throw new Error("No user returned");
   }
 
-  async registerWithEmail(data: RegisterSchema): Promise<void> {
-    const supabase = getSupabaseBrowserClient();
-    const { res, error } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
+  async registerWithEmail(param: RegisterSchema): Promise<void> {
+    const supabase = await getSupabaseServerClient();
+    const { data, error } = await supabase.auth.signUp({
+      email: param.email,
+      password: param.password,
       options: {
         data: {},
       },
     });
 
     if (error) throw new Error(error.message);
-    if (!res.user) throw new Error("No user returned");
+    if (!data.user) throw new Error("No user returned");
   }
 
   async logout(): Promise<void> {
-    const supabase = getSupabaseBrowserClient();
+    const supabase = await getSupabaseServerClient();
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
   }
 
   async getCurrentUser(): Promise<User | null> {
-    const supabase = getSupabaseBrowserClient();
+    const supabase = await getSupabaseServerClient();
     const {
       data: { session },
       error,
@@ -62,34 +70,18 @@ export class AuthRepositoryRemote implements AuthRepository {
         };
   }
 
-  onUserChange(callback: (user: User | null) => void): () => void {
-    const supabase = getSupabaseBrowserClient();
-    const { subscription } = supabase.auth.onAuthStateChange(
-      (_event: any, session: any) => {
-        const user: User | null = !session
-          ? null
-          : {
-              id: session?.user?.id || "",
-              email: session?.user?.email || "",
-              roles: [],
-              profile: {
-                firstName: session?.user?.user_metadata?.firstName || "",
-                lastName: session?.user?.user_metadata?.lastName || "",
-                avatarUrl: session?.user?.user_metadata?.avatar_url || "",
-              },
-            };
-        callback(user);
-      }
-    );
-
-    return () => subscription.unsubscribe();
+  onUserChange(): () => void {
+    // ⚠️ Not supported on the server.
+    // Supabase auth state changes can only be observed on the client.
+    // On the server, fetch the session directly per request instead.
+    return () => void 0;
   }
 
   async loginWithProvider(
     provider: string,
     options?: { redirectTo?: string }
   ): Promise<void> {
-    const supabase = getSupabaseBrowserClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: provider as Provider,
       options,
@@ -99,3 +91,6 @@ export class AuthRepositoryRemote implements AuthRepository {
     if (!data?.url) throw new Error("No redirect URL returned");
   }
 }
+
+export const authRepositoryServer: AuthRepository =
+  new AuthRepositoryRemoteServerSide();

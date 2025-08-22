@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { FooButtons } from "@/features/auth/shared/components/foo_buttons";
+import { FooButtons } from "@/features/auth/shared/components/foo-buttons";
 import { useAuth } from "@/features/auth/shared/providers/auth-provider";
 
 import Image from "next/image";
