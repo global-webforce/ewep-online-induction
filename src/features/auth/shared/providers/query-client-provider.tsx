@@ -2,7 +2,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 
-export const queryClient = new QueryClient();
+const queryClient = new QueryClient();
+
+/// This is only used onced in the app tree wrapping root layout chilren.
+/// React Query requires for useMutation and useQuery to work - client side only.
 
 export function ClientProvider({ children }: { children: ReactNode }) {
   return (

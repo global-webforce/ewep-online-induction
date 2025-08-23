@@ -1,6 +1,3 @@
-// app/providers/AuthProvider.tsx
-"use client";
-
 import {
   createContext,
   useContext,
@@ -18,7 +15,12 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
+
+/// This is only used onced in the app tree wrapping root layout chilren.
+/// It provides auth state to the rest of the app - client side only.
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
