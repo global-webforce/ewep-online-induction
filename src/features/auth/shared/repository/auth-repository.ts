@@ -17,10 +17,9 @@ export interface AuthRepository {
   // Listen to auth state changes (login/logout/session refresh)
   onUserChange: (callback: (user: User | null) => void) => () => void;
 
+  // OAuth login (Google, GitHub, etc.)
   loginWithProvider: (
     provider: "google" | "github" | "facebook" | "twitter" | string,
     options?: { redirectTo?: string }
   ) => Promise<void>;
 }
-
-// OAuth login (Google, GitHub, etc.)

@@ -53,10 +53,15 @@ https://www.reddit.com/r/nextjs/comments/1guuoky/middleware_or_not_middleware/
 https://supabase.com/blog/jwt-signing-keys
 https://github.com/orgs/supabase/discussions/20905?source=post_page-----33a045d15c78---------------------------------------
 
-### Why Server Side is good
+# Why Server Side is good
 
 https://www.reddit.com/r/nextjs/comments/1esoz63/whats_the_motivation_behind_serverside_rendering/
 
-### Explained Server Side/Components
+## Explained Server Side/Components
 
 https://www.joshwcomeau.com/react/server-components/
+
+# Project Naming Convention
+
+All files are assumed server-side by default, but when its client component or code, we append `.client` on filename.
+Providers & hooks are client-side in nature no need to append `.client`.

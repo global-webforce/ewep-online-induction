@@ -5,9 +5,9 @@ import Link from "next/link"; // <- use Next.js Link, not lucide-react
 import React from "react";
 import { useAuth } from "../providers/auth-provider";
 import { useLogout } from "../../logout/use-logout";
+import LogoutButton from "../../logout/logout-button.client";
 
 export function FooButtons() {
-  const { mutate: logout } = useLogout();
   const { user } = useAuth();
 
   return (
@@ -31,11 +31,7 @@ export function FooButtons() {
       )}
 
       {user != null && ( // show dashboard if logged in
-        <div className="flex gap-2 justify-end">
-          <Button onClick={() => logout()} variant="default">
-            Logout
-          </Button>
-        </div>
+        <LogoutButton />
       )}
     </div>
   );

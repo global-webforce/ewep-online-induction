@@ -4,15 +4,15 @@ import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
 import { getSupabaseClient } from "@/supabase/get-supabase-client";
 
-/// Implementation of AuthRepository for server-side operations using Supabase.
-/// Note: Some methods like onUserChange are not applicable on the server side.
-/// For server-side auth, fetch the session directly per request.
-/// See https://supabase.com/docs/guides/auth/auth-helpers/nextjs/server-side
-/// and https://supabase.com/docs/guides/auth/auth-helpers/nextjs/api-routes
-/// for more details.
-/// Usage: Middleware, API routes, getServerSideProps, etc.
+/**
+ * A supabase implementation of the {@link AuthRepository} interface for server-side authentication.
+ * @important It uses SERVER-CLIENT {@link getSupabaseClient} to interact with Supabase.
+ * Usage: Middleware, API routes, getServerSideProps, etc.
+ * @important You can only use this on either top route or layout.
+ * @important On interactive components, you should wrap the method in
+ **/
 
-export class AuthRepositoryRemoteServerSide implements AuthRepository {
+export class AuthRepositoryRemoteServer implements AuthRepository {
   async loginWithEmail(email: string, password: string): Promise<void> {
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -67,10 +67,8 @@ export class AuthRepositoryRemoteServerSide implements AuthRepository {
         };
   }
 
+  /// ⚠️ Not supported on the server.
   onUserChange(): () => void {
-    // ⚠️ Not supported on the server.
-    // Supabase auth state changes can only be observed on the client.
-    // On the server, fetch the session directly per request instead.
     return () => void 0;
   }
 
@@ -89,5 +87,4 @@ export class AuthRepositoryRemoteServerSide implements AuthRepository {
   }
 }
 
-export const authRepositoryServer: AuthRepository =
-  new AuthRepositoryRemoteServerSide();
+export const authRepository: AuthRepository = new AuthRepositoryRemoteServer();

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import LogoutButton from "@/features/auth/logout/logout-button";
 
 export default function Dashboard() {

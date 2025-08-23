@@ -4,6 +4,12 @@ import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
 import { getSupabaseClient } from "@/supabase/get-supabase-client.client";
 
+/**
+ * A supabase implementation of the {@link AuthRepository} interface for CLIENT-SIDE authentication.
+ * @important It uses BROWSER-CLIENT {@link getSupabaseClient} to interact with Supabase.
+ * Usage: Client-side components, hooks, etc.
+ **/
+
 export class AuthRepositoryRemote implements AuthRepository {
   async loginWithEmail(email: string, password: string): Promise<void> {
     const supabase = getSupabaseClient();
@@ -13,7 +19,7 @@ export class AuthRepositoryRemote implements AuthRepository {
     });
 
     if (error) throw new Error(error.message);
-    if (data) throw new Error("No user returned");
+    if (!data) throw new Error("No user returned");
   }
 
   async registerWithEmail(param: RegisterSchema): Promise<void> {
