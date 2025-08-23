@@ -1,22 +1,15 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import React from "react";
-import { authRepository } from "../shared/repository";
 
-export default async function LogoutButton() {
-  const user = await authRepository.getCurrentUser();
+import { logoutAction } from "./logout-action";
 
+export default function LogoutButton() {
   return (
-    <>
-      {user != null && ( // show dashboard if logged in
-        <div className="flex gap-2 justify-end">
-          <Button
-            onClick={async () => await authRepository.logout()}
-            variant="default"
-          >
-            Logout
-          </Button>
-        </div>
-      )}
-    </>
+    <div className="flex gap-2 justify-end">
+      <Button onClick={async () => await logoutAction()} variant="default">
+        Logout
+      </Button>
+    </div>
   );
 }

@@ -2,7 +2,7 @@ import { Provider } from "@supabase/supabase-js";
 import { RegisterSchema } from "../../register/register-schema";
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
-import { getSupabaseServerClient } from "@/supabase/getSupabaseServerClient";
+import { getSupabaseClient } from "@/supabase/get-supabase-client";
 
 /// Implementation of AuthRepository for server-side operations using Supabase.
 /// Note: Some methods like onUserChange are not applicable on the server side.
@@ -14,7 +14,7 @@ import { getSupabaseServerClient } from "@/supabase/getSupabaseServerClient";
 
 export class AuthRepositoryRemoteServerSide implements AuthRepository {
   async loginWithEmail(email: string, password: string): Promise<void> {
-    const supabase = await getSupabaseServerClient();
+    const supabase = await getSupabaseClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -25,7 +25,7 @@ export class AuthRepositoryRemoteServerSide implements AuthRepository {
   }
 
   async registerWithEmail(param: RegisterSchema): Promise<void> {
-    const supabase = await getSupabaseServerClient();
+    const supabase = await getSupabaseClient();
     const { data, error } = await supabase.auth.signUp({
       email: param.email,
       password: param.password,
@@ -35,27 +35,24 @@ export class AuthRepositoryRemoteServerSide implements AuthRepository {
     });
 
     if (error) throw new Error(error.message);
-    if (!data.user) throw new Error("No user returned");
+    if (!data) throw new Error("No user returned");
   }
 
   async logout(): Promise<void> {
-    const supabase = await getSupabaseServerClient();
+    const supabase = await getSupabaseClient();
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
   }
 
   async getCurrentUser(): Promise<User | null> {
-    const supabase = await getSupabaseServerClient();
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.auth.getSession();
 
     if (error) {
       console.warn("Supabase session error:", error.message);
       return null;
     }
-
+    const session = data.session;
     return !session
       ? null
       : {
@@ -81,14 +78,14 @@ export class AuthRepositoryRemoteServerSide implements AuthRepository {
     provider: string,
     options?: { redirectTo?: string }
   ): Promise<void> {
-    const supabase = await getSupabaseServerClient();
+    const supabase = await getSupabaseClient();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: provider as Provider,
       options,
     });
 
     if (error) throw new Error(error.message);
-    if (!data?.url) throw new Error("No redirect URL returned");
+    if (!data) throw new Error("No redirect URL returned");
   }
 }
 

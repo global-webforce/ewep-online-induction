@@ -1,4 +1,4 @@
-import LogoutButton from "@/features/auth/logout/logout-button-server";
+import LogoutButton from "@/features/auth/logout/logout-button";
 
 export default function Dashboard() {
   return (

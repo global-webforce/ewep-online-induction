@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 
 import { RegisterSchema } from "./register-schema";
-import { authRepository } from "../shared/repository";
+import { authRepository } from "../shared/repository/auth-repository-remote.client";
 
 export function useRegisterWithEmail() {
   return useMutation({

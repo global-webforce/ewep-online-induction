@@ -10,7 +10,7 @@ import {
 } from "react";
 
 import { User } from "../models/user-schema";
-import { authRepository } from "../repository";
+import { authRepository } from "../repository/auth-repository-remote.client";
 
 interface AuthContextType {
   user: User | null;

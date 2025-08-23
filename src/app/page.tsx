@@ -1,4 +1,4 @@
-import LoginForm from "@/features/auth/login/login-form";
+import LoginForm from "@/features/auth/login/login-form.client";
 import Image from "next/image";
 
 export default function Home() {
