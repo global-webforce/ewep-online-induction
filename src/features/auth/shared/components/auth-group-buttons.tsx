@@ -1,13 +1,10 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import Link from "next/link"; // <- use Next.js Link, not lucide-react
 import LogoutButton from "../../logout/logout-button-client";
-import { useAuth } from "../providers/auth-provider";
+import { authRepository } from "../repository";
 
-export function AuthGroupButtons() {
-  const { user } = useAuth();
-
+export async function AuthGroupButtons() {
+  const user = await authRepository.getCurrentUser();
   return (
     <div className="flex items-center">
       {!user && ( // show login/register if NOT logged in

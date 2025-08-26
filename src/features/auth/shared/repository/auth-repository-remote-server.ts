@@ -47,25 +47,32 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
   async getCurrentUser(): Promise<User | null> {
     const supabase = await createClient();
 
-    const { data, error } = await supabase.auth.getSession();
+    /**
+     * Using the user object as returned from supabase.auth.getSession() or from some supabase.auth.onAuthStateChange() events could be insecure!
+     * This value comes directly from the storage medium (usually cookies on the server) and may not be authentic.
+     * Use supabase.auth.getUser() instead which authenticates the data by contacting the Supabase Auth server.
+     * */
+
+    /// Dev Note: When I used getSession, I'm still logged in even if I already the deleted the user via Supabase Dashboard!!!
+
+    const { data, error } = await supabase.auth.getUser();
 
     if (error) {
-      console.warn("Supabase session error:", error.message);
       return null;
     }
 
-    const session = data.session;
+    const session = data.user;
 
     return !session
       ? null
       : {
-          id: session?.user?.id || "",
-          email: session?.user?.email || "",
-          roles: [],
+          id: data?.user?.id || "",
+          email: data?.user?.email || "",
+          roles: ["admin"],
           profile: {
-            firstName: session?.user?.user_metadata?.firstName || "",
-            lastName: session?.user?.user_metadata?.lastName || "",
-            avatarUrl: session?.user?.user_metadata?.avatar_url || "",
+            firstName: data?.user?.user_metadata?.firstName || "",
+            lastName: data?.user?.user_metadata?.lastName || "",
+            avatarUrl: data?.user?.user_metadata?.avatar_url || "",
           },
         };
   }

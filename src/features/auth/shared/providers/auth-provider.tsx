@@ -9,13 +9,15 @@ import {
 } from "react";
 
 import { User } from "../models/user-schema";
-import { authRepository } from "../repository";
+import { AuthRepositoryRemote } from "../repository/auth-repository-remote-client";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   logout: () => Promise<void>;
 }
+
+const authRepository = new AuthRepositoryRemote();
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined

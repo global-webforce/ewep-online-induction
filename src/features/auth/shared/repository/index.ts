@@ -1,3 +1,3 @@
-import { AuthRepositoryRemote } from "./auth-repository-remote-client";
+import { AuthRepositoryRemoteServer } from "./auth-repository-remote-server";
 
-export const authRepository = new AuthRepositoryRemote();
+export const authRepository = new AuthRepositoryRemoteServer();

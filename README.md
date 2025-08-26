@@ -39,6 +39,10 @@ Yes, layouts can be client components, but it’s discouraged unless you really 
 
 # SUPABASE 101
 
+## Quick Guide
+
+https://supabase.com/docs/guides/getting-started/quickstarts/nextjs
+
 ### Supabase provides two client creation APIs
 
 1. createBrowserClient → client-side only
@@ -60,8 +64,3 @@ https://www.reddit.com/r/nextjs/comments/1esoz63/whats_the_motivation_behind_ser
 ## Explained Server Side/Components
 
 https://www.joshwcomeau.com/react/server-components/
-
-# Project Naming Convention
-
-All files are assumed server-side by default, but when its client component or code, we append `.client` on filename.
-Providers & hooks are client-side in nature no need to append `.client`.

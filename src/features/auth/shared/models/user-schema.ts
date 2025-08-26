@@ -13,7 +13,7 @@ export const UserSchema = z.object({
   id: z.uuid(), // You control this type
   email: z.email(),
   profile: ProfileSchema.optional(),
-  roles: z.array(z.string()).default([]), // e.g., ["admin", "trainer"]
+  roles: z.array(z.string()).default(["admin"]), // e.g., ["admin", "trainer"]
 });
 
 export type Profile = z.infer<typeof ProfileSchema>;

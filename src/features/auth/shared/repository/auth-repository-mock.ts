@@ -59,7 +59,7 @@ export class AuthRepositoryMock implements AuthRepository {
     this.currentUser = {
       id: `mock-${provider}-id`,
       email: `${provider}_user@example.com`,
-      roles: [],
+      roles: ["admin"],
     };
     this.notifyListeners();
   }

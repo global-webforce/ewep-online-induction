@@ -56,7 +56,7 @@ export class AuthRepositoryRemote implements AuthRepository {
       : {
           id: session?.user?.id || "",
           email: session?.user?.email || "",
-          roles: [],
+          roles: ["admin"],
           profile: {
             firstName: session?.user?.user_metadata?.firstName || "",
             lastName: session?.user?.user_metadata?.lastName || "",

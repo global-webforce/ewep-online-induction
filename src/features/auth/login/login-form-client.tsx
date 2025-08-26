@@ -1,14 +1,13 @@
 "use client";
 
-import { useLoginWithEmail } from "./use-login";
-import { useAuth } from "../shared/providers/auth-provider";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { loginSchema, LoginSchema } from "./login-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoginWithEmail } from "./use-login";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 export default function LoginForm() {
@@ -21,8 +20,6 @@ export default function LoginForm() {
       password: "",
     },
   });
-
-  const { user: x } = useAuth();
 
   const onSubmit = (values: LoginSchema) => {
     login(values);
@@ -37,17 +34,16 @@ export default function LoginForm() {
       </CardHeader>
 
       <CardContent className="p-1">
+        {error && (
+          <p className="text-sm text-red-500 text-center">
+            {(error as Error).message}
+          </p>
+        )}
+
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {x?.email && (
-            <p className="text-sm text-muted-foreground">
-              You are logged in as{" "}
-              <span className="font-medium">{x.email}</span>
-            </p>
-          )}
-
           {/* Email field */}
           <div className="flex flex-col gap-1">
             <Label htmlFor="email">Email</Label>
