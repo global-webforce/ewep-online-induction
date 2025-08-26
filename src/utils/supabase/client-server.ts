@@ -1,12 +1,18 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-export async function getSupabaseClient() {
+/**
+ * For server-side (RSC / middleware / API routes):
+ * always use a fresh client (your first version)
+ * so you don’t leak state between requests.
+ */
+
+export async function createClient() {
   const cookieStore = await cookies();
 
-  const supabase = createServerClient(
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
         getAll() {
@@ -26,6 +32,4 @@ export async function getSupabaseClient() {
       },
     }
   );
-
-  return supabase;
 }

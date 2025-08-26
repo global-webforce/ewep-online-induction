@@ -2,19 +2,17 @@ import { Provider } from "@supabase/supabase-js";
 import { RegisterSchema } from "../../register/register-schema";
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
-import { getSupabaseClient } from "@/supabase/get-supabase-client-browser";
+import { createClient } from "@/utils/supabase/client-browser";
 
 /**
- * A supabase implementation of the {@link AuthRepository} interface for server-side authentication.
- * @important It uses SERVER-CLIENT {@link getSupabaseClient} to interact with Supabase.
- * Usage: Middleware, API routes, getServerSideProps, etc.
- * @important You can only use this on either top route or layout.
- * @important On interactive components, you should wrap the method in
+ * A supabase implementation of the {@link AuthRepository} interface for CLIENT-SIDE authentication.
+ * @important It uses BROWSER-CLIENT {@link createClient} to interact with Supabase.
+ * Usage: Client-side components, hooks, etc.
  **/
 
 export class AuthRepositoryRemote implements AuthRepository {
   async loginWithEmail(email: string, password: string): Promise<void> {
-    const supabase = await getSupabaseClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -25,7 +23,7 @@ export class AuthRepositoryRemote implements AuthRepository {
   }
 
   async registerWithEmail(param: RegisterSchema): Promise<void> {
-    const supabase = await getSupabaseClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.auth.signUp({
       email: param.email,
       password: param.password,
@@ -39,13 +37,13 @@ export class AuthRepositoryRemote implements AuthRepository {
   }
 
   async logout(): Promise<void> {
-    const supabase = await getSupabaseClient();
+    const supabase = await createClient();
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
   }
 
   async getCurrentUser(): Promise<User | null> {
-    const supabase = await getSupabaseClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.auth.getSession();
 
     if (error) {
@@ -68,7 +66,7 @@ export class AuthRepositoryRemote implements AuthRepository {
   }
 
   onUserChange(callback: (user: User | null) => void): () => void {
-    const supabase = getSupabaseClient();
+    const supabase = createClient();
     const { subscription } = supabase.auth.onAuthStateChange(
       (_event: any, session: any) => {
         const user: User | null = !session
@@ -94,7 +92,7 @@ export class AuthRepositoryRemote implements AuthRepository {
     provider: string,
     options?: { redirectTo?: string }
   ): Promise<void> {
-    const supabase = await getSupabaseClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: provider as Provider,
       options,

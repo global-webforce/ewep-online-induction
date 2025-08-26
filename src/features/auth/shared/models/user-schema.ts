@@ -12,7 +12,7 @@ export const ProfileSchema = z.object({
 export const UserSchema = z.object({
   id: z.uuid(), // You control this type
   email: z.email(),
-  profile: ProfileSchema,
+  profile: ProfileSchema.optional(),
   roles: z.array(z.string()).default([]), // e.g., ["admin", "trainer"]
 });
 
