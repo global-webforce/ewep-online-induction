@@ -1,7 +1,9 @@
 "use server";
 
 import { redirect, RedirectType } from "next/navigation";
-import { authRepository } from "../shared/repository/auth-repository-remote";
+import { AuthRepositoryRemoteServer } from "../shared/repository/auth-repository-remote-server";
+
+const authRepository = new AuthRepositoryRemoteServer();
 
 export async function logoutAction() {
   await authRepository.logout();

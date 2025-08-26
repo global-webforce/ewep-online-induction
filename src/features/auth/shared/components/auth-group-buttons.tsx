@@ -2,12 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link"; // <- use Next.js Link, not lucide-react
-import React from "react";
+import LogoutButton from "../../logout/logout-button-client";
 import { useAuth } from "../providers/auth-provider";
-import { useLogout } from "../../logout/use-logout";
-import LogoutButton from "../../logout/logout-button.client";
 
-export function FooButtons() {
+export function AuthGroupButtons() {
   const { user } = useAuth();
 
   return (

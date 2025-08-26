@@ -2,7 +2,7 @@ import { Provider } from "@supabase/supabase-js";
 import { RegisterSchema } from "../../register/register-schema";
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
-import { getSupabaseClient } from "@/supabase/get-supabase-client";
+import { getSupabaseClient } from "@/supabase/get-supabase-client-browser";
 
 /**
  * A supabase implementation of the {@link AuthRepository} interface for server-side authentication.
@@ -12,7 +12,7 @@ import { getSupabaseClient } from "@/supabase/get-supabase-client";
  * @important On interactive components, you should wrap the method in
  **/
 
-export class AuthRepositoryRemoteServer implements AuthRepository {
+export class AuthRepositoryRemote implements AuthRepository {
   async loginWithEmail(email: string, password: string): Promise<void> {
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -67,9 +67,27 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
         };
   }
 
-  /// ⚠️ Not supported on the server.
-  onUserChange(): () => void {
-    return () => void 0;
+  onUserChange(callback: (user: User | null) => void): () => void {
+    const supabase = getSupabaseClient();
+    const { subscription } = supabase.auth.onAuthStateChange(
+      (_event: any, session: any) => {
+        const user: User | null = !session
+          ? null
+          : {
+              id: session?.user?.id || "",
+              email: session?.user?.email || "",
+              roles: [],
+              profile: {
+                firstName: session?.user?.user_metadata?.firstName || "",
+                lastName: session?.user?.user_metadata?.lastName || "",
+                avatarUrl: session?.user?.user_metadata?.avatar_url || "",
+              },
+            };
+        callback(user);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }
 
   async loginWithProvider(
@@ -86,5 +104,3 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
     if (!data) throw new Error("No redirect URL returned");
   }
 }
-
-export const authRepository: AuthRepository = new AuthRepositoryRemoteServer();

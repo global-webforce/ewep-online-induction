@@ -8,7 +8,7 @@ import { logoutAction } from "./logout-action";
 // Loading is also not supported in server components, so we don't show any loading state.
 // Normal async actions are not allowed in server components, so we use server actions to handle the logout process.
 
-export default function LogoutButton() {
+export default function LogoutButtonServer() {
   return (
     <form action={logoutAction}>
       <div className="flex gap-2 justify-end">

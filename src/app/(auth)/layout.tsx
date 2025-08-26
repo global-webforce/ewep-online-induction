@@ -1,7 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { FooButtons } from "@/features/auth/shared/components/foo-buttons";
-import { useAuth } from "@/features/auth/shared/providers/auth-provider";
-
+import { AuthGroupButtons } from "@/features/auth/shared/components/auth-group-buttons";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -32,7 +29,7 @@ export default async function AuthLayout({
                 </Link>
               </div>
             </div>
-            <FooButtons />
+            <AuthGroupButtons />
           </div>
         </div>
       </nav>
