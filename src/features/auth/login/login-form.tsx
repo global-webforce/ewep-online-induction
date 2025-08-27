@@ -1,45 +1,37 @@
 "use client";
 
-import { useAuth } from "../shared/providers/auth-provider";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema, RegisterSchema } from "./register-schema";
-import { useRegisterWithEmail } from "./use-register";
+import { useForm } from "react-hook-form";
+import { loginSchema, LoginSchema } from "./login-schema";
+import { useLoginWithEmail } from "./use-login";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { UserInfo } from "../shared/components/user-info";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
-export default function RegisterForm() {
-  const {
-    mutate: register,
-    status,
-    error,
-    data: user,
-  } = useRegisterWithEmail();
+export default function LoginForm() {
+  const { mutate: login, status, error, data } = useLoginWithEmail();
 
-  const form = useForm<RegisterSchema>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
-  const { user: x } = useAuth();
-
-  const onSubmit = (values: RegisterSchema) => {
-    register(values);
+  const onSubmit = (values: LoginSchema) => {
+    login(values);
   };
 
   return (
     <Card className="w-full max-w-md p-6 flex flex-col gap-4 bg-white rounded-lg">
       <CardHeader>
         <CardTitle className="text-center text-xl font-semibold">
-          Register
+          Login
         </CardTitle>
       </CardHeader>
 
@@ -48,11 +40,12 @@ export default function RegisterForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {x?.email && (
-            <p className="text-sm text-muted-foreground">
-              You are logged in as{" "}
-              <span className="font-medium">{x.email}</span>
-            </p>
+          {error && (
+            <Alert variant="destructive">
+              <Terminal />
+
+              <AlertDescription>{(error as Error).message}</AlertDescription>
+            </Alert>
           )}
 
           {/* Email field */}
@@ -87,37 +80,14 @@ export default function RegisterForm() {
             )}
           </div>
 
-          {/* Confirm Password field */}
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              {...form.register("confirmPassword")}
-            />
-            {form.formState.errors.confirmPassword && (
-              <p className="text-sm text-red-500">
-                {form.formState.errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
-
           {/* Submit button */}
           <Button
             type="submit"
             disabled={status === "pending"}
             className="w-full"
           >
-            {status === "pending" ? "Registering..." : "Register"}
+            {status === "pending" ? "Logging in..." : "Login"}
           </Button>
-
-          {/* Status messages */}
-          {error && (
-            <p className="text-sm text-red-500 text-center">
-              {(error as Error).message}
-            </p>
-          )}
         </form>
       </CardContent>
     </Card>

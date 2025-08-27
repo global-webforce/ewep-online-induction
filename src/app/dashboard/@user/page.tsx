@@ -1,4 +1,4 @@
-import LogoutButtonServer from "@/features/auth/logout/logout-button-server";
+import LogoutButtonServer from "@/features/auth/logout/logout-button";
 import { AuthRepositoryRemoteServer } from "@/features/auth/shared/repository/auth-repository-remote-server";
 
 const authRepository = new AuthRepositoryRemoteServer();

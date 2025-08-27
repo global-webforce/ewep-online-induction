@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link"; // <- use Next.js Link, not lucide-react
-import LogoutButton from "../../logout/logout-button-client";
+
 import { authRepository } from "../repository";
+import LogoutButtonServer from "../../logout/logout-button";
 
 export async function AuthGroupButtons() {
   const user = await authRepository.getCurrentUser();
@@ -26,7 +27,7 @@ export async function AuthGroupButtons() {
       )}
 
       {user != null && ( // show dashboard if logged in
-        <LogoutButton />
+        <LogoutButtonServer />
       )}
     </div>
   );

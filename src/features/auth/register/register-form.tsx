@@ -2,48 +2,51 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { loginSchema, LoginSchema } from "./login-schema";
-import { useLoginWithEmail } from "./use-login";
-
+import { registerSchema, RegisterSchema } from "./register-schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRegisterWithEmail } from "./use-register";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
-export default function LoginForm() {
-  const { mutate: login, status, error, data } = useLoginWithEmail();
+export default function RegisterForm() {
+  const { mutate: register, status, error, data } = useRegisterWithEmail();
 
-  const form = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (values: LoginSchema) => {
-    login(values);
+  const onSubmit = (values: RegisterSchema) => {
+    register(values);
   };
 
   return (
     <Card className="w-full max-w-md p-6 flex flex-col gap-4 bg-white rounded-lg">
       <CardHeader>
         <CardTitle className="text-center text-xl font-semibold">
-          Login
+          Register
         </CardTitle>
       </CardHeader>
 
       <CardContent className="p-1">
-        {error && (
-          <p className="text-sm text-red-500 text-center">
-            {(error as Error).message}
-          </p>
-        )}
-
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
+          {error && (
+            <Alert variant="destructive">
+              <Terminal />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{(error as Error).message}</AlertDescription>
+            </Alert>
+          )}
+
           {/* Email field */}
           <div className="flex flex-col gap-1">
             <Label htmlFor="email">Email</Label>
@@ -76,21 +79,30 @@ export default function LoginForm() {
             )}
           </div>
 
+          {/* Confirm Password field */}
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              {...form.register("confirmPassword")}
+            />
+            {form.formState.errors.confirmPassword && (
+              <p className="text-sm text-red-500">
+                {form.formState.errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
+
           {/* Submit button */}
           <Button
             type="submit"
             disabled={status === "pending"}
             className="w-full"
           >
-            {status === "pending" ? "Logging in..." : "Login"}
+            {status === "pending" ? "Logging in..." : "Register"}
           </Button>
-
-          {/* Status messages */}
-          {error && (
-            <p className="text-sm text-red-500 text-center">
-              {(error as Error).message}
-            </p>
-          )}
         </form>
       </CardContent>
     </Card>

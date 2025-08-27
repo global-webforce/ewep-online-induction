@@ -7,5 +7,5 @@ const authRepository = new AuthRepositoryRemoteServer();
 
 export async function logoutAction() {
   await authRepository.logout();
-  redirect(`/login`, RedirectType.push);
+  // redirect(`/login`, RedirectType.push);
 }
