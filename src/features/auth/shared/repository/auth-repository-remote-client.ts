@@ -1,8 +1,9 @@
 import { Provider } from "@supabase/supabase-js";
-import { RegisterSchema } from "../../register/register-schema";
+
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
 import { createClient } from "@/utils/supabase/client-browser";
+import { RegisterSchema } from "@/features/auth/register/register-schema";
 
 /**
  * A supabase implementation of the {@link AuthRepository} interface for CLIENT-SIDE authentication.

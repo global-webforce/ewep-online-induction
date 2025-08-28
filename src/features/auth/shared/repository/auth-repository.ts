@@ -1,4 +1,4 @@
-import { RegisterSchema } from "../../register/register-schema";
+import { RegisterSchema } from "@/features/auth/register/register-schema";
 import { User } from "../models/user-schema";
 
 export interface AuthRepository {

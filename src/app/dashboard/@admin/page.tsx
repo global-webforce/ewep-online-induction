@@ -1,7 +1,5 @@
 import LogoutButtonServer from "@/features/auth/logout/logout-button";
-import { AuthRepositoryRemoteServer } from "@/features/auth/shared/repository/auth-repository-remote-server";
-
-const authRepository = new AuthRepositoryRemoteServer();
+import { authRepository } from "@/features/auth/shared/repository";
 
 export default async function AdminDashboard() {
   const x = await authRepository.getCurrentUser();

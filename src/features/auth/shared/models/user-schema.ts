@@ -1,19 +1,18 @@
-// src/domain/models/User.ts
 import { z } from "zod";
 
-// Profile schema (expandable without breaking User)
 export const ProfileSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
-  avatarUrl: z.string().url().nullable(),
+  avatarUrl: z.url().nullable(),
 });
 
 // User schema
 export const UserSchema = z.object({
-  id: z.uuid(), // You control this type
+  id: z.uuid(),
   email: z.email(),
+  dateVerified: z.iso.datetime().optional(),
   profile: ProfileSchema.optional(),
-  roles: z.array(z.string()).default(["admin"]), // e.g., ["admin", "trainer"]
+  roles: z.array(z.string()).default(["admin"]),
 });
 
 export type Profile = z.infer<typeof ProfileSchema>;

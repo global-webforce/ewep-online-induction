@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link"; // <- use Next.js Link, not lucide-react
-
+import Link from "next/link";
 import { authRepository } from "../repository";
-import LogoutButtonServer from "../../logout/logout-button";
+import LogoutButtonServer from "@/features/auth/logout/logout-button";
 
 export async function AuthGroupButtons() {
   const user = await authRepository.getCurrentUser();

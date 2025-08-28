@@ -1,6 +1,6 @@
 "use server";
 
-import { authRepository } from "../shared/repository";
+import { authRepository } from "@/features/auth/shared/repository";
 import { RegisterSchema, registerSchema } from "./register-schema";
 
 export async function registerAction(values: RegisterSchema) {

@@ -1,6 +1,6 @@
 "use server";
 
-import { authRepository } from "../shared/repository";
+import { authRepository } from "@/features/auth/shared/repository";
 import { LoginSchema, loginSchema } from "./login-schema";
 
 export async function loginAction(values: LoginSchema) {

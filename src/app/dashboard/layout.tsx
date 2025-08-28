@@ -1,7 +1,7 @@
-import { AuthRepositoryRemoteServer } from "@/features/auth/shared/repository/auth-repository-remote-server";
+import { authRepository } from "@/features/auth/shared/repository";
 import { redirect, RedirectType } from "next/navigation";
 import { ReactNode } from "react";
-const authRepository = new AuthRepositoryRemoteServer();
+
 export default async function DashboardLayout({
   admin,
   user,

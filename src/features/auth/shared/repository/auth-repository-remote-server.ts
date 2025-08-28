@@ -1,15 +1,15 @@
 import { Provider } from "@supabase/supabase-js";
-import { RegisterSchema } from "../../register/register-schema";
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
 import { createClient } from "@/utils/supabase/client-server";
+import { RegisterSchema } from "@/features/auth/register/register-schema";
+import { userSchemaAdapterSupabase } from "../adapters/user-schema-adapter-supabase";
 
 /**
  * A supabase implementation of the {@link AuthRepository} interface for server-side authentication.
  * @important It uses SERVER-CLIENT {@link createClient} to interact with Supabase.
- * Usage: Middleware, API routes, getServerSideProps, etc.
  * @important You can only use this on either top route or layout.
- * @important On interactive components, you should wrap the method in
+ * Usage: Middleware, API routes, getServerSideProps, etc.
  **/
 
 export class AuthRepositoryRemoteServer implements AuthRepository {
@@ -51,9 +51,8 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
      * Using the user object as returned from supabase.auth.getSession() or from some supabase.auth.onAuthStateChange() events could be insecure!
      * This value comes directly from the storage medium (usually cookies on the server) and may not be authentic.
      * Use supabase.auth.getUser() instead which authenticates the data by contacting the Supabase Auth server.
+     * Dev Note: When I used getSession, I'm still logged in even if I already the deleted the user via Supabase Dashboard!!!
      * */
-
-    /// Dev Note: When I used getSession, I'm still logged in even if I already the deleted the user via Supabase Dashboard!!!
 
     const { data, error } = await supabase.auth.getUser();
 
@@ -61,29 +60,12 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
       return null;
     }
 
-    const session = data.user;
-
-    return !session
-      ? null
-      : {
-          id: data?.user?.id || "",
-          email: data?.user?.email || "",
-          roles: ["admin"],
-          profile: {
-            firstName: data?.user?.user_metadata?.firstName || "",
-            lastName: data?.user?.user_metadata?.lastName || "",
-            avatarUrl: data?.user?.user_metadata?.avatar_url || "",
-          },
-        };
+    return !data.user ? null : userSchemaAdapterSupabase(data.user);
   }
 
-  onUserChange(callback: (user: User | null) => void): () => void {
+  onUserChange(_: (_: any) => void): () => void {
     // ❌ Not available on server-side.
-    // Supabase onAuthStateChange only works in the browser client.
-    // On the server, fetch the user once per request using supabase.auth.getSession().
-    return () => {
-      // noop
-    };
+    return () => {};
   }
 
   async loginWithProvider(
