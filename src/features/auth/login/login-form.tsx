@@ -5,12 +5,13 @@ import { useForm } from "react-hook-form";
 import { loginSchema, LoginSchema } from "./login-schema";
 import { useLoginWithEmail } from "./use-login";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Mail, Terminal } from "lucide-react";
+import { Terminal } from "lucide-react";
+import CheckYourEmail from "../shared/components/check-your-email";
 
 export default function LoginForm() {
   const { mutate: login, status, error } = useLoginWithEmail();
@@ -26,6 +27,8 @@ export default function LoginForm() {
   const onSubmit = (values: LoginSchema) => {
     login(values);
   };
+
+  if (error?.message.includes("Email not confirmed")) return <CheckYourEmail />;
 
   return (
     <>
@@ -48,13 +51,6 @@ export default function LoginForm() {
                 <AlertDescription>{(error as Error).message}</AlertDescription>
               </Alert>
             )}
-
-            <Alert>
-              <AlertDescription>
-                We’ve sent a confirmation link to your email. <br />
-                Please verify to continue.
-              </AlertDescription>
-            </Alert>
 
             {/* Email field */}
             <div className="flex flex-col gap-1">

@@ -1,7 +1,5 @@
-"use client";
-
 import LoginForm from "@/features/auth/login/login-form";
 
-export default function LoginPage() {
+export default async function LoginPage() {
   return <LoginForm />;
 }

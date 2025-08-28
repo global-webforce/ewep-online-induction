@@ -1,15 +1,14 @@
-"use client";
+import { authRepository } from "../repository";
 
-import { useAuth } from "../providers/auth-provider";
-
-export function UserInfo() {
-  const { user } = useAuth();
-
+export async function UserInfo() {
+  const user = await authRepository.getCurrentUser();
   return (
     <div className="flex items-center">
-      {user && ( // show dashboard if logged in
-        <p>{user.email}</p>
-      )}
+      <h1 className="text-white">USER</h1>
+      {
+        // show dashboard if logged in
+        <p className="text-white">{user?.email}</p>
+      }
     </div>
   );
 }

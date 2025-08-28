@@ -21,7 +21,7 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
     });
 
     if (error) throw new Error(error.message);
-    if (!data) throw new Error("No user returned");
+    if (!data.user) throw new Error("No user returned");
   }
 
   async registerWithEmail(param: RegisterSchema): Promise<void> {
@@ -57,6 +57,10 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
+      if (data.user) {
+        return userSchemaAdapterSupabase(data.user);
+      }
+
       return null;
     }
 

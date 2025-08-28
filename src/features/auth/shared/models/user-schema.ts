@@ -10,7 +10,7 @@ export const ProfileSchema = z.object({
 export const UserSchema = z.object({
   id: z.uuid(),
   email: z.email(),
-  dateVerified: z.iso.datetime().optional(),
+  emailConfirmedAt: z.iso.datetime().optional(),
   profile: ProfileSchema.optional(),
   roles: z.array(z.string()).default(["admin"]),
 });
