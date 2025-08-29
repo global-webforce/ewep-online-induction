@@ -8,6 +8,8 @@ export interface AuthRepository {
   // Email/password registration
   registerWithEmail: (data: RegisterSchema) => Promise<void>;
 
+  resendVerificationEmail: (email: string) => Promise<void>;
+
   // Log out
   logout: () => Promise<void>;
 

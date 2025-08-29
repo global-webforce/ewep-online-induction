@@ -21,7 +21,15 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
     });
 
     if (error) throw new Error(error.message);
-    if (!data.user) throw new Error("No user returned");
+  }
+
+  async resendVerificationEmail(email: string): Promise<void> {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.resend({
+      email: email,
+      type: "signup",
+    });
+    if (error) throw new Error(error.message);
   }
 
   async registerWithEmail(param: RegisterSchema): Promise<void> {
@@ -56,13 +64,7 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
 
     const { data, error } = await supabase.auth.getUser();
 
-    if (error) {
-      if (data.user) {
-        return userSchemaAdapterSupabase(data.user);
-      }
-
-      return null;
-    }
+    if (error) return null;
 
     return !data.user ? null : userSchemaAdapterSupabase(data.user);
   }
@@ -77,12 +79,11 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
     options?: { redirectTo?: string }
   ): Promise<void> {
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: provider as Provider,
       options,
     });
 
     if (error) throw new Error(error.message);
-    if (!data) throw new Error("No redirect URL returned");
   }
 }

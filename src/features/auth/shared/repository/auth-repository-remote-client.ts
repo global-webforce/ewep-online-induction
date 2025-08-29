@@ -12,6 +12,14 @@ import { RegisterSchema } from "@/features/auth/register/register-schema";
  **/
 
 export class AuthRepositoryRemote implements AuthRepository {
+  async resendVerificationEmail(email: string): Promise<void> {
+    const supabase = await createClient();
+    const { data, error } = await supabase.au;
+
+    if (error) throw new Error(error.message);
+    if (!data.user) throw new Error("No user returned");
+  }
+
   async loginWithEmail(email: string, password: string): Promise<void> {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.signInWithPassword({

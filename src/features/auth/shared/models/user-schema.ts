@@ -6,7 +6,6 @@ export const ProfileSchema = z.object({
   avatarUrl: z.url().nullable(),
 });
 
-// User schema
 export const UserSchema = z.object({
   id: z.uuid(),
   email: z.email(),

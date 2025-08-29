@@ -29,7 +29,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-md p-6 flex flex-col gap-4 bg-white rounded-lg shadow-md">
+    <Card className="w-full max-w-md p-6 flex flex-col gap-4 rounded-lg shadow-md">
       <CardHeader>
         <CardTitle className="text-center text-2xl font-semibold">
           Create an account

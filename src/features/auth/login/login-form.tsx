@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Terminal } from "lucide-react";
 import CheckYourEmail from "../shared/components/check-your-email";
+import ResendVerificationEmailForm from "../resend-verification-email/resend-form";
 
 export default function LoginForm() {
   const { mutate: login, status, error } = useLoginWithEmail();
@@ -28,11 +29,12 @@ export default function LoginForm() {
     login(values);
   };
 
-  if (error?.message.includes("Email not confirmed")) return <CheckYourEmail />;
+  if (error?.message.includes("Email not confirmed") && form.getValues("email"))
+    return <ResendVerificationEmailForm email={form.getValues("email")} />;
 
   return (
     <>
-      <Card className="w-full max-w-md p-6 flex flex-col gap-4 bg-white rounded-lg shadow-md">
+      <Card className="w-full max-w-md p-6 flex flex-col gap-4  rounded-lg shadow-md">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-semibold">
             Login to your account

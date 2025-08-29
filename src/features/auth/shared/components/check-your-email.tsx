@@ -1,9 +1,10 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Mail } from "lucide-react";
 import React from "react";
 
-export default function CheckYourEmail() {
+export default function CheckYourEmail({ email }: { email: string }) {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
@@ -14,17 +15,15 @@ export default function CheckYourEmail() {
       </CardHeader>
       <CardContent className="space-y-4  ">
         <Alert>
-          <AlertDescription className="text-center justify-center ">
-            We've sent a confirmation link to your email. <br />
-            Please verify to continue.
+          <AlertDescription className="text-center justify-center inline ">
+            Please verify your email address by clicking the link sent to{" "}
+            <b className="">{email}</b>
           </AlertDescription>
         </Alert>
-        <div className="text-center text-sm text-gray-600">
-          Didn't receive the email? Check your spam folder or{" "}
-          <button type="submit" className="text-blue-600 hover:underline">
-            Try again.
-          </button>
-        </div>
+
+        <Button type="submit" disabled={false} className="w-full">
+          Resend Verification Email
+        </Button>
       </CardContent>
     </Card>
   );

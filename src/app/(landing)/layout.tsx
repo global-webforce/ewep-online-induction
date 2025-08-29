@@ -1,5 +1,4 @@
 import { AuthGroupButtons } from "@/features/auth/shared/components/auth-group-buttons";
-import Image from "next/image";
 import Link from "next/link";
 
 export default async function AuthLayout({
@@ -9,21 +8,14 @@ export default async function AuthLayout({
 }>) {
   return (
     <div className="min-h-screen flex flex-col relative">
-      <Image
-        src="/bg.jpg?height=1080&width=1920"
-        alt="Background"
-        layout="fill"
-        quality={100}
-        priority
-      />
-      <div className="absolute inset-0 bg-black opacity-50" />
+      <div className="absolute inset-0 bg-background opacity-50" />
 
-      <nav className="relative bg-white bg-opacity-90 shadow-md z-10">
+      <nav className="relative bg-background bg-opacity-90 shadow-md z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <Link href="/" className="text-xl font-bold text-gray-800">
+                <Link href="/" className="text-xl font-bold text-foreground">
                   SFS Online Induction
                 </Link>
               </div>
@@ -37,8 +29,8 @@ export default async function AuthLayout({
         {children}
       </main>
 
-      <footer className="relative bg-white bg-opacity-90 shadow-md mt-8 z-10">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-600">
+      <footer className="relative bg-background bg-opacity-90 shadow-md mt-8 z-10">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
           <p className="text-sm">
             &copy; 2025 Stark Food Systems. Internal use only.
           </p>
