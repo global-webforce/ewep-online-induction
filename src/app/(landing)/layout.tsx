@@ -1,4 +1,4 @@
-import { AuthGroupButtons } from "@/features/auth/shared/components/auth-group-buttons";
+import { AuthGroupButtons } from "@/features/shared/components/auth-group-buttons";
 import Link from "next/link";
 
 export default async function AuthLayout({

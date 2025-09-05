@@ -1,4 +1,4 @@
-import { authRepository } from "@/features/auth/shared/repository";
+import { authRepository } from "@/features/shared/repository";
 import { redirect, RedirectType } from "next/navigation";
 import { ReactNode } from "react";
 
@@ -9,7 +9,7 @@ export default async function DashboardLayout({
   admin: ReactNode;
   user: ReactNode;
 }) {
-  const currentUser = await authRepository.getCurrentUser();
+  const currentUser = await authRepository.getSession();
 
   if (!currentUser) {
     redirect(`/login`, RedirectType.replace);
