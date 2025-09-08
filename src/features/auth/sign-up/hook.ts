@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { registerAction } from "./action";
-import { RegisterSchema } from "@/features/shared/models/register-input-schema";
+import { SignUpInput } from "@/features/shared/models/sign-up-input-schema";
 
 export function useRegisterWithEmail() {
   return useMutation({
-    mutationFn: (values: RegisterSchema) => registerAction(values),
+    mutationFn: (values: SignUpInput) => registerAction(values),
   });
 }

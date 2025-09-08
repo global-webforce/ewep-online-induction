@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 
 import {
   createContext,
@@ -58,3 +58,4 @@ export const useAuth = () => {
   if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 };
+ */

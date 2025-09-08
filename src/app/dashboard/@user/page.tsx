@@ -1,4 +1,4 @@
-import LogoutButtonServer from "@/features/auth/logout/form";
+import LogoutButtonServer from "@/features/auth/sign-out/form";
 import { authRepository } from "@/features/shared/repository";
 
 export default async function UserDashboard() {

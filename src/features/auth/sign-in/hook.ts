@@ -2,13 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { LoginInput } from "@/features/shared/models/login-input-schema";
-import { loginAction } from "./action";
+import { signInAction } from "./action";
+import { SignInInput } from "@/features/shared/models/sign-in-input-schema";
 
 export function useLoginWithEmail() {
   const router = useRouter();
   return useMutation({
-    mutationFn: (values: LoginInput) => loginAction(values),
+    mutationFn: (values: SignInInput) => signInAction(values),
     onSuccess: () => {
       router.push(`/dashboard`);
     },

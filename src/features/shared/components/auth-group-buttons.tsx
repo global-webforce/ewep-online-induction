@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { authRepository } from "../repository";
-import LogoutButtonServer from "@/features/auth/logout/form";
+import LogoutButtonServer from "@/features/auth/sign-out/form";
 
 export async function AuthGroupButtons() {
   const user = await authRepository.getSession();

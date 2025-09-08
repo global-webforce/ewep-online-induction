@@ -5,22 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  LoginInput,
-  loginInputSchema,
-} from "@/features/shared/models/login-input-schema";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import VerifyEmailForm from "../verify-email/form";
 import { useLoginWithEmail } from "./hook";
-import { SimpleAlert } from "../verify-email/custom-alert";
+import { SimpleAlert } from "../../shared/components/custom-alert";
+import {
+  SignInInput,
+  signInInputSchema,
+} from "@/features/shared/models/sign-in-input-schema";
 
 export default function LoginForm() {
-  const { mutate: login, status, error, reset } = useLoginWithEmail();
+  const { mutate: signIn, status, error, reset } = useLoginWithEmail();
 
-  const form = useForm<LoginInput>({
-    resolver: zodResolver(loginInputSchema),
+  const form = useForm<SignInInput>({
+    resolver: zodResolver(signInInputSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -48,10 +49,10 @@ export default function LoginForm() {
           <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
         )}
 
-        <h1 className="text-center text-3xl font-bold"> LOG IN</h1>
+        <h1 className="text-center text-3xl font-bold"> Log in</h1>
 
         <form
-          onSubmit={form.handleSubmit((values) => login(values))}
+          onSubmit={form.handleSubmit((values) => signIn(values))}
           className="flex flex-col gap-4"
         >
           <div className="flex flex-col gap-1">

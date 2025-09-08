@@ -8,19 +8,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  RegisterSchema,
-  registerSchema,
-} from "@/features/shared/models/register-input-schema";
+
 import Link from "next/link";
 import VerifyEmailForm from "../verify-email/form";
-import { SimpleAlert } from "../verify-email/custom-alert";
+import { SimpleAlert } from "../../shared/components/custom-alert";
+import {
+  SignUpInput,
+  signUpInputSchema,
+} from "@/features/shared/models/sign-up-input-schema";
 
 export default function RegisterForm() {
   const { mutate: register, status, error, reset } = useRegisterWithEmail();
 
-  const form = useForm<RegisterSchema>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<SignUpInput>({
+    resolver: zodResolver(signUpInputSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -28,7 +29,7 @@ export default function RegisterForm() {
     },
   });
 
-  const onSubmit = (values: RegisterSchema) => {
+  const onSubmit = (values: SignUpInput) => {
     register(values);
   };
 
@@ -53,7 +54,7 @@ export default function RegisterForm() {
 
       <CardHeader>
         <CardTitle className="text-center text-3xl font-bold">
-          REGISTER
+          Register
         </CardTitle>
       </CardHeader>
 

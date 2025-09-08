@@ -12,7 +12,8 @@ import {
 import { ArrowLeft, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useResendVerificationEmail } from "./hook";
-import { SimpleAlert } from "./custom-alert";
+import { SimpleAlert } from "../../shared/components/custom-alert";
+import Link from "next/link";
 
 export default function VerifyEmailForm({
   email,
@@ -50,7 +51,7 @@ export default function VerifyEmailForm({
 
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">
-            VERIFY YOUR EMAIL
+            Verify your email
           </CardTitle>
 
           <CardDescription className="text-center">
@@ -73,17 +74,18 @@ export default function VerifyEmailForm({
             >
               {status === "pending" ? "Resending Email..." : "Resend Email"}
             </Button>
-            <Button
-              onClick={() => {
-                reset();
-                onBack ? onBack() : router.back();
-              }}
-              variant="ghost"
-              className="w-full flex items-center justify-center gap-2"
-            >
-              <ArrowLeft size={16} />
-              Go Back
-            </Button>
+
+            <div className="mt-4 text-center text-sm">
+              <p
+                onClick={() => {
+                  reset();
+                  onBack ? onBack() : router.back();
+                }}
+                className="underline underline-offset-4"
+              >
+                Go back
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>

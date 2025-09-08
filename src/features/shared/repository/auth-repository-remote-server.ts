@@ -2,12 +2,11 @@ import { Provider } from "@supabase/supabase-js";
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
 import { createClient } from "@/utils/supabase/client-server";
-import { RegisterSchema } from "@/features/shared/models/register-input-schema";
-
-import { LoginInput } from "../models/login-input-schema";
+import { SignInInput } from "../models/sign-in-input-schema";
 import { EmailInput } from "../models/email-input-schema";
 import { userSchemaAdapterSupabase } from "../adapters/user-schema-supabase-adapter";
 import { mapSupabaseError } from "../adapters/errors-schema-supabase-adapter";
+import { SignUpInput } from "../models/sign-up-input-schema";
 
 /**
  * A supabase implementation of the {@link AuthRepository} interface for server-side authentication.
@@ -17,7 +16,7 @@ import { mapSupabaseError } from "../adapters/errors-schema-supabase-adapter";
  **/
 
 export class AuthRepositoryRemoteServer implements AuthRepository {
-  async loginWithEmail(params: LoginInput): Promise<void> {
+  async signIn(params: SignInInput): Promise<void> {
     const supabase = await createClient();
     const { error } = await supabase.auth.signInWithPassword(params);
 
@@ -25,7 +24,7 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
     if (error) throw mapSupabaseError(error);
   }
 
-  async registerWithEmail(params: RegisterSchema): Promise<void> {
+  async signUp(params: SignUpInput): Promise<void> {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.signUp({
       email: params.email,
@@ -48,6 +47,12 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
     }
   }
 
+  async signOut(): Promise<void> {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signOut();
+    if (error) throw mapSupabaseError(error);
+  }
+
   async verifyEmail(param: EmailInput): Promise<void> {
     const supabase = await createClient();
     const { error } = await supabase.auth.resend({
@@ -57,9 +62,9 @@ export class AuthRepositoryRemoteServer implements AuthRepository {
     if (error) throw mapSupabaseError(error);
   }
 
-  async logout(): Promise<void> {
+  async forgotPassword(param: EmailInput): Promise<void> {
     const supabase = await createClient();
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.resetPasswordForEmail(param);
     if (error) throw mapSupabaseError(error);
   }
 

@@ -1,18 +1,14 @@
-import { RegisterSchema } from "@/features/shared/models/register-input-schema";
+import { SignUpInput } from "@/features/shared/models/sign-up-input-schema";
 import { User } from "../models/user-schema";
-import { LoginInput } from "../models/login-input-schema";
+import { SignInInput } from "../models/sign-in-input-schema";
 import { EmailInput } from "../models/email-input-schema";
 
 export interface AuthRepository {
-  loginWithEmail: (data: LoginInput) => Promise<void>;
-  loginWithProvider: (
-    provider: "google" | "facebook" | string,
-    options?: { redirectTo?: string }
-  ) => Promise<void>;
-  registerWithEmail: (data: RegisterSchema) => Promise<void>;
+  signIn: (data: SignInInput) => Promise<void>;
+  signUp: (data: SignUpInput) => Promise<void>;
+  signOut: () => Promise<void>;
   verifyEmail: (data: EmailInput) => Promise<void>;
-  logout: () => Promise<void>;
-
+  forgotPassword: (data: EmailInput) => Promise<void>;
   getSession: () => Promise<User | null>;
   setSession(payload: Record<string, any>): Promise<void>;
 }
