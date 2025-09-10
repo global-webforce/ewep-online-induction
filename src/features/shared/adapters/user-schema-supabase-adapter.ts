@@ -5,7 +5,7 @@ export function userSchemaAdapterSupabase(user: SupabaseUser): User {
   return {
     id: user?.id || "",
     email: user?.email || "",
-    roles: ["admin"],
+    roles: [user.app_metadata?.userrole || "user"],
     emailConfirmedAt: user?.email_confirmed_at,
     profile: {
       firstName: user?.user_metadata?.firstName || "",

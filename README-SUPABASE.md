@@ -13,3 +13,11 @@ For Admin users, we can BYPASS all Policies by using `service role key` on Supab
 Link: `https://github.com/supabase-community/supabase-custom-claims`
 
 `User` - info that can updated by user e.g. `profile`, `first_name` , `avatar_url`.
+Note: You can also put `role` here BUT (Not trusted for authorization, just for queries/UI only)
+Link: `https://nocodegarden.io/blog/creating-user-profiles-on-sign-up-in-supabase`
+
+# EXPOSING AUTH TABLE TO PUBLIC (GAME CHANGE HACK)
+
+## We convert auth table to a view!!!
+
+https://github.com/supabase/auth-js/issues/359
