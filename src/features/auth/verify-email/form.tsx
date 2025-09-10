@@ -1,94 +1,68 @@
 "use client";
 
-import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ArrowLeft, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useResendVerificationEmail } from "./hook";
-import { SimpleAlert } from "../../shared/components/custom-alert";
-import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Email } from "@/features/shared/models/email-input-schema";
+import { SimpleAlert } from "@/features/shared/ui/simple-alert";
+import { useMutation } from "@tanstack/react-query";
+import { verifyEmailAction } from "./action";
 
-export default function VerifyEmailForm({
-  email,
-  onBack,
-}: {
-  email: string;
-  onBack?: () => void;
-}) {
-  const {
-    mutate: resendVerificationEmail,
-    status,
-    isSuccess,
-    error,
-    reset,
-  } = useResendVerificationEmail();
+type Props = {
+  email: Email;
+  onBack: () => void;
+};
 
-  const onSubmit = () => {
-    resendVerificationEmail(email);
-  };
-
-  const router = useRouter();
+export default function VerifyEmailForm({ email, onBack }: Props) {
+  const { mutate, isSuccess, isPending, error, reset } = useMutation({
+    mutationFn: (_: string) => verifyEmailAction(email),
+  });
 
   return (
-    <>
-      <Card className="w-full max-w-md p-6">
-        {isSuccess && (
-          <SimpleAlert variant="success">
-            New Verification Email Sent!
-          </SimpleAlert>
-        )}
+    <Card className="w-full max-w-md p-6">
+      {isSuccess && (
+        <SimpleAlert variant="success">
+          New Verification Email Sent!
+        </SimpleAlert>
+      )}
 
-        {error && (
-          <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
-        )}
+      {error && (
+        <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
+      )}
 
-        <CardHeader>
-          <CardTitle className="text-center text-3xl font-bold">
-            Verify your email
-          </CardTitle>
+      <h1 className="text-center text-3xl font-bold">Verify your email</h1>
 
-          <CardDescription className="text-center">
-            Please open your email and click the link we sent.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6 p-1">
-          <div className="text-center text-sm text-muted-foreground">
-            Didn’t get the email?
-            <br />
-            <span>Check your Spam/Junk folder, or</span>
-          </div>
+      <p className="text-center">
+        Please open your email (
+        <span className="font-semibold italic text-green-200">{email}</span>){" "}
+        and click the link we sent.
+      </p>
 
-          <div className="flex flex-col gap-3">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => onSubmit()} // <- expose via props like before
-              disabled={status === "pending"}
-            >
-              {status === "pending" ? "Resending Email..." : "Resend Email"}
-            </Button>
+      <div className="text-center text-sm text-muted-foreground">
+        Didn't get the email?
+        <span> Check your Spam/Junk folder, or</span>
+      </div>
 
-            <div className="mt-4 text-center text-sm">
-              <p
-                onClick={() => {
-                  reset();
-                  onBack ? onBack() : router.back();
-                }}
-                className="underline underline-offset-4"
-              >
-                Go back
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </>
+      <div className="flex flex-col gap-3">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => mutate(email)}
+          disabled={isPending}
+        >
+          {isPending ? "Loading..." : "Resend Email"}
+        </Button>
+
+        <Button
+          variant="ghost"
+          className="w-max mx-auto"
+          onClick={() => {
+            reset();
+            onBack();
+          }}
+        >
+          Go back
+        </Button>
+      </div>
+    </Card>
   );
 }

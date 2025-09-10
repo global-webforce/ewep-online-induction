@@ -1,4 +1,4 @@
-import { authRepository } from "../repository";
+import { authRepository } from "../auth-repository";
 
 export async function UserInfo() {
   const user = await authRepository.getSession();

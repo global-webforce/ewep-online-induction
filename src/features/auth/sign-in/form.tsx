@@ -1,26 +1,33 @@
 "use client";
 
-import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import VerifyEmailForm from "../verify-email/form";
-import { useLoginWithEmail } from "./hook";
-import { SimpleAlert } from "../../shared/components/custom-alert";
 import {
   SignInInput,
   signInInputSchema,
 } from "@/features/shared/models/sign-in-input-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { SimpleAlert } from "../../shared/ui/simple-alert";
+import VerifyEmailForm from "../verify-email/form";
+import { signInAction } from "./action";
 
-export default function LoginForm() {
-  const { mutate: signIn, status, error, reset } = useLoginWithEmail();
+export default function SignInForm() {
+  const router = useRouter();
 
-  const form = useForm<SignInInput>({
+  const { mutate, reset, isPending, error } = useMutation({
+    mutationFn: (values: SignInInput) => signInAction(values),
+    onSuccess: () => {
+      router.push(`/dashboard`);
+    },
+  });
+
+  const form = useForm({
     resolver: zodResolver(signInInputSchema),
     defaultValues: {
       email: "",
@@ -49,10 +56,10 @@ export default function LoginForm() {
           <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
         )}
 
-        <h1 className="text-center text-3xl font-bold"> Log in</h1>
+        <h1 className="text-center text-3xl font-bold"> Sign in</h1>
 
         <form
-          onSubmit={form.handleSubmit((values) => signIn(values))}
+          onSubmit={form.handleSubmit((values) => mutate(values))}
           className="flex flex-col gap-4"
         >
           <div className="flex flex-col gap-1">
@@ -94,17 +101,13 @@ export default function LoginForm() {
             )}
           </div>
 
-          <Button
-            type="submit"
-            disabled={status === "pending"}
-            className="w-full"
-          >
-            {status === "pending" ? "Logging in..." : "Login"}
+          <Button type="submit" disabled={isPending} className="w-full">
+            {isPending ? "Loading..." : "Sign In"}
           </Button>
 
           <div className="mt-4 text-center text-sm">
             Don't have an account?&nbsp;
-            <Link href="/register" className="underline underline-offset-4">
+            <Link href="/sign-up" className="underline underline-offset-4">
               Sign up
             </Link>
           </div>

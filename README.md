@@ -9,12 +9,12 @@
 
 ### Using Hooks with Repository Methods
 
-| Action                            | Hook Type                           |
-| --------------------------------- | ----------------------------------- |
-| Fetch current user                | `useQuery` (React Query) / `useSWR` |
-| Login / register / logout / OAuth | `useMutation`                       |
-| Update profile or settings        | `useMutation`                       |
-| Fetch lists, posts, or data       | `useQuery` / `useSWR`               |
+| Action                             | Hook Type                           |
+| ---------------------------------- | ----------------------------------- |
+| Fetch current user                 | `useQuery` (React Query) / `useSWR` |
+| SignIn / register / logout / OAuth | `useMutation`                       |
+| Update profile or settings         | `useMutation`                       |
+| Fetch lists, posts, or data        | `useQuery` / `useSWR`               |
 
 #### Note: Using `useMutation` required implementation of `QueryClientProvider` wrapping the root layout
 

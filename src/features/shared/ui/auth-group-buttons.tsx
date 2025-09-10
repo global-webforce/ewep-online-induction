@@ -1,19 +1,19 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { authRepository } from "../repository";
-import LogoutButtonServer from "@/features/auth/sign-out/form";
+import { authRepository } from "../auth-repository";
+import LogoutButtonServer from "@/features/auth/sign-out/ui";
 
 export async function AuthGroupButtons() {
   const user = await authRepository.getSession();
   return (
     <div className="flex items-center">
-      {!user && ( // show login/register if NOT logged in
+      {!user && ( // show signIn/register if NOT logged in
         <div className="flex gap-2 justify-center">
-          <Link href="/login">
-            <Button variant="outline">Login</Button>
+          <Link href="/sign-in">
+            <Button variant="outline">Sign In</Button>
           </Link>
-          <Link href="/register">
-            <Button variant="default">Register</Button>
+          <Link href="/sign-up">
+            <Button variant="default">Sign Up</Button>
           </Link>
         </div>
       )}

@@ -1,5 +1,5 @@
-import LogoutButtonServer from "@/features/auth/sign-out/form";
-import { authRepository } from "@/features/shared/repository";
+import LogoutButtonServer from "@/features/auth/sign-out/ui";
+import { authRepository } from "@/features/shared/auth-repository";
 
 export default async function UserDashboard() {
   const x = await authRepository.getSession();

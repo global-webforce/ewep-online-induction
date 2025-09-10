@@ -1,5 +1,5 @@
 // app/auth/callback/route.ts
-import { authRepository } from "@/features/shared/repository";
+import { authRepository } from "@/features/shared/auth-repository";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -15,5 +15,5 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  return NextResponse.redirect(new URL("/login", request.url));
+  return NextResponse.redirect(new URL("/signIn", request.url));
 }
