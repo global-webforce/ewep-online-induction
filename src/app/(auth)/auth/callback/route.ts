@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const type = searchParams.get("type");
 
   if (access_token && refresh_token) {
-    authRepository.setSession({ access_token, refresh_token });
+    authRepository.setUser({ access_token, refresh_token });
 
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }

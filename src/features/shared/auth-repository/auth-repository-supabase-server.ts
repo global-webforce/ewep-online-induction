@@ -2,11 +2,12 @@ import { Provider } from "@supabase/supabase-js";
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
 import { createClient } from "@/utils/supabase/client-server";
-import { SignInInput } from "../models/sign-in-input-schema";
-import { Email, EmailInput } from "../models/email-input-schema";
+
 import { userSchemaAdapterSupabase } from "../adapters/user-schema-supabase-adapter";
 import { mapSupabaseError } from "../adapters/errors-schema-supabase-adapter";
-import { SignUpInput } from "../models/sign-up-input-schema";
+
+import { SignInInput } from "@/features/auth/sign-in/schema";
+import { SignUpInput } from "@/features/auth/sign-up/schema";
 
 /**
  * A supabase implementation of the {@link AuthRepository} interface for server-side authentication.
@@ -53,7 +54,7 @@ export class AuthRepositorySupabaseServer implements AuthRepository {
     if (error) throw mapSupabaseError(error);
   }
 
-  async verifyEmail(params: Email): Promise<void> {
+  async verifyEmail(params: string): Promise<void> {
     const supabase = await createClient();
     const { error } = await supabase.auth.resend({
       email: params,
@@ -62,9 +63,9 @@ export class AuthRepositorySupabaseServer implements AuthRepository {
     if (error) throw mapSupabaseError(error);
   }
 
-  async forgotPassword(params: EmailInput): Promise<void> {
+  async forgotPassword(param: string): Promise<void> {
     const supabase = await createClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(params.email);
+    const { error } = await supabase.auth.resetPasswordForEmail(param);
     if (error) throw mapSupabaseError(error);
   }
 
@@ -72,10 +73,10 @@ export class AuthRepositorySupabaseServer implements AuthRepository {
    * Using the user object as returned from supabase.auth.getSession() or from some supabase.auth.onAuthStateChange() events could be insecure!
    * This value comes directly from the storage medium (usually cookies on the server) and may not be authentic.
    * Use supabase.auth.getUser() instead which authenticates the data by contacting the Supabase Auth server.
-   * Dev Note: When I used getSession, I'm still logged in even if I already the deleted the user via Supabase Dashboard!!!
+   * Dev Note: When I used supabase.auth.getSession, I'm still logged in even if I already the deleted the user via Supabase Dashboard!!!
    **/
 
-  async getSession(): Promise<User | null> {
+  async getUser(): Promise<User | null> {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
     if (error) return null;
@@ -83,7 +84,7 @@ export class AuthRepositorySupabaseServer implements AuthRepository {
     return userSchemaAdapterSupabase(data.user);
   }
 
-  async setSession(payload: Record<string, any>): Promise<void> {
+  async setUser(payload: Record<string, any>): Promise<void> {
     const supabase = await createClient();
     const { access_token, refresh_token } = payload;
 

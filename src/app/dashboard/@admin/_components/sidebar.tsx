@@ -27,14 +27,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-type Props = {
-  user: {
-    id: string;
-    email?: string;
-  };
-};
-
-export default function SidebarDashboard({ user }: Props) {
+export default function SideBarAdmin() {
   const nav = [
     {
       title: "Home",

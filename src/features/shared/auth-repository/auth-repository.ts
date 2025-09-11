@@ -1,14 +1,11 @@
-import { SignUpInput } from "@/features/shared/models/sign-up-input-schema";
-import { Email, EmailInput } from "../models/email-input-schema";
-import { SignInInput } from "../models/sign-in-input-schema";
 import { User } from "../models/user-schema";
 
 export interface AuthRepository {
-  signIn: (data: SignInInput) => Promise<void>;
-  signUp: (data: SignUpInput) => Promise<void>;
+  signIn: (data: any) => Promise<void>;
+  signUp: (data: any) => Promise<void>;
   signOut: () => Promise<void>;
-  verifyEmail: (data: Email) => Promise<void>;
-  forgotPassword: (data: EmailInput) => Promise<void>;
-  getSession: () => Promise<User | null>;
-  setSession(payload: Record<string, any>): Promise<void>;
+  verifyEmail: (data: any) => Promise<void>;
+  forgotPassword: (data: any) => Promise<void>;
+  getUser: () => Promise<User | null>;
+  setUser(payload: Record<string, any>): Promise<void>;
 }

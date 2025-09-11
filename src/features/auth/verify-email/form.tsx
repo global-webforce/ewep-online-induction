@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Email } from "@/features/shared/models/email-input-schema";
+import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
 import { SimpleAlert } from "@/features/shared/ui/simple-alert";
 import { useMutation } from "@tanstack/react-query";
 import { verifyEmailAction } from "./action";
 
 type Props = {
-  email: Email;
+  email: string;
   onBack: () => void;
 };
 
@@ -37,21 +37,21 @@ export default function VerifyEmailForm({ email, onBack }: Props) {
         and click the link we sent.
       </p>
 
-      <div className="text-center text-sm text-muted-foreground">
-        Didn't get the email?
-        <span> Check your Spam/Junk folder, or</span>
+      <div className="flex flex-col gap-2">
+        <span className="text-center text-sm text-muted-foreground">
+          Didn't get the email? Check your Spam/Junk folder, or
+        </span>
+        <LoadingButton
+          variant="outline"
+          onClick={() => mutate(email)}
+          className="w-full"
+          pending={isPending}
+        >
+          Resend Email
+        </LoadingButton>
       </div>
 
       <div className="flex flex-col gap-3">
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => mutate(email)}
-          disabled={isPending}
-        >
-          {isPending ? "Loading..." : "Resend Email"}
-        </Button>
-
         <Button
           variant="ghost"
           className="w-max mx-auto"

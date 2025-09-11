@@ -1,23 +1,19 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FormField } from "@/features/react-hook-form-reusable/form-field";
+import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
 import { SimpleAlert } from "@/features/shared/ui/simple-alert";
+import VerifyEmailForm from "@/features/auth/verify-email/form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { registerAction } from "./action";
-import {
-  SignUpInput,
-  signUpInputSchema,
-} from "@/features/shared/models/sign-up-input-schema";
 import Link from "next/link";
-import VerifyEmailForm from "../verify-email/form";
+import { useForm } from "react-hook-form";
+import { registerAction } from "./action";
+import { SignUpInput, signUpInputSchema } from "./schema";
 
 export default function RegisterForm() {
-  const { mutate, status, error, reset } = useMutation({
+  const { mutate, isPending, error, reset } = useMutation({
     mutationFn: (values: SignUpInput) => registerAction(values),
   });
 
@@ -55,60 +51,31 @@ export default function RegisterForm() {
         onSubmit={form.handleSubmit((values) => mutate(values))}
         className="flex flex-col gap-4"
       >
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            {...form.register("email")}
-          />
-          {form.formState.errors.email && (
-            <p className="text-sm text-red-500">
-              {form.formState.errors.email.message}
-            </p>
-          )}
-        </div>
+        <FormField
+          control={form.control}
+          type="email"
+          name="email"
+          label="Email"
+          placeholder="you@example.com"
+        />
 
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            {...form.register("password")}
-          />
-          {form.formState.errors.password && (
-            <p className="text-sm text-red-500">
-              {form.formState.errors.password.message}
-            </p>
-          )}
-        </div>
+        <FormField
+          control={form.control}
+          type="password"
+          name="password"
+          label="Password"
+        />
 
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            placeholder="••••••••"
-            {...form.register("confirmPassword")}
-          />
-          {form.formState.errors.confirmPassword && (
-            <p className="text-sm text-red-500">
-              {form.formState.errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
+        <FormField
+          control={form.control}
+          type="password"
+          name="confirmPassword"
+          label="Confirm Password"
+        />
 
-        <div className="flex flex-col gap-3">
-          <Button
-            type="submit"
-            disabled={status === "pending"}
-            className="w-full"
-          >
-            {status === "pending" ? "Loading..." : "Register"}
-          </Button>
-        </div>
+        <LoadingButton type="submit" className="w-full" pending={isPending}>
+          Register
+        </LoadingButton>
 
         <div className="mt-4 text-center text-sm">
           Already have an account?{" "}

@@ -4,7 +4,7 @@ import { authRepository } from "../auth-repository";
 import LogoutButtonServer from "@/features/auth/sign-out/ui";
 
 export async function AuthGroupButtons() {
-  const user = await authRepository.getSession();
+  const user = await authRepository.getUser();
   return (
     <div className="flex items-center">
       {!user && ( // show signIn/register if NOT logged in

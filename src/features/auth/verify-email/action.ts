@@ -1,10 +1,10 @@
 "use server";
 
-import { emailSchema } from "@/features/shared/models/email-input-schema";
 import { authRepository } from "@/features/shared/auth-repository";
+import z from "zod";
 
 export async function verifyEmailAction(param: string) {
-  const parsed = emailSchema.safeParse(param);
+  const parsed = z.email().safeParse(param);
   if (!parsed.success) {
     throw new Error("Invalid input");
   }

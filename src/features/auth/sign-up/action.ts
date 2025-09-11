@@ -1,10 +1,7 @@
 "use server";
 
-import {
-  SignUpInput,
-  signUpInputSchema,
-} from "@/features/shared/models/sign-up-input-schema";
 import { authRepository } from "@/features/shared/auth-repository";
+import { SignUpInput, signUpInputSchema } from "./schema";
 
 export async function registerAction(values: SignUpInput) {
   const parsed = signUpInputSchema.safeParse(values);

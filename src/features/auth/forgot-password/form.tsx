@@ -1,19 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  EmailInput,
-  emailInputSchema,
-} from "@/features/shared/models/email-input-schema";
+import { FormField } from "@/features/react-hook-form-reusable/form-field";
+import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
 import { SimpleAlert } from "@/features/shared/ui/simple-alert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { forgotPasswordAction } from "./action";
+import { EmailInput, emailInputSchema } from "./schema";
 
 export default function ForgotPasswordForm() {
   const form = useForm<EmailInput>({
@@ -23,7 +19,7 @@ export default function ForgotPasswordForm() {
     },
   });
 
-  const { mutate, status, error, isSuccess } = useMutation({
+  const { mutate, isPending, error, isSuccess } = useMutation({
     mutationFn: (values: EmailInput) => forgotPasswordAction(values),
     onSuccess: () => {
       form.reset();
@@ -35,7 +31,7 @@ export default function ForgotPasswordForm() {
       <Card className="w-full max-w-md p-6 ">
         {isSuccess && (
           <SimpleAlert variant="success">
-            If the account email exists, a reset link has been sent.
+            If such email exists, a reset link has been sent.
           </SimpleAlert>
         )}
 
@@ -49,28 +45,17 @@ export default function ForgotPasswordForm() {
           onSubmit={form.handleSubmit((values) => mutate(values))}
           className="flex flex-col gap-4"
         >
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              {...form.register("email")}
-            />
-            {form.formState.errors.email && (
-              <p className="text-sm text-red-500">
-                {form.formState.errors.email.message}
-              </p>
-            )}
-          </div>
+          <FormField
+            control={form.control}
+            type="email"
+            name="email"
+            label="Email"
+            placeholder="you@example.com"
+          />
 
-          <Button
-            type="submit"
-            disabled={status === "pending"}
-            className="w-full"
-          >
-            {status === "pending" ? "Loading..." : "Send Reset Link"}
-          </Button>
+          <LoadingButton type="submit" className="w-full" pending={isPending}>
+            Register
+          </LoadingButton>
 
           <div className="mt-4 text-center text-sm">
             <Link href="/sign-in" className="underline underline-offset-4">

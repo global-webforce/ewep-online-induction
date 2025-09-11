@@ -1,7 +1,7 @@
 import { authRepository } from "../auth-repository";
 
 export async function UserInfo() {
-  const user = await authRepository.getSession();
+  const user = await authRepository.getUser();
   return (
     <div className="flex items-center">
       <h1 className="text-white">USER</h1>
