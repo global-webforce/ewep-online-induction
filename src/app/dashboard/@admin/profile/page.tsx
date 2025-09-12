@@ -1,7 +1,7 @@
-import LogoutButtonServer from "@/features/auth/sign-out/ui";
 import { authRepository } from "@/features/shared/auth-repository";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import ProfileForm from "@/features/auth/profile/form";
 
 export default async function Profile() {
   const x = await authRepository.getUser();
@@ -17,10 +17,10 @@ export default async function Profile() {
       </header>
 
       <main>
-        <h1 className="text-lg font-semibold">User Dashboard</h1>
+        {/*  <h1 className="text-lg font-semibold">User Dashboard</h1>
         <p>Welcome, normal user!dd</p>
-        <p>{JSON.stringify(x)}</p>
-        <LogoutButtonServer />
+        <p>{JSON.stringify(x)}</p> */}
+        <ProfileForm />
       </main>
     </div>
   );

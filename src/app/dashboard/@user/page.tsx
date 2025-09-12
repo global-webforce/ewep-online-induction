@@ -1,5 +1,5 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import LogoutButtonServer from "@/features/auth/sign-out/ui";
+
 import { authRepository } from "@/features/shared/auth-repository";
 
 export default async function UserDashboard() {
@@ -14,7 +14,6 @@ export default async function UserDashboard() {
       <h2 className="text-lg font-semibold">User Dashboard</h2>
       <p>Welcome, normal user!</p>
       <p>{JSON.stringify(x)}</p>
-      <LogoutButtonServer />
     </div>
   );
 }

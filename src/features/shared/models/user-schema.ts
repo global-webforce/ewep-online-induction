@@ -10,8 +10,8 @@ export const UserSchema = z.object({
   id: z.uuid(),
   email: z.email(),
   emailConfirmedAt: z.iso.datetime().optional(),
+  role: z.enum(["super_admin", "admin", "default"]).default("admin"),
   profile: ProfileSchema.optional(),
-  roles: z.array(z.string()).default(["admin"]),
 });
 
 export type Profile = z.infer<typeof ProfileSchema>;

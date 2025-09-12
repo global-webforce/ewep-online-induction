@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { authRepository } from "../auth-repository";
-import LogoutButtonServer from "@/features/auth/sign-out/ui";
 
 export async function AuthGroupButtons() {
   const user = await authRepository.getUser();
@@ -23,10 +22,6 @@ export async function AuthGroupButtons() {
             <Button variant="default">Go to Dashboard</Button>
           </Link>
         </div>
-      )}
-
-      {user != null && ( // show dashboard if logged in
-        <LogoutButtonServer />
       )}
     </div>
   );

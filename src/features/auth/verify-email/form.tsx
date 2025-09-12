@@ -20,24 +20,22 @@ export default function VerifyEmailForm({ email, onBack }: Props) {
   return (
     <Card className="w-full max-w-md p-6">
       {isSuccess && (
-        <SimpleAlert variant="success">
-          New Verification Email Sent!
-        </SimpleAlert>
+        <SimpleAlert variant="success">Link sent to your email!</SimpleAlert>
       )}
 
       {error && (
         <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
       )}
 
-      <h1 className="text-center text-3xl font-bold">Verify your email</h1>
+      <h1 className="text-center text-3xl font-bold">Check your Inbox</h1>
 
       <p className="text-center">
-        Please open your email (
-        <span className="font-semibold italic text-green-200">{email}</span>){" "}
-        and click the link we sent.
+        We’ve sent a link to{" "}
+        <span className="font-semibold italic text-green-200">{email}</span>—
+        check your inbox to continue.
       </p>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <span className="text-center text-sm text-muted-foreground">
           Didn't get the email? Check your Spam/Junk folder, or
         </span>
@@ -47,7 +45,7 @@ export default function VerifyEmailForm({ email, onBack }: Props) {
           className="w-full"
           pending={isPending}
         >
-          Resend Email
+          Resend Link
         </LoadingButton>
       </div>
 

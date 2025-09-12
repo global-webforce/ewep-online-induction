@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import LogoutButtonServer from "@/features/auth/sign-out/ui";
+
 import { authRepository } from "@/features/shared/auth-repository";
 
 export default async function AdminDashboard() {
@@ -20,7 +20,6 @@ export default async function AdminDashboard() {
         <h1 className="text-lg font-semibold">User Dashboard</h1>
         <p>Welcome, normal user!dd</p>
         <p>{JSON.stringify(x)}</p>
-        <LogoutButtonServer />
       </main>
     </div>
   );

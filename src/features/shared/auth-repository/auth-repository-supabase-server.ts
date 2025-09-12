@@ -2,6 +2,7 @@ import { Provider } from "@supabase/supabase-js";
 import { AuthRepository } from "./auth-repository";
 import { User } from "../models/user-schema";
 import { createClient } from "@/utils/supabase/client-server";
+import { createClient as createClientAdmin } from "@/utils/supabase/client-server-admin";
 
 import { userSchemaAdapterSupabase } from "../adapters/user-schema-supabase-adapter";
 import { mapSupabaseError } from "../adapters/errors-schema-supabase-adapter";
@@ -27,24 +28,38 @@ export class AuthRepositorySupabaseServer implements AuthRepository {
 
   async signUp(params: SignUpInput): Promise<void> {
     const supabase = await createClient();
+
+    const supabaseAdmin = await createClientAdmin();
+
+    const { data: email } = await supabaseAdmin
+      .from("users")
+      .select("*")
+      .eq("email", params.email)
+      .maybeSingle();
+
+    if (email) {
+      /*    if (!email?.email_confirmed_at) {
+        throw mapSupabaseError(Error("email confirmation required"));
+      } */
+
+      throw new Error("A user with this email already exists.");
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email: params.email,
       password: params.password,
-      options: {
-        data: {},
-      },
     });
 
     if (error) throw mapSupabaseError(error);
 
-    // If confirmation is required, session will be null
-    if (!error && !data.session) {
+    // If confirmation is required, data will have user value and session will be null
+    if (!data.user?.email_confirmed_at) {
       throw mapSupabaseError(Error("email confirmation required"));
     }
 
-    // If confirmation not required, session exists
+    // If confirmation not required, user and session will exist
     if (data.session) {
-      console.log("User signed up and logged in:", data.session);
+      console.log(data);
     }
   }
 
@@ -55,6 +70,17 @@ export class AuthRepositorySupabaseServer implements AuthRepository {
   }
 
   async verifyEmail(params: string): Promise<void> {
+    /*
+NOTE: Important!
+ON Supabase > Authentication > Configuration > Emails > Confirm signup, update the content with this:
+
+<h2>Confirm your signup</h2>
+
+<p>Follow this link to confirm your user:</p>
+<p><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup&redirect_to={{ .RedirectTo  }}">Confirm your mail</a></p>
+
+*/
+
     const supabase = await createClient();
     const { error } = await supabase.auth.resend({
       email: params,

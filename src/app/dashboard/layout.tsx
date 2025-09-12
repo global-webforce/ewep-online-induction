@@ -2,7 +2,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { authRepository } from "@/features/shared/auth-repository";
 import { redirect, RedirectType } from "next/navigation";
 import { ReactNode } from "react";
-import SideBarAdmin from "./@admin/_components/sidebar";
+import SideBarAdmin from "../../features/dashboard-admin/sidebar";
 
 export default async function DashboardLayout({
   admin,
@@ -22,7 +22,7 @@ export default async function DashboardLayout({
       <SideBarAdmin />
       <SidebarInset>
         <div className="min-h-screen">
-          <div>{currentUser.roles.includes("Admin") ? admin : user}</div>
+          <div>{currentUser.role == "super_admin" ? admin : user}</div>
         </div>
       </SidebarInset>
     </SidebarProvider>

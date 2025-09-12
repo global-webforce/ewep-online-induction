@@ -2,8 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -12,13 +23,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  Bell,
   BookText,
   Calendar,
   Home,
-  MessageCircle,
-  Paintbrush,
-  Settings,
+  LogOut,
   UserCheck,
   UserCircle,
   Users,
@@ -26,6 +34,8 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { logoutAction } from "../auth/sign-out/action";
+import SignOutForm from "../auth/sign-out/form";
 
 export default function SideBarAdmin() {
   const nav = [
@@ -105,6 +115,9 @@ export default function SideBarAdmin() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SignOutForm />
+      </SidebarFooter>
     </Sidebar>
   );
 }
