@@ -1,4 +1,7 @@
+import { Card } from "@/components/ui/card";
+import { authRepository } from "@/features/shared/auth-repository";
 import { AuthGroupButtons } from "@/features/shared/ui/auth-group-buttons";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function AuthLayout({
@@ -6,6 +9,7 @@ export default async function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const x = await authRepository.getUser();
   return (
     <div className="min-h-screen flex flex-col relative">
       <div className="absolute inset-0 bg-background opacity-50" />
@@ -26,7 +30,13 @@ export default async function AuthLayout({
       </nav>
 
       <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
-        {children}
+        {x ? (
+          <Card className="flex flex-col items-center gap-4 p-6">
+            <h1>You're already signed-in!!</h1> <AuthGroupButtons />
+          </Card>
+        ) : (
+          children
+        )}
       </main>
 
       <footer className="relative bg-background bg-opacity-90 shadow-md mt-8 z-10">

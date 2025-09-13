@@ -5,7 +5,7 @@ export function mapSupabaseError(error: any): Error {
     message.includes("email not confirmed") ||
     message.includes("email confirmation required")
   ) {
-    return new Error("This email is not confirmed.");
+    return new Error("This email is not confirmed");
   }
 
   if (
@@ -17,17 +17,17 @@ export function mapSupabaseError(error: any): Error {
 
     return new Error(
       waitTime
-        ? `Please wait ${waitTime} before trying again.`
-        : "Please wait before trying again."
+        ? `Please wait ${waitTime} before trying again`
+        : "Please wait before trying again"
     );
   }
 
-  function toTitleCase(str: string) {
-    return str.replace(
-      /\w\S*/g,
-      (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase()
-    );
+  function capitalizeFirstLetter(sentence: string) {
+    if (!sentence) return "";
+    return sentence.charAt(0).toUpperCase() + sentence.slice(1);
   }
 
-  return new Error(toTitleCase(message) + "." || "An unknown error occurred.");
+  return new Error(
+    capitalizeFirstLetter(message) || "An unknown error occurred"
+  );
 }

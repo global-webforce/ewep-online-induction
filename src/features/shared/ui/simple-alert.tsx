@@ -24,7 +24,7 @@ export function SimpleAlert({
 }: SimpleAlertProps) {
   return (
     <div className={styles[variant]}>
-      <p className="text-center text-sm  whitespace-normal w-full">
+      <p className=" normal-case text-center text-sm  whitespace-normal w-full">
         {children}
       </p>
     </div>

@@ -31,7 +31,7 @@ export default function ForgotPasswordForm() {
       <Card className="w-full max-w-md p-6 ">
         {isSuccess && (
           <SimpleAlert variant="success">
-            If such email exists, a reset link has been sent.
+            Check your inbox for a reset link (if registered).
           </SimpleAlert>
         )}
 
@@ -54,7 +54,7 @@ export default function ForgotPasswordForm() {
           />
 
           <LoadingButton type="submit" className="w-full" pending={isPending}>
-            Register
+            Send Password Reset Link
           </LoadingButton>
 
           <div className="mt-4 text-center text-sm">

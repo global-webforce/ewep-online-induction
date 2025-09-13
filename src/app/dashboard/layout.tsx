@@ -22,7 +22,7 @@ export default async function DashboardLayout({
       <SideBarAdmin />
       <SidebarInset>
         <div className="min-h-screen">
-          <div>{currentUser.role == "super_admin" ? admin : user}</div>
+          <div>{currentUser.app_role == "super_admin" ? admin : user}</div>
         </div>
       </SidebarInset>
     </SidebarProvider>

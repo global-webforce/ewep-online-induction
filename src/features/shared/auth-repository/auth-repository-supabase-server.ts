@@ -95,6 +95,12 @@ ON Supabase > Authentication > Configuration > Emails > Confirm signup, update t
     if (error) throw mapSupabaseError(error);
   }
 
+  async updatePassword(param: string): Promise<void> {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.updateUser({ password: param });
+    if (error) throw mapSupabaseError(error);
+  }
+
   /*
    * Using the user object as returned from supabase.auth.getSession() or from some supabase.auth.onAuthStateChange() events could be insecure!
    * This value comes directly from the storage medium (usually cookies on the server) and may not be authentic.

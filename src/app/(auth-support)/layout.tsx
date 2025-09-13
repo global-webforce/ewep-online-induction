@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { authRepository } from "@/features/shared/auth-repository";
 import { AuthGroupButtons } from "@/features/shared/ui/auth-group-buttons";
@@ -30,9 +31,17 @@ export default async function AuthLayout({
       </nav>
 
       <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
-        {x ? (
+        {!x ? (
           <Card className="flex flex-col items-center gap-4 p-6">
-            <h1>You're already signed-in!!</h1> <AuthGroupButtons />
+            <h1>You must be signed-in to reset your password. </h1>{" "}
+            <div className="flex gap-2 justify-center">
+              <Link href="/sign-in">
+                <Button variant="default">Sign In</Button>
+              </Link>
+              <Link href="/forgot-password">
+                <Button variant="outline">Forgot Password?</Button>
+              </Link>{" "}
+            </div>
           </Card>
         ) : (
           children

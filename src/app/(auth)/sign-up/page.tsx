@@ -1,5 +1,5 @@
-import RegisterForm from "@/features/auth/sign-up/form";
+import SignUpForm from "@/features/auth/sign-up/form";
 
 export default async function RegisterPage() {
-  return <RegisterForm />;
+  return <SignUpForm />;
 }

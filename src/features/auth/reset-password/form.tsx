@@ -9,56 +9,48 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { signUpAction } from "./action";
-import { SignUpInput, signUpInputSchema } from "./schema";
+import { resetPasswordAction } from "./action";
+import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
+import { logoutAction } from "../sign-out/action";
 
-export default function SignUpForm() {
-  const { mutate, isPending, error, reset } = useMutation({
-    mutationFn: (values: SignUpInput) => signUpAction(values),
+export default function ResetPasswordForm() {
+  const { mutate, isPending, error, isSuccess } = useMutation({
+    mutationFn: (values: ResetPasswordInput) => resetPasswordAction(values),
+    onSuccess: () => {
+      setTimeout(() => {
+        logoutAction();
+      }, 3000);
+    },
   });
 
-  const form = useForm<SignUpInput>({
-    resolver: zodResolver(signUpInputSchema),
+  const form = useForm<ResetPasswordInput>({
+    resolver: zodResolver(resetPasswordInputSchema),
+    disabled: isPending || isSuccess,
     defaultValues: {
-      email: "",
       password: "",
       confirmPassword: "",
     },
   });
 
-  if (
-    error?.message.toLowerCase().includes("email is not confirmed") &&
-    form.getValues("email")
-  )
-    return (
-      <VerifyEmailForm
-        email={form.getValues("email")}
-        onBack={() => {
-          form.reset();
-          reset();
-        }}
-      />
-    );
   return (
     <Card className="w-full max-w-md p-6 ">
+      {isSuccess && (
+        <SimpleAlert variant="success">
+          Password updated successfully. <br />
+          You'll be signed out shortly...
+        </SimpleAlert>
+      )}
+
       {error && (
         <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
       )}
 
-      <h1 className="text-center text-3xl font-bold"> Sign Up</h1>
+      <h1 className="text-center text-3xl font-bold"> Reset Password</h1>
 
       <form
         onSubmit={form.handleSubmit((values) => mutate(values))}
         className="flex flex-col gap-4"
       >
-        <FormField
-          control={form.control}
-          type="email"
-          name="email"
-          label="Email"
-          placeholder="you@example.com"
-        />
-
         <FormField
           control={form.control}
           type="password"
@@ -73,16 +65,13 @@ export default function SignUpForm() {
           label="Confirm Password"
         />
 
-        <LoadingButton type="submit" className="w-full" pending={isPending}>
-          Sign Up
+        <LoadingButton
+          type="submit"
+          className="w-full"
+          pending={isPending || isSuccess}
+        >
+          Reset Password
         </LoadingButton>
-
-        <div className="mt-2 text-center text-sm">
-          Already have an account?{" "}
-          <Link href="/sign-in" className="underline underline-offset-4">
-            Sign in
-          </Link>
-        </div>
       </form>
     </Card>
   );
