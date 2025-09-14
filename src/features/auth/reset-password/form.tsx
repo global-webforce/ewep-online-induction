@@ -1,78 +1,144 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { FormField } from "@/features/react-hook-form-reusable/form-field";
 import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
 import { SimpleAlert } from "@/features/shared/ui/simple-alert";
-import VerifyEmailForm from "@/features/auth/verify-email/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { resetPasswordAction } from "./action";
 import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
 import { logoutAction } from "../sign-out/action";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
+// This component changes the flow so that when the user clicks "Reset Password",
+// we first show a confirmation dialog. If the user confirms, we perform the
+// reset (mutation) and immediately sign the user out and redirect to sign-in.
 
 export default function ResetPasswordForm() {
-  const { mutate, isPending, error, isSuccess } = useMutation({
+  const router = useRouter();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingValues, setPendingValues] = useState<ResetPasswordInput | null>(
+    null
+  );
+
+  const {
+    mutate,
+    isPending: isLoading,
+    isError,
+    error,
+    isSuccess,
+  } = useMutation({
     mutationFn: (values: ResetPasswordInput) => resetPasswordAction(values),
-    onSuccess: () => {
-      setTimeout(() => {
-        logoutAction();
-      }, 3000);
+    onSuccess: async () => {
+      try {
+        // Attempt to sign out immediately after a successful password update.
+        // If your logoutAction is a server action that must be triggered via a form,
+        // adapt this to hit a client endpoint that signs out or let the sign-in page
+        // show a success message instead.
+        await logoutAction();
+      } catch (e) {
+        // ignore logout error — we'll still redirect to sign-in
+      }
+
+      // Redirect to sign-in with a query param so sign-in page can show a success banner
+      router.push("/sign-in?reset=success");
     },
   });
 
+  const isPending = isLoading || isSuccess;
+
   const form = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordInputSchema),
-    disabled: isPending || isSuccess,
+    disabled: isPending,
     defaultValues: {
       password: "",
       confirmPassword: "",
     },
   });
 
+  // Called when the form is valid — we save values and open the confirmation dialog
+  const handleValidSubmit = (values: ResetPasswordInput) => {
+    setPendingValues(values);
+    setConfirmOpen(true);
+  };
+
+  // Called when the user confirms the dialog — triggers the actual mutation
+  const handleConfirm = () => {
+    if (!pendingValues) return;
+    mutate(pendingValues);
+    setConfirmOpen(false);
+  };
+
   return (
     <Card className="w-full max-w-md p-6 ">
-      {isSuccess && (
-        <SimpleAlert variant="success">
-          Password updated successfully. <br />
-          You'll be signed out shortly...
-        </SimpleAlert>
+      {isError && (
+        <SimpleAlert variant="error">{(error as Error)?.message}</SimpleAlert>
       )}
 
-      {error && (
-        <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
-      )}
+      <h1 className="text-2xl font-bold">Reset Password</h1>
 
-      <h1 className="text-center text-3xl font-bold"> Reset Password</h1>
-
-      <form
-        onSubmit={form.handleSubmit((values) => mutate(values))}
-        className="flex flex-col gap-4"
-      >
-        <FormField
-          control={form.control}
-          type="password"
-          name="password"
-          label="Password"
-        />
-
-        <FormField
-          control={form.control}
-          type="password"
-          name="confirmPassword"
-          label="Confirm Password"
-        />
-
-        <LoadingButton
-          type="submit"
-          className="w-full"
-          pending={isPending || isSuccess}
+      {/* Reset Form: submitting opens confirmation dialog */}
+      {
+        <form
+          onSubmit={form.handleSubmit(handleValidSubmit)}
+          className="flex flex-col gap-4"
         >
-          Reset Password
-        </LoadingButton>
-      </form>
+          <FormField
+            control={form.control}
+            type="password"
+            name="password"
+            label="New Password"
+          />
+
+          <FormField
+            control={form.control}
+            type="password"
+            name="confirmPassword"
+            label="Confirm New Password"
+          />
+
+          <LoadingButton type="submit" className="w-full" pending={isPending}>
+            Reset Password
+          </LoadingButton>
+        </form>
+      }
+
+      {/* Confirmation dialog shown before performing the reset */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm password reset</DialogTitle>
+            <DialogDescription>
+              This will update your account password. You will be signed out and
+              will need to sign in again with the new password. Do you want to
+              continue?
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+
+            <Button onClick={handleConfirm} disabled={isLoading}>
+              {isLoading ? "Resetting..." : "Yes, reset password"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

@@ -90,6 +90,18 @@ ON Supabase > Authentication > Configuration > Emails > Confirm signup, update t
   }
 
   async forgotPassword(param: string): Promise<void> {
+    /*
+NOTE: Important!
+ON Supabase > Authentication > Configuration > Emails > Recovery, update the content with this:
+
+<h2>Reset Password</h2>
+
+<p>Follow this link to reset the password for your user:</p>
+<p><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&redirect_to={{ .RedirectTo  }}">Reset Password</a></p>
+
+    
+    */
+
     const supabase = await createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(param);
     if (error) throw mapSupabaseError(error);

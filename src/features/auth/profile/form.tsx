@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { registerAction } from "./action";
 import { ProfileInput, profileInputSchema } from "./schema";
+import { Button } from "@/components/ui/button";
 
 export default function ProfileForm() {
   const { mutate, isPending, error, reset } = useMutation({
@@ -67,6 +68,10 @@ export default function ProfileForm() {
           Register
         </LoadingButton>
       </form>
+
+      <Button asChild variant="outline" className="w-full">
+        <Link href="/reset-password">Reset Password</Link>
+      </Button>
     </Card>
   );
 }
