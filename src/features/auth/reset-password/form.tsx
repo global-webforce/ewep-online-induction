@@ -22,6 +22,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // This component changes the flow so that when the user clicks "Reset Password",
 // we first show a confirmation dialog. If the user confirms, we perform the
@@ -113,6 +114,12 @@ export default function ResetPasswordForm() {
           <LoadingButton type="submit" className="w-full" pending={isPending}>
             Reset Password
           </LoadingButton>
+
+          <div className="mt-2 text-center text-sm">
+            <Link href="/dashboard" className="underline underline-offset-4">
+              Go to Dashboard
+            </Link>
+          </div>
         </form>
       }
 

@@ -14,12 +14,12 @@ export default async function DashboardLayout({
   const currentUser = await authRepository.getUser();
 
   if (!currentUser) {
+    console.log("No user, redirecting to sign-in");
     redirect("/sign-in", RedirectType.replace);
   }
-
   return (
     <SidebarProvider>
-      <SideBarAdmin />
+      <SideBarAdmin user={currentUser} />
       <SidebarInset>
         <div className="min-h-screen">
           <div>{currentUser.app_role == "super_admin" ? admin : user}</div>

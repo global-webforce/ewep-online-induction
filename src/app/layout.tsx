@@ -5,6 +5,7 @@ import "./globals.css";
 
 import { ClientProvider } from "@/features/app/provider/query-client-provider";
 import { ThemeProvider } from "@/features/app/provider/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,15 +26,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.className}  antialiased`}>
-        {" "}
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ClientProvider>{children}</ClientProvider>
-        </ThemeProvider>
+        <ClientProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ClientProvider>{children}</ClientProvider>
+            <Toaster />
+          </ThemeProvider>
+        </ClientProvider>
       </body>
     </html>
   );

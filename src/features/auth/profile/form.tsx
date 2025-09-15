@@ -4,74 +4,72 @@ import { Card } from "@/components/ui/card";
 import { FormField } from "@/features/react-hook-form-reusable/form-field";
 import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
 import { SimpleAlert } from "@/features/shared/ui/simple-alert";
-import VerifyEmailForm from "@/features/auth/verify-email/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { registerAction } from "./action";
+import { profileUpdateAction } from "./action";
 import { ProfileInput, profileInputSchema } from "./schema";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-export default function ProfileForm() {
-  const { mutate, isPending, error, reset } = useMutation({
-    mutationFn: (values: ProfileInput) => registerAction(values),
+export default function ProfileForm({ data }: { data?: ProfileInput }) {
+  const router = useRouter();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (values: ProfileInput) => profileUpdateAction(values),
+    onError: (error, _) => {
+      toast.error(error.message);
+      form.reset(data);
+    },
+    onSuccess: (_, data) => {
+      toast.success("Profile has been updated.");
+      form.reset(data);
+    },
   });
 
   const form = useForm<ProfileInput>({
     resolver: zodResolver(profileInputSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: data,
   });
 
   return (
-    <Card className="w-full max-w-lg p-6 ">
-      {error && (
-        <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
-      )}
+    <>
+      <Card className="w-full max-w-lg p-6 ">
+        <div>
+          <b>Basic Information</b>
+          <p className="text-sm text-muted-foreground">
+            Update your basic profile information.
+          </p>
+        </div>
 
-      <div>
-        <b>Personal Information</b>
-        <p> Update your personal details and profile information.</p>
-      </div>
+        <form
+          onSubmit={form.handleSubmit((values) => mutate(values))}
+          className="flex flex-col gap-4"
+        >
+          <FormField
+            control={form.control}
+            type="text"
+            name="firstName"
+            label="First Name"
+          />
 
-      <form
-        onSubmit={form.handleSubmit((values) => mutate(values))}
-        className="flex flex-col gap-4"
-      >
-        <FormField
-          control={form.control}
-          type="email"
-          name="email"
-          label="Email"
-          placeholder="you@example.com"
-        />
+          <FormField
+            control={form.control}
+            type="text"
+            name="lastName"
+            label="Last Name"
+          />
 
-        <FormField
-          control={form.control}
-          type="password"
-          name="password"
-          label="Password"
-        />
-
-        <FormField
-          control={form.control}
-          type="password"
-          name="confirmPassword"
-          label="Confirm Password"
-        />
-
-        <LoadingButton type="submit" className="w-full" pending={isPending}>
-          Register
-        </LoadingButton>
-      </form>
-
-      <Button asChild variant="outline" className="w-full">
-        <Link href="/reset-password">Reset Password</Link>
-      </Button>
-    </Card>
+          <LoadingButton
+            type="submit"
+            className="w-full"
+            disabled={!form.formState.isDirty}
+            pending={isPending}
+          >
+            Update Profile
+          </LoadingButton>
+        </form>
+      </Card>
+    </>
   );
 }

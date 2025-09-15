@@ -1,6 +1,6 @@
 import { Provider } from "@supabase/supabase-js";
 import { AuthRepository } from "./auth-repository";
-import { User } from "../models/user-schema";
+
 import { createClient } from "@/utils/supabase/client-server";
 import { createClient as createClientAdmin } from "@/utils/supabase/client-server-admin";
 
@@ -9,6 +9,12 @@ import { mapSupabaseError } from "../adapters/errors-schema-supabase-adapter";
 
 import { SignInInput } from "@/features/auth/sign-in/schema";
 import { SignUpInput } from "@/features/auth/sign-up/schema";
+import {
+  ProfileInput,
+  profileInputSchema,
+} from "@/features/auth/profile/schema";
+import { User } from "../models/user-schema";
+import { cache } from "react";
 
 /**
  * A supabase implementation of the {@link AuthRepository} interface for server-side authentication.
@@ -113,6 +119,19 @@ ON Supabase > Authentication > Configuration > Emails > Recovery, update the con
     if (error) throw mapSupabaseError(error);
   }
 
+  async updateProfile(param: ProfileInput): Promise<ProfileInput> {
+    // throw new Error("Soemthing went wrong!!");
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.updateUser({ data: param });
+    if (error) throw mapSupabaseError(error);
+
+    const parsed = profileInputSchema.safeParse(data.user.user_metadata);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return parsed.data;
+  }
+
   /*
    * Using the user object as returned from supabase.auth.getSession() or from some supabase.auth.onAuthStateChange() events could be insecure!
    * This value comes directly from the storage medium (usually cookies on the server) and may not be authentic.
@@ -120,12 +139,19 @@ ON Supabase > Authentication > Configuration > Emails > Recovery, update the con
    * Dev Note: When I used supabase.auth.getSession, I'm still logged in even if I already the deleted the user via Supabase Dashboard!!!
    **/
 
-  async getUser(): Promise<User | null> {
+  getUser = cache(async (): Promise<User | null> => {
     const supabase = await createClient();
+
+    // your artificial delay (just for demo)
+    // await new Promise((resolve) => setTimeout(resolve, 2_000));
+
     const { data, error } = await supabase.auth.getUser();
     if (error) return null;
 
     return userSchemaAdapterSupabase(data.user);
+  });
+  async getUserFake(): Promise<User | null> {
+    throw new Error("Invalid session payload");
   }
 
   async setUser(payload: Record<string, any>): Promise<void> {

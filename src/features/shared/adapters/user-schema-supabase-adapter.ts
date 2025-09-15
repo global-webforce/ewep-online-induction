@@ -10,7 +10,6 @@ export function userSchemaAdapterSupabase(user: SupabaseUser): User {
     profile: {
       firstName: user?.user_metadata?.firstName || "",
       lastName: user?.user_metadata?.lastName || "",
-      avatarUrl: user?.user_metadata?.avatarUrl || "",
     },
   };
 }
