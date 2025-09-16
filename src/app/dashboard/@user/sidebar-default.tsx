@@ -59,12 +59,6 @@ export default function SideBarDefault({ user }: { user: User }) {
     },
 
     {
-      title: "Contacts",
-      icon: Users, // More appropriate for contacts or groups
-      href: "/dashboard/contacts",
-    },
-
-    {
       title: "Profile",
       icon: UserCircle, // A more distinct icon for user profile
       href: "/dashboard/profile",

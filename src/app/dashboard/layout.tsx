@@ -3,14 +3,14 @@ import { authRepository } from "@/features/shared/auth-repository";
 import { redirect, RedirectType } from "next/navigation";
 import { ReactNode } from "react";
 import SideBarAdmin from "./@admin/sidebar-admin";
-import SideBarDefault from "./@default/sidebar-default";
+import SideBarDefault from "./@user/sidebar-default";
 
 export default async function DashboardLayout({
   admin,
-  def,
+  user,
 }: {
   admin: ReactNode;
-  def: ReactNode;
+  user: ReactNode;
 }) {
   const currentUser = await authRepository.getUser();
 
@@ -27,7 +27,7 @@ export default async function DashboardLayout({
       )}
       <SidebarInset>
         <div className="min-h-screen">
-          <div>{currentUser.app_role == "super_admin" ? admin : def}</div>
+          <div>{currentUser.app_role == "super_admin" ? admin : user}</div>
         </div>
       </SidebarInset>
     </SidebarProvider>
