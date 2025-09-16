@@ -5,7 +5,7 @@ export default async function Profile() {
   const user = await authRepository.getUser();
   return (
     <main>
-      <ProfileForm data={user?.profile} />
+      <ProfileForm data={user!} />
     </main>
   );
 }

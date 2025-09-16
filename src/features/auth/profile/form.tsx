@@ -1,25 +1,27 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { FormField } from "@/features/react-hook-form-reusable/form-field";
 import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
-import { SimpleAlert } from "@/features/shared/ui/simple-alert";
+import { User } from "@/features/shared/models/user-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { profileUpdateAction } from "./action";
 import { ProfileInput, profileInputSchema } from "./schema";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
-export default function ProfileForm({ data }: { data?: ProfileInput }) {
+export default function ProfileForm({ data }: { data?: User }) {
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     mutationFn: (values: ProfileInput) => profileUpdateAction(values),
     onError: (error, _) => {
       toast.error(error.message);
-      form.reset(data);
+      form.reset(data?.profile);
     },
     onSuccess: (_, data) => {
       toast.success("Profile has been updated.");
@@ -29,12 +31,12 @@ export default function ProfileForm({ data }: { data?: ProfileInput }) {
 
   const form = useForm<ProfileInput>({
     resolver: zodResolver(profileInputSchema),
-    defaultValues: data,
+    defaultValues: data?.profile,
   });
 
   return (
-    <>
-      <Card className="w-full max-w-lg p-6 ">
+    <div className="space-y-4">
+      <Card className="w-full  p-5 ">
         <div>
           <b>Basic Information</b>
           <p className="text-sm text-muted-foreground">
@@ -52,7 +54,6 @@ export default function ProfileForm({ data }: { data?: ProfileInput }) {
             name="firstName"
             label="First Name"
           />
-
           <FormField
             control={form.control}
             type="text"
@@ -62,7 +63,7 @@ export default function ProfileForm({ data }: { data?: ProfileInput }) {
 
           <LoadingButton
             type="submit"
-            className="w-full"
+            className="w-min"
             disabled={!form.formState.isDirty}
             pending={isPending}
           >
@@ -70,6 +71,22 @@ export default function ProfileForm({ data }: { data?: ProfileInput }) {
           </LoadingButton>
         </form>
       </Card>
-    </>
+
+      <Card className="w-full  p-5 ">
+        <div>
+          <b>Account Information</b>
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor={"email"}>Email</Label>
+            <Input name="email" readOnly type="email" value={data?.email} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor={"role"}>Role</Label>
+            <Input value={data?.app_role} readOnly type="text" />
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 }

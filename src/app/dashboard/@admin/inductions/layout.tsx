@@ -9,14 +9,10 @@ export default async function UserDashboard({
   children: ReactNode;
 }) {
   return (
-    <div className="p-4 h-screen flex flex-col gap-3 ">
-      <header className="flex gap-3">
+    <div className="p-4 h-screen flex flex-col ">
+      <header className="flex gap-3 h-8">
         <SidebarTrigger className="-ml-1" />
-        <h1 className="text-xl font-semibold">Profile</h1>
-
-        <Button variant="outline" className="ml-auto">
-          Quick Add
-        </Button>
+        <h1 className="text-xl font-semibold">Inductions</h1>
       </header>
       {children}
     </div>

@@ -2,7 +2,6 @@ import { Provider } from "@supabase/supabase-js";
 import { AuthRepository } from "./auth-repository";
 
 import { createClient } from "@/utils/supabase/client-server";
-import { createClient as createClientAdmin } from "@/utils/supabase/client-server-admin";
 
 import { userSchemaAdapterSupabase } from "../adapters/user-schema-supabase-adapter";
 import { mapSupabaseError } from "../adapters/errors-schema-supabase-adapter";
@@ -15,6 +14,7 @@ import {
 } from "@/features/auth/profile/schema";
 import { User } from "../models/user-schema";
 import { cache } from "react";
+import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 
 /**
  * A supabase implementation of the {@link AuthRepository} interface for server-side authentication.
@@ -35,7 +35,7 @@ export class AuthRepositorySupabaseServer implements AuthRepository {
   async signUp(params: SignUpInput): Promise<void> {
     const supabase = await createClient();
 
-    const supabaseAdmin = await createClientAdmin();
+    const supabaseAdmin = createClientAdmin();
 
     const { data: email } = await supabaseAdmin
       .from("users")

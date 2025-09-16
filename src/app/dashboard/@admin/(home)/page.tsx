@@ -9,7 +9,7 @@ export default async function AdminDashboard() {
     <div className="p-4 flex flex-col gap-4">
       <header className="flex gap-3">
         <SidebarTrigger className="-ml-1" />
-        <h1 className="text-xl font-semibold">Dashboard</h1>
+        <h1 className="text-xl font-semibold">Dashboardxxx</h1>
 
         <Button variant="outline" className="ml-auto">
           Quick Add

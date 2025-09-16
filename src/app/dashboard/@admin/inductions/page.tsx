@@ -1,21 +1,27 @@
-import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { authRepository } from "@/features/shared/auth-repository";
+import {
+  InductionRow,
+  InductionSchema,
+} from "@/features/app/inductions/schema";
+import { InductionsTable } from "@/features/app/inductions/table";
+import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 
 export default async function InductionPage() {
-  const x = await authRepository.getUser();
+  const supabase = createClientAdmin();
+  const { data, error } = await supabase
+    .from("inductions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return error;
+  }
+
+  const inductions: InductionRow[] | null = data;
+
   return (
-    <div className="p-4 flex flex-col gap-4">
-      <header className="flex gap-3">
-        <SidebarTrigger className="-ml-1" />
-        <h1 className="text-xl font-semibold">Inductions</h1>
-
-        <Button variant="outline" className="ml-auto">
-          Quick Add
-        </Button>
-      </header>
-
-      <main></main>
-    </div>
+    <main>
+      <InductionsTable data={inductions} />
+    </main>
   );
 }
