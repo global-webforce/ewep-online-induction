@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 import { Slide } from "../types";
 
+function randomId() {
+  return (Math.random() + 1).toString(36).substring(7);
+}
+
 export const useSlideController = (value: Slide[] = []) => {
   const originalValue = value;
   const defaultSlide: Slide = {
     title: "",
     content: "",
     quiz: undefined,
+    localId: randomId(),
   };
 
-  const [slides, setSlides] = useState<Slide[]>(value.length > 0 ? value : []);
+  const [slides, setSlides] = useState<Slide[]>(
+    value.length > 0 ? value : [defaultSlide]
+  );
   const [undoStack, setUndoStack] = useState<Slide[][]>([]);
   const [redoStack, setRedoStack] = useState<Slide[][]>([]);
 
@@ -25,7 +32,6 @@ export const useSlideController = (value: Slide[] = []) => {
 
   // 🔹 Normalize slides whenever `slides` changes
   useEffect(() => {
-    console.log(1);
     if (slides.length === 0) return;
 
     // Sort by order if available, otherwise move to end
@@ -40,6 +46,7 @@ export const useSlideController = (value: Slide[] = []) => {
     const normalized = sorted.map((slide, idx) => ({
       ...slide,
       order: idx,
+      localId: randomId(),
     }));
 
     // Only update if changed (to prevent infinite loop)
@@ -47,7 +54,7 @@ export const useSlideController = (value: Slide[] = []) => {
     if (!isSame) {
       setSlides(normalized);
     }
-  }, [slides]);
+  }, [value]);
 
   const saveSlides = () => {
     setRedoStack(() => []);
@@ -84,15 +91,16 @@ export const useSlideController = (value: Slide[] = []) => {
     setCurrentSlide(defaultSlide);
   };
 
-  const copySlide = (id: number) => {
+  const copySlide = (id: string) => {
     setPrevSlide(currentSlide);
     setUndoStack((prevStack) => [...prevStack, slides]);
-    const index = slides.findIndex((slide) => slide.order === id);
+    const index = slides.findIndex((slide) => slide.localId === id);
     if (index !== -1) {
       const slideToCopy = slides[index];
-      const copiedSlide = {
+      const copiedSlide: Slide = {
         ...slideToCopy,
         title: `${slideToCopy.title} (${index + 1})`,
+        localId: randomId(),
       };
       const updatedSlides = [
         ...slides.slice(0, index + 1),
@@ -104,10 +112,10 @@ export const useSlideController = (value: Slide[] = []) => {
     }
   };
 
-  const onMoveSlide = (id: number, direction: "up" | "down") => {
+  const onMoveSlide = (id: string, direction: "up" | "down") => {
     setPrevSlide(currentSlide);
     setUndoStack((prevStack) => [...prevStack, slides]);
-    const index = slides.findIndex((slide) => slide.order === id);
+    const index = slides.findIndex((slide) => slide.localId === id);
     if (index === -1) return;
 
     const updatedSlides = [...slides];
@@ -127,21 +135,21 @@ export const useSlideController = (value: Slide[] = []) => {
     setSlides(updatedSlides);
   };
 
-  const isLastSlide = (id: number) => {
+  const isLastSlide = (id: string) => {
     const lastSlide = slides[slides.length - 1];
-    return lastSlide.order === id;
+    return lastSlide.id === id;
   };
 
-  const deleteSlide = (id: number) => {
+  const deleteSlide = (id: string) => {
     setPrevSlide(currentSlide);
     setUndoStack((prevStack) => [...prevStack, slides]);
-    const index = slides.findIndex((slide) => slide.order === id);
+    const index = slides.findIndex((slide) => slide.localId === id);
     // const confirmDelete = window.confirm(`Delete Slide? ${index + 1}`);
 
-    const updatedSlides = slides.filter((slide) => slide.order !== id);
+    const updatedSlides = slides.filter((slide) => slide.localId !== id);
     setSlides(updatedSlides);
 
-    if (currentSlide.order === id) {
+    if (currentSlide.id === id) {
       const nextSlide = updatedSlides[index] || updatedSlides[index - 1];
       setCurrentSlide(nextSlide || updatedSlides[0]);
     }
@@ -149,7 +157,7 @@ export const useSlideController = (value: Slide[] = []) => {
 
   const updateSlide = (updatedSlide: Slide) => {
     const updatedSlides = slides.map((slide) => {
-      return slide.order === updatedSlide.order ? updatedSlide : slide;
+      return slide.localId === updatedSlide.localId ? updatedSlide : slide;
     });
     setSlides(updatedSlides);
     setCurrentSlide(updatedSlide);
@@ -157,7 +165,7 @@ export const useSlideController = (value: Slide[] = []) => {
 
   const nextSlide = () => {
     const currentIndex = slides.findIndex(
-      (slide) => slide.order === currentSlide?.order
+      (slide) => slide.localId === currentSlide?.id
     );
     if (currentIndex < slides.length - 1) {
       setCurrentSlide(slides[currentIndex + 1]);
@@ -175,7 +183,7 @@ export const useSlideController = (value: Slide[] = []) => {
   };
 
   const currentIndex = (): number => {
-    return slides.findIndex((slide) => slide.order === currentSlide.order);
+    return slides.findIndex((slide) => slide.localId === currentSlide.id);
   };
 
   return {

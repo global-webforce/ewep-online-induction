@@ -35,7 +35,7 @@ export default function SlidePreviewEditor({
     const { unsubscribe } = watch((v) => {
       onChange({ ...v } as Slide);
     });
-
+    console.log(slide);
     return () => unsubscribe();
   }, [onChange, watch, form]);
 
@@ -68,9 +68,11 @@ export default function SlidePreviewEditor({
               name={"content"}
               render={({ field }) => (
                 <TinyMECEditor
-                  id="xcx"
+                  id={"dfsfsf"}
                   value={field.value || ""}
-                  onChange={(e) => field.onChange(e)}
+                  onChange={(e) => {
+                    field.onChange(e);
+                  }}
                 />
               )}
             />

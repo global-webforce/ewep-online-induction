@@ -15,6 +15,7 @@ export const QuestionSchema = z.object({
 
 export const SlideSchema = z.object({
   id: z.string().optional(),
+  localId: z.string().optional(),
   order: z.number().int().default(0).optional(),
   title: z.string().optional(),
   content: z.string().optional(),

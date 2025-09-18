@@ -23,9 +23,9 @@ interface SlideScrollableListProps {
   slides: Slide[];
   currentSlide: Slide | null;
   onSelectSlide: (slide: Slide) => void;
-  onDeleteSlide: (id: number) => void;
-  onCopySlide: (id: number) => void;
-  onMoveSlide: (id: number, direction: "up" | "down") => void;
+  onDeleteSlide: (id: string) => void;
+  onCopySlide: (id: string) => void;
+  onMoveSlide: (id: string, direction: "up" | "down") => void;
 }
 
 export function SlideScrollableList({
@@ -37,10 +37,10 @@ export function SlideScrollableList({
   onMoveSlide,
 }: SlideScrollableListProps) {
   // Store the ID of the slide being confirmed for deletion
-  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   // Handle delete click to show confirmation text
-  const handleDeleteClick = (slideId: number) => {
+  const handleDeleteClick = (slideId: string) => {
     if (deleteConfirm === slideId) {
       onDeleteSlide(slideId); // Delete slide if already confirmed
       setDeleteConfirm(null); // Reset confirmation
@@ -73,7 +73,7 @@ export function SlideScrollableList({
               variant="ghost"
               size="icon"
               onClick={(e) => {
-                handleDeleteClick(slide.order!);
+                handleDeleteClick(slide.localId!);
               }}
               aria-label="Delete slide"
             >
@@ -82,20 +82,20 @@ export function SlideScrollableList({
           </TooltipTrigger>
           <TooltipContent>Delete slide</TooltipContent>
         </Tooltip>
-        {deleteConfirm === slide.order && (
+        {deleteConfirm === slide.localId && (
           <div className="flex items-center gap-2">
             <LucideCheck
               className="h-5 w-5"
               onClick={(e) => {
                 e.stopPropagation();
-                onDeleteSlide(slide.order!);
-                handleDeleteClick(slide.order!);
+                onDeleteSlide(slide.localId!);
+                handleDeleteClick(slide.localId!);
               }}
             ></LucideCheck>
             |
             <LucideX
               className="h-5 w-5"
-              onClick={() => handleDeleteClick(slide.order!)}
+              onClick={() => handleDeleteClick(slide.localId!)}
             ></LucideX>
           </div>
         )}
@@ -112,7 +112,7 @@ export function SlideScrollableList({
             size="icon"
             onClick={(e) => {
               e.stopPropagation();
-              onCopySlide(slide.order!);
+              onCopySlide(slide.localId!);
             }}
             aria-label="Copy slide"
           >
@@ -133,7 +133,7 @@ export function SlideScrollableList({
             size="icon"
             onClick={(e) => {
               e.stopPropagation();
-              onMoveSlide(slide.order!, "up");
+              onMoveSlide(slide.localId!, "up");
             }}
             disabled={index === 0}
             aria-label="Move slide up"
@@ -175,7 +175,7 @@ export function SlideScrollableList({
             size="icon"
             onClick={(e) => {
               e.stopPropagation();
-              onMoveSlide(slide.order!, "down");
+              onMoveSlide(slide.localId!, "down");
             }}
             disabled={index === slides.length - 1}
             aria-label="Move slide down"
@@ -193,10 +193,10 @@ export function SlideScrollableList({
       <div className="space-y-3 p-3">
         {slides.map((slide: Slide, index: number) => (
           <div
+            key={slide.localId}
             onClick={() => onSelectSlide(slide)}
-            key={slide.order || index + 999}
             className={`border cursor-pointer transition-colors ${
-              currentSlide?.order === slide.order
+              currentSlide?.localId === slide.localId
                 ? "bg-accent border-amber-500"
                 : "hover:bg-accent/50"
             }`}
@@ -204,13 +204,14 @@ export function SlideScrollableList({
             <div className="flex items-center justify-between p-3 overflow-hidden max-h-28 h-28">
               <div>
                 <Title slide={slide} />
+                <p>{slide.localId}</p>
                 <Content slide={slide} />
               </div>
             </div>
 
             <div
               className={`flex justify-between items-center  text-white border-t-neutral-700 border-t-1 ${
-                currentSlide?.order === slide.order
+                currentSlide?.localId === slide.localId
                   ? "bg-background"
                   : "bg-background/50"
               }`}
