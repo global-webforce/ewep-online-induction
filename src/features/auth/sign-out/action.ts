@@ -1,6 +1,6 @@
 "use server";
 
-import { authRepository } from "@/features/shared/auth-repository";
+import { authRepository } from "@/features/auth-repository";
 import { redirect, RedirectType } from "next/navigation";
 
 export async function logoutAction() {

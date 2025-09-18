@@ -1,19 +1,16 @@
-import { InductionRow } from "@/features/app/inductions/schema";
-import { InductionsTable } from "@/features/app/inductions/table";
-import { createClient } from "@/utils/supabase/client-server";
+import { getAllInductionAction, InductionsTable } from "@/features/inductions";
 
 export default async function InductionPage() {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("inductions")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const data = await getAllInductionAction();
+  return (
+    <main className=" flex flex-col ">
+      <div>
+        <header className="flex gap-3 min-h-10">
+          <h1 className="text-xl font-semibold">Inductions</h1>
+        </header>
+      </div>
 
-  if (error) {
-    throw Error(error.message);
-  }
-
-  const inductions: InductionRow[] | null = data;
-
-  return <main>{<InductionsTable data={inductions} />}</main>;
+      {<InductionsTable data={data} />}
+    </main>
+  );
 }

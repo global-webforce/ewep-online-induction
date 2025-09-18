@@ -1,9 +1,9 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { FormField } from "@/features/react-hook-form-reusable/form-field";
-import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
-import { SimpleAlert } from "@/features/shared/ui/simple-alert";
+import { FormField } from "@/components/react-hook-form-reusable/form-field";
+import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import { AlertPanel } from "@/components/custom/alert-panel";
 import VerifyEmailForm from "@/features/auth/verify-email/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -42,7 +42,7 @@ export default function SignUpForm() {
   return (
     <Card className="w-full max-w-md p-6 ">
       {error && (
-        <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
+        <AlertPanel variant="error">{(error as Error).message}</AlertPanel>
       )}
 
       <h1 className="text-center text-3xl font-bold"> Sign Up</h1>

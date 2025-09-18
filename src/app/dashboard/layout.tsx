@@ -1,9 +1,9 @@
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { authRepository } from "@/features/shared/auth-repository";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { authRepository } from "@/features/auth-repository";
 import { redirect, RedirectType } from "next/navigation";
 import { ReactNode } from "react";
-import SideBarAdmin from "./@admin/sidebar-admin";
-import SideBarDefault from "./@user/sidebar-default";
+import SideBarAdmin from "../../components/dashboard-layout/sidebar-admin";
+import SideBarDefault from "../../components/dashboard-layout/sidebar-default";
 
 export default async function DashboardLayout({
   admin,
@@ -25,11 +25,10 @@ export default async function DashboardLayout({
       ) : (
         <SideBarDefault user={currentUser} />
       )}
-      <SidebarInset>
-        <div className="min-h-screen">
-          <div>{currentUser.app_role == "super_admin" ? admin : user}</div>
-        </div>
-      </SidebarInset>
+
+      <main className="bg-background w-full min-h-screen">
+        {currentUser.app_role == "super_admin" ? admin : user}
+      </main>
     </SidebarProvider>
   );
 }

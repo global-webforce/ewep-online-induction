@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { authRepository } from "@/features/shared/auth-repository";
-import { AuthGroupButtons } from "@/features/shared/ui/auth-group-buttons";
-import Image from "next/image";
+import { authRepository } from "@/features/auth-repository";
+import { AuthGroupButtons } from "@/components/custom/auth-group-buttons";
 import Link from "next/link";
 
 export default async function AuthLayout({
@@ -32,7 +31,7 @@ export default async function AuthLayout({
       <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
         {x ? (
           <Card className="flex flex-col items-center gap-4 p-6">
-            <h1>You're already signed-in!!</h1> <AuthGroupButtons />
+            <h1>You`&apos;`re already signed-in!!</h1> <AuthGroupButtons />
           </Card>
         ) : (
           children

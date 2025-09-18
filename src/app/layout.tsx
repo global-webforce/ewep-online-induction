@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import "./globals.css";
 
-import { ClientProvider } from "@/features/app/provider/query-client-provider";
-import { ThemeProvider } from "@/features/app/provider/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { ClientProvider } from "@/providers/query-client-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "600", "700"],
@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.className}  antialiased`}>
+      <body className={`${inter.className}  antialiased`}>
         <ClientProvider>
           <ThemeProvider
             attribute="class"

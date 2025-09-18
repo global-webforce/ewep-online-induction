@@ -1,4 +1,4 @@
-import { authRepository } from "@/features/shared/auth-repository";
+import { authRepository } from "@/features/auth-repository";
 
 export default async function Page() {
   const user = await authRepository.getUser();

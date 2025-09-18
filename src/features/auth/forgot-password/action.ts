@@ -1,6 +1,6 @@
 "use server";
 
-import { authRepository } from "@/features/shared/auth-repository";
+import { authRepository } from "@/features/auth-repository";
 import { EmailInput, emailInputSchema } from "./schema";
 
 export async function forgotPasswordAction(params: EmailInput) {

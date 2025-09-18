@@ -3,23 +3,20 @@
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormField } from "@/features/react-hook-form-reusable/form-field";
-import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
-import { User } from "@/features/shared/models/user-schema";
+import { FormField } from "@/components/react-hook-form-reusable/form-field";
+import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import { User } from "@/models/user-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { profileUpdateAction } from "./action";
 import { ProfileInput, profileInputSchema } from "./schema";
 
 export default function ProfileForm({ data }: { data?: User }) {
-  const router = useRouter();
-
   const { mutate, isPending } = useMutation({
     mutationFn: (values: ProfileInput) => profileUpdateAction(values),
-    onError: (error, _) => {
+    onError: (error) => {
       toast.error(error.message);
       form.reset(data?.profile);
     },
@@ -36,7 +33,7 @@ export default function ProfileForm({ data }: { data?: User }) {
 
   return (
     <div className="space-y-4">
-      <Card className="w-full  p-5 ">
+      <Card className="w-full p-4">
         <div>
           <b>Basic Information</b>
           <p className="text-sm text-muted-foreground">
@@ -72,7 +69,7 @@ export default function ProfileForm({ data }: { data?: User }) {
         </form>
       </Card>
 
-      <Card className="w-full  p-5 ">
+      <Card className="w-full  p-4 gap-4">
         <div>
           <b>Account Information</b>
         </div>

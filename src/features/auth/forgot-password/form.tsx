@@ -1,9 +1,9 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { FormField } from "@/features/react-hook-form-reusable/form-field";
-import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
-import { SimpleAlert } from "@/features/shared/ui/simple-alert";
+import { FormField } from "@/components/react-hook-form-reusable/form-field";
+import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import { AlertPanel } from "@/components/custom/alert-panel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
@@ -30,13 +30,13 @@ export default function ForgotPasswordForm() {
     <>
       <Card className="w-full max-w-md p-6 ">
         {isSuccess && (
-          <SimpleAlert variant="success">
+          <AlertPanel variant="success">
             Check your inbox for a reset link (if registered).
-          </SimpleAlert>
+          </AlertPanel>
         )}
 
         {error && (
-          <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
+          <AlertPanel variant="error">{(error as Error).message}</AlertPanel>
         )}
 
         <h1 className="text-center text-3xl font-bold">Forgot Password</h1>

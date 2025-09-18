@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { FormField } from "@/features/react-hook-form-reusable/form-field";
-import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
-import { SimpleAlert } from "@/features/shared/ui/simple-alert";
+import { FormField } from "@/components/react-hook-form-reusable/form-field";
+import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import { AlertPanel } from "@/components/custom/alert-panel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -44,17 +44,7 @@ export default function ResetPasswordForm() {
   } = useMutation({
     mutationFn: (values: ResetPasswordInput) => resetPasswordAction(values),
     onSuccess: async () => {
-      try {
-        // Attempt to sign out immediately after a successful password update.
-        // If your logoutAction is a server action that must be triggered via a form,
-        // adapt this to hit a client endpoint that signs out or let the sign-in page
-        // show a success message instead.
-        await logoutAction();
-      } catch (e) {
-        // ignore logout error — we'll still redirect to sign-in
-      }
-
-      // Redirect to sign-in with a query param so sign-in page can show a success banner
+      await logoutAction();
       router.push("/sign-in?reset=success");
     },
   });
@@ -86,7 +76,7 @@ export default function ResetPasswordForm() {
   return (
     <Card className="w-full max-w-md p-6 ">
       {isError && (
-        <SimpleAlert variant="error">{(error as Error)?.message}</SimpleAlert>
+        <AlertPanel variant="error">{(error as Error)?.message}</AlertPanel>
       )}
 
       <h1 className="text-2xl font-bold">Reset Password</h1>

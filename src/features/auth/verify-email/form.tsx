@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import LoadingButton from "@/features/react-hook-form-reusable/form-submit";
-import { SimpleAlert } from "@/features/shared/ui/simple-alert";
+import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import { AlertPanel } from "@/components/custom/alert-panel";
 import { useMutation } from "@tanstack/react-query";
 import { verifyEmailAction } from "./action";
 
@@ -14,17 +14,17 @@ type Props = {
 
 export default function VerifyEmailForm({ email, onBack }: Props) {
   const { mutate, isSuccess, isPending, error, reset } = useMutation({
-    mutationFn: (_: string) => verifyEmailAction(email),
+    mutationFn: (email: string) => verifyEmailAction(email),
   });
 
   return (
     <Card className="w-full max-w-md p-6">
       {isSuccess && (
-        <SimpleAlert variant="success">Link sent to your email!</SimpleAlert>
+        <AlertPanel variant="success">Link sent to your email!</AlertPanel>
       )}
 
       {error && (
-        <SimpleAlert variant="error">{(error as Error).message}</SimpleAlert>
+        <AlertPanel variant="error">{(error as Error).message}</AlertPanel>
       )}
 
       <h1 className="text-center text-3xl font-bold">Check your Inbox</h1>
@@ -37,7 +37,7 @@ export default function VerifyEmailForm({ email, onBack }: Props) {
 
       <div className="flex flex-col gap-3">
         <span className="text-center text-sm text-muted-foreground">
-          Didn't get the email? Check your Spam/Junk folder, or
+          Didn`&apos;`t get the email? Check your Spam/Junk folder, or
         </span>
         <LoadingButton
           variant="outline"

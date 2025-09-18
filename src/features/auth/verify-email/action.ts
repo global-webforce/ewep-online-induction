@@ -1,6 +1,6 @@
 "use server";
 
-import { authRepository } from "@/features/shared/auth-repository";
+import { authRepository } from "@/features/auth-repository";
 import z from "zod";
 
 export async function verifyEmailAction(param: string) {

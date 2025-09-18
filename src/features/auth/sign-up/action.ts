@@ -1,6 +1,6 @@
 "use server";
 
-import { authRepository } from "@/features/shared/auth-repository";
+import { authRepository } from "@/features/auth-repository";
 import { SignUpInput, signUpInputSchema } from "./schema";
 
 export async function signUpAction(values: SignUpInput) {

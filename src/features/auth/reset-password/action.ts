@@ -1,6 +1,6 @@
 "use server";
 
-import { authRepository } from "@/features/shared/auth-repository";
+import { authRepository } from "@/features/auth-repository";
 import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
 
 export async function resetPasswordAction(values: ResetPasswordInput) {
