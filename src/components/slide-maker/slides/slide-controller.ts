@@ -1,211 +1,214 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import { useRef, useState } from "react";
 import { Slide } from "../types";
+
+function normalize(slides: Slide[]) {
+  const sorted = slides.sort((a, b) => {
+    if (a.order === undefined && b.order === undefined) return 0;
+    if (a.order === undefined) return 1;
+    if (b.order === undefined) return -1;
+    return a.order - b.order;
+  });
+
+  return sorted.map((slide, index) => ({
+    ...slide,
+    order: index,
+    localId: slide.localId || randomId(),
+  }));
+}
 
 function randomId() {
   return (Math.random() + 1).toString(36).substring(7);
 }
 
-export const useSlideController = (value: Slide[] = []) => {
-  const originalValue = value;
-  const defaultSlide: Slide = {
-    title: "",
-    content: "",
-    quiz: undefined,
-    localId: randomId(),
-  };
+type HistoryEntry = {
+  slides: Slide[];
+  index: number;
+};
 
-  const [slides, setSlides] = useState<Slide[]>(
-    value.length > 0 ? value : [defaultSlide]
-  );
-  const [undoStack, setUndoStack] = useState<Slide[][]>([]);
-  const [redoStack, setRedoStack] = useState<Slide[][]>([]);
+export const useSlideControllerV2 = (value: Slide[]) => {
+  const history = useRef<HistoryEntry[]>([]);
+  const future = useRef<HistoryEntry[]>([]);
 
-  const [prevSlide, setPrevSlide] = useState<Slide>(
-    slides.length > 0 ? slides[0] : defaultSlide
-  );
+  const defaultValue =
+    normalize(value).length > 0
+      ? normalize(value)
+      : [
+          {
+            title: "Your first slide",
+            content: "Make content and quiz",
+            quiz: undefined,
+            order: 0,
+            localId: randomId(),
+          },
+        ];
 
-  const [currentSlide, setCurrentSlide] = useState<Slide>(
-    slides.length > 0 ? slides[0] : defaultSlide
-  );
+  const pristineValue = useRef<Slide[]>(defaultValue);
+  const [slides, _setSlides] = useState<Slide[]>(defaultValue);
 
-  const [isEditMode, setIsEditMode] = useState(true);
+  function setSlides(updater: Slide[] | ((prev: Slide[]) => Slide[])) {
+    _setSlides((prev) => {
+      const nextValue =
+        typeof updater === "function"
+          ? (updater as (prev: Slide[]) => Slide[])(prev)
+          : updater;
 
-  // 🔹 Normalize slides whenever `slides` changes
-  useEffect(() => {
-    if (slides.length === 0) return;
-
-    // Sort by order if available, otherwise move to end
-    const sorted = [...slides].sort((a, b) => {
-      if (a.order === undefined && b.order === undefined) return 0;
-      if (a.order === undefined) return 1;
-      if (b.order === undefined) return -1;
-      return a.order - b.order;
+      return normalize(nextValue);
     });
+  }
 
-    // Assign sequential order starting from 0
-    const normalized = sorted.map((slide, idx) => ({
-      ...slide,
-      order: idx,
-      localId: randomId(),
-    }));
+  const [index, _setIndex] = useState(0);
 
-    // Only update if changed (to prevent infinite loop)
-    const isSame = JSON.stringify(slides) === JSON.stringify(normalized);
-    if (!isSame) {
-      setSlides(normalized);
-    }
-  }, [value]);
+  function setIndex(updater: number | ((prev: number) => number)) {
+    _setIndex((prev) => {
+      const nextValue =
+        typeof updater === "function"
+          ? (updater as (prev: number) => number)(prev)
+          : updater;
 
-  const saveSlides = () => {
-    setRedoStack(() => []);
-    setUndoStack(() => []);
-  };
-
-  const undoChanges = () => {
-    if (undoStack.length > 0) {
-      const previousState = undoStack[undoStack.length - 1];
-      setSlides(previousState);
-      setUndoStack((prevStack) => prevStack.slice(0, prevStack.length - 1)); // Remove last undo
-      setRedoStack((prevStack) => [slides, ...prevStack]); // Push the current state to redo stack
-      setCurrentSlide(prevSlide);
-      setPrevSlide(currentSlide);
-    }
-  };
-
-  // Redo functionality
-  const redoChanges = () => {
-    if (redoStack.length > 0) {
-      const nextState = redoStack[0];
-      setSlides(nextState);
-      setRedoStack((prevStack) => prevStack.slice(1)); // Remove the first item from redo stack
-      setUndoStack((prevStack) => [...prevStack, slides]); // Push the current state to undo stack
-      setCurrentSlide(prevSlide);
-    }
-  };
+      return nextValue;
+    });
+  }
 
   const addSlide = () => {
-    setPrevSlide(currentSlide);
-    setUndoStack((prevStack) => [...prevStack, slides]);
-
-    setSlides((slides) => [...slides, defaultSlide]);
-    setCurrentSlide(defaultSlide);
-  };
-
-  const copySlide = (id: string) => {
-    setPrevSlide(currentSlide);
-    setUndoStack((prevStack) => [...prevStack, slides]);
-    const index = slides.findIndex((slide) => slide.localId === id);
-    if (index !== -1) {
-      const slideToCopy = slides[index];
-      const copiedSlide: Slide = {
-        ...slideToCopy,
-        title: `${slideToCopy.title} (${index + 1})`,
-        localId: randomId(),
-      };
-      const updatedSlides = [
-        ...slides.slice(0, index + 1),
-        copiedSlide,
-        ...slides.slice(index + 1),
+    setSlides((prev) => {
+      history.current.push({ index: index, slides: prev });
+      return [
+        ...prev.toSpliced(index + 1, 0, {
+          title: "",
+          content: "",
+          quiz: undefined,
+          order: index,
+          localId: randomId(),
+        }),
       ];
-      setSlides(updatedSlides);
-      setCurrentSlide(copiedSlide);
-    }
-  };
-
-  const onMoveSlide = (id: string, direction: "up" | "down") => {
-    setPrevSlide(currentSlide);
-    setUndoStack((prevStack) => [...prevStack, slides]);
-    const index = slides.findIndex((slide) => slide.localId === id);
-    if (index === -1) return;
-
-    const updatedSlides = [...slides];
-
-    // Move up
-    if (direction === "up" && index > 0) {
-      const [movedSlide] = updatedSlides.splice(index, 1);
-      updatedSlides.splice(index - 1, 0, movedSlide);
-    }
-
-    // Move down
-    if (direction === "down" && index < slides.length - 1) {
-      const [movedSlide] = updatedSlides.splice(index, 1);
-      updatedSlides.splice(index + 1, 0, movedSlide);
-    }
-
-    setSlides(updatedSlides);
-  };
-
-  const isLastSlide = (id: string) => {
-    const lastSlide = slides[slides.length - 1];
-    return lastSlide.id === id;
-  };
-
-  const deleteSlide = (id: string) => {
-    setPrevSlide(currentSlide);
-    setUndoStack((prevStack) => [...prevStack, slides]);
-    const index = slides.findIndex((slide) => slide.localId === id);
-    // const confirmDelete = window.confirm(`Delete Slide? ${index + 1}`);
-
-    const updatedSlides = slides.filter((slide) => slide.localId !== id);
-    setSlides(updatedSlides);
-
-    if (currentSlide.id === id) {
-      const nextSlide = updatedSlides[index] || updatedSlides[index - 1];
-      setCurrentSlide(nextSlide || updatedSlides[0]);
-    }
-  };
-
-  const updateSlide = (updatedSlide: Slide) => {
-    const updatedSlides = slides.map((slide) => {
-      return slide.localId === updatedSlide.localId ? updatedSlide : slide;
     });
-    setSlides(updatedSlides);
-    setCurrentSlide(updatedSlide);
+    setIndex(index + 1);
   };
 
-  const nextSlide = () => {
-    const currentIndex = slides.findIndex(
-      (slide) => slide.localId === currentSlide?.id
-    );
-    if (currentIndex < slides.length - 1) {
-      setCurrentSlide(slides[currentIndex + 1]);
-    }
+  // ✅ New utilities
+  const deleteSlide = (targetIndex: number = index) => {
+    setSlides((prev) => {
+      if (prev.length <= 1) {
+        alert(" 🚫 prevent deleting last slide");
+        return prev;
+      }
+
+      history.current.push({ index, slides: prev });
+
+      const updated = prev.filter((_, i) => i !== targetIndex);
+      return updated;
+    });
+
+    setIndex((prev) => {
+      if (slides.length <= 1) return prev; // safety check
+      if (prev === targetIndex) {
+        return Math.max(0, prev - 1); // move left if current was deleted
+      }
+      return prev > targetIndex ? prev - 1 : prev; // shift index if after deleted
+    });
   };
 
-  const isDirty = (): boolean => {
-    const def = JSON.stringify(
-      originalValue.map((e) => ({ ...e, id: undefined }))
-    );
-    const updated = JSON.stringify(
-      slides.map((e) => ({ ...e, id: undefined }))
-    );
-    return def === updated;
+  const updateSlide = (
+    updatedData: Partial<Slide>,
+    targetIndex: number = index
+  ) => {
+    setSlides((prev) => {
+      history.current.push({ index, slides: prev });
+      return prev.map((slide, i) =>
+        i === targetIndex ? { ...slide, ...updatedData } : slide
+      );
+    });
   };
 
-  const currentIndex = (): number => {
-    return slides.findIndex((slide) => slide.localId === currentSlide.id);
+  const copySlide = (targetIndex: number = index) => {
+    setSlides((prev) => {
+      history.current.push({ index, slides: prev });
+      const clone = {
+        ...prev[targetIndex],
+        localId: randomId(),
+        order: targetIndex + 1,
+      };
+      return prev.toSpliced(targetIndex + 1, 0, clone);
+    });
+    setIndex(targetIndex + 1);
+  };
+
+  const moveSlide = (direction: "up" | "down", targetIndex: number = index) => {
+    setSlides((prevSlides) => {
+      const lastIndex = prevSlides.length - 1;
+      const isMovingUp = direction === "up";
+      const isMovingDown = direction === "down";
+
+      // prevent moving out of bounds
+      if (
+        (isMovingUp && targetIndex === 0) ||
+        (isMovingDown && targetIndex === lastIndex)
+      ) {
+        return prevSlides;
+      }
+
+      history.current.push({ index, slides: prevSlides });
+
+      // swap logic
+      const swapIndex = isMovingUp ? targetIndex - 1 : targetIndex + 1;
+      const currentSlide = prevSlides[targetIndex];
+      const adjacentSlide = prevSlides[swapIndex];
+
+      const updatedSlides = [...prevSlides];
+      updatedSlides[targetIndex] = { ...adjacentSlide, order: targetIndex };
+      updatedSlides[swapIndex] = { ...currentSlide, order: swapIndex };
+
+      return updatedSlides;
+    });
+
+    setIndex((prevIndex) => {
+      const lastIndex = slides.length - 1;
+      if (direction === "up" && targetIndex > 0) {
+        return targetIndex - 1;
+      }
+      if (direction === "down" && targetIndex < lastIndex) {
+        return prevIndex + 1;
+      }
+
+      return prevIndex; // no change if out of bounds
+    });
+  };
+
+  const undo = () => {
+    if (history.current.length === 0) return;
+    const lastCommit = history.current[history.current.length - 1];
+    future.current.push(lastCommit);
+    history.current.pop();
+    setSlides(lastCommit.slides);
+    setIndex(lastCommit.index);
+  };
+
+  const redo = () => {
+    if (future.current.length === 0) return;
+    const lastRevert = future.current[future.current.length - 1];
+    history.current.push(lastRevert);
+    future.current.pop();
+    setSlides(lastRevert.slides);
+    setIndex(lastRevert.index);
+  };
+
+  const isDirty = () => {
+    return JSON.stringify(pristineValue.current) !== JSON.stringify(slides);
   };
 
   return {
-    isEditMode,
+    index,
     slides,
-    currentSlide,
-    undoStack,
-    redoStack,
-    setSlides,
-    saveSlides,
+    isDirty,
+    undo,
+    redo,
+    setIndex,
     addSlide,
+    deleteSlide,
     updateSlide,
     copySlide,
-    deleteSlide,
-    nextSlide,
-    onMoveSlide,
-    isDirty,
-    setIsEditMode,
-    setCurrentSlide,
-    undoChanges,
-    redoChanges,
-    isLastSlide,
-    currentIndex,
+    moveSlide,
   };
 };

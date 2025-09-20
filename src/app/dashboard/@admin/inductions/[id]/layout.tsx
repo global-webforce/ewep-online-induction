@@ -9,29 +9,30 @@ type Params = Promise<{ id: string }>;
 export default async function DashboardLayout({
   params,
   children,
-  slides,
-  inductees,
 }: {
   params: Params;
   children: ReactNode;
   slides: ReactNode;
-  inductees: ReactNode;
 }) {
   return (
     <>
       {children}
-      <Tabs defaultValue="account">
+      {/*    <Tabs defaultValue="account">
         <TabsList>
-          <TabsTrigger value="account">Slides</TabsTrigger>
-          <TabsTrigger value="password">History</TabsTrigger>
+          <TabsTrigger className="min-w-40" value="account">
+            Slides
+          </TabsTrigger>
+          <TabsTrigger className="min-w-40" value="password">
+            History
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="account">
-          <Card>{slides}</Card>
+          <Card className="pt-0">{slides}</Card>
         </TabsContent>
         <TabsContent value="password">
           <Card>{inductees}</Card>
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
     </>
   );
 }

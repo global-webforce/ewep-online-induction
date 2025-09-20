@@ -35,7 +35,7 @@ export default function SlidePreviewEditor({
     const { unsubscribe } = watch((v) => {
       onChange({ ...v } as Slide);
     });
-    console.log(slide);
+
     return () => unsubscribe();
   }, [onChange, watch, form]);
 

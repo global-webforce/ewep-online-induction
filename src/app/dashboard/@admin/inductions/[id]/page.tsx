@@ -1,22 +1,65 @@
-import { SlideMaker } from "@/components/slide-maker/slides/slide-maker";
-import { getInductionAction, InductionFormUpdate } from "@/features/inductions";
+"use client";
 
-type Params = Promise<{ id: string }>;
-export default async function DefaultDashboardPage({
+import { use, useEffect, useState } from "react";
+
+import { sampleSlides } from "@/components/slide-maker/slides/sample";
+
+import { getInductionAction, InductionFormUpdate } from "@/features/inductions";
+import dynamic from "next/dynamic";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Link } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const SlideMaker = dynamic(() => import("./slide-maker"), { ssr: false });
+export default function SingleInductionPage({
   params,
 }: {
-  params: Params;
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  const data = await getInductionAction(id);
+  const { id } = use(params);
+
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await getInductionAction(id);
+      setData(res);
+    }
+    fetchData();
+  }, [id]);
 
   return (
     <>
-      <h1 className="text-xl font-semibold">{data.title}</h1>
+      {data ? (
+        <>
+          <h1 className="text-xl semi-bold">Manage {data.title}</h1>
+          <InductionFormUpdate id={id} data={data} />
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Create Presentation</CardTitle>
+              <CardDescription>
+                Quickly create and customize your presentation slides.
+              </CardDescription>
+            </CardHeader>
 
-      <SlideMaker value={[]} />
-
-      <InductionFormUpdate id={id} data={data} />
+            <CardFooter>
+              <Button>
+                <span>Go to Presentation</span>
+              </Button>
+            </CardFooter>
+          </Card>
+          {/*  <SlideMaker value={sampleSlides} /> */}
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 }
