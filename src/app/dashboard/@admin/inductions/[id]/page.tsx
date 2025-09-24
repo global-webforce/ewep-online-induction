@@ -1,64 +1,54 @@
 "use client";
-
-import { use, useEffect, useState } from "react";
-
-import { sampleSlides } from "@/components/slide-maker/slides/sample";
-
-import { getInductionAction, InductionFormUpdate } from "@/features/inductions";
-import dynamic from "next/dynamic";
+import { AlertPanelState } from "@/components/custom/alert-panel-state";
+import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import { Link } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { getInductionById, InductionFormUpdate } from "@/features/inductions";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
-const SlideMaker = dynamic(() => import("./slide-maker"), { ssr: false });
-export default function SingleInductionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function SingleInductionPage() {
+  const { id } = useParams<{ id: string }>();
 
-  const [data, setData] = useState<any>(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      const res = await getInductionAction(id);
-      setData(res);
-    }
-    fetchData();
-  }, [id]);
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: [`inductions`, id],
+    queryFn: async () => await getInductionById(id),
+  });
 
   return (
     <>
-      {data ? (
-        <>
-          <h1 className="text-xl semi-bold">Manage {data.title}</h1>
-          <InductionFormUpdate id={id} data={data} />
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Create Presentation</CardTitle>
-              <CardDescription>
-                Quickly create and customize your presentation slides.
-              </CardDescription>
-            </CardHeader>
+      {error && (
+        <AlertPanelState onRetry={async () => await refetch()} variant="error">
+          {error.message}
+        </AlertPanelState>
+      )}
+      {isLoading && <AlertPanelState variant="loading" />}
+      <h1 className="text-xl font-bold">{data?.title}</h1>
+      <InductionFormUpdate id={id} data={data} />
 
-            <CardFooter>
-              <Button>
+      {id && (
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Create Presentation</CardTitle>
+            <CardDescription>
+              Quickly create and customize your presentation slides.
+            </CardDescription>
+          </CardHeader>
+
+          <CardFooter>
+            <Button asChild>
+              <Link href={"/dashboard/inductions/" + id + "/resources"}>
                 <span>Go to Presentation</span>
-              </Button>
-            </CardFooter>
-          </Card>
-          {/*  <SlideMaker value={sampleSlides} /> */}
-        </>
-      ) : (
-        <></>
+              </Link>
+            </Button>
+          </CardFooter>
+        </Card>
       )}
     </>
   );

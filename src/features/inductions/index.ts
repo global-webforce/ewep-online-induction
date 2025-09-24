@@ -1,5 +1,5 @@
-export { getAllAction as getAllInductionAction } from "./actions";
-export { getAction as getInductionAction } from "./actions";
-export { DataTable as InductionsTable } from "./table";
-export { FormCreate as InductionFormCreate } from "./form-create";
-export { FormUpdate as InductionFormUpdate } from "./form-update";
+export { getAll as getAllInductions } from "./queries";
+export { getById as getInductionById } from "./queries";
+export { DataTable as InductionsTable } from "./components/table";
+export { FormCreate as InductionFormCreate } from "./components/form.create";
+export { FormUpdate as InductionFormUpdate } from "./components/form.update";

@@ -6,7 +6,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ClientProvider } from "@/providers/query-client-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
-
+import { NavigationGuardProvider } from "next-navigation-guard";
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -33,7 +33,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <ClientProvider>{children}</ClientProvider>
+            <NavigationGuardProvider>{children}</NavigationGuardProvider>
             <Toaster />
           </ThemeProvider>
         </ClientProvider>

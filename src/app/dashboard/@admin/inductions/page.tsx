@@ -1,16 +1,23 @@
-import { getAllInductionAction, InductionsTable } from "@/features/inductions";
+"use client";
+import { AlertPanelState } from "@/components/custom/alert-panel-state";
+import { getAllInductions, InductionsTable } from "@/features/inductions";
+import { useQuery } from "@tanstack/react-query";
 
-export default async function InductionPage() {
-  const data = await getAllInductionAction();
+export default function Page() {
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: ["inductions"],
+    queryFn: async () => await getAllInductions(),
+  });
+
   return (
-    <main className=" flex flex-col ">
-      <div>
-        <header className="flex gap-3 min-h-10">
-          <h1 className="text-xl font-semibold">Inductions</h1>
-        </header>
-      </div>
-
-      {<InductionsTable data={data} />}
+    <main className=" flex flex-col gap-4">
+      {error && (
+        <AlertPanelState onRetry={async () => await refetch()} variant="error">
+          {error.message}
+        </AlertPanelState>
+      )}{" "}
+      {isLoading && <AlertPanelState variant="loading" />}
+      {<InductionsTable data={data || []} />}
     </main>
   );
 }

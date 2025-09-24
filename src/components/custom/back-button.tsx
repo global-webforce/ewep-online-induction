@@ -1,17 +1,27 @@
 // components/BackButton.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "lucide-react";
 
 export function BackButton() {
   const router = useRouter();
 
-  return (
+  const pathname = usePathname();
+
+  // Split into segments, remove empty ones
+  const segments = pathname.split("/").filter(Boolean);
+
+  // Show only if there are exactly 2 segments
+  const isTopPage = segments.length === 2;
+
+  return !isTopPage ? (
     <Button variant="outline" size="icon" onClick={() => router.back()}>
       <ArrowLeftIcon />
       <span className="sr-only">Back</span>
     </Button>
+  ) : (
+    <></>
   );
 }

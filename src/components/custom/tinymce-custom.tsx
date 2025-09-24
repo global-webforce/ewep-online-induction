@@ -1,32 +1,25 @@
 "use client";
 
 import { Editor } from "@tinymce/tinymce-react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 interface TinyMECEditorProps {
   id: string;
   value?: string;
+  initialValue?: string;
   onChange: (newValue: string) => void;
 }
 
 export default function TinyMECEditor({
   id,
   value,
+  initialValue,
   onChange,
 }: TinyMECEditorProps) {
   const [loading, setLoading] = useState(true);
   const height = 560;
 
   const editorRef: any = useRef(null);
-
-  const insertImage = () => {
-    if (editorRef.current) {
-      const editor = editorRef.current;
-      editor.insertContent(
-        '<img width="300" src="https://images.unsplash.com/photo-1719937206098-236a481a2b6d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Your Image" />'
-      );
-    }
-  };
 
   return (
     <div style={{ position: "relative", width: "100%", height: height }}>
@@ -52,16 +45,15 @@ export default function TinyMECEditor({
 
       <Editor
         id={id}
+        // initialValue={value}
+        value={value}
         tinymceScriptSrc="/tinymce/tinymce.min.js"
         licenseKey="gpl"
-        onEditorChange={(newValue, editor) => {
-          onChange(newValue);
-        }}
-        onInit={(evt, editor) => {
+        onEditorChange={(e) => onChange(e)}
+        onInit={(editor) => {
           setLoading(false);
           editorRef.current = editor;
         }}
-        value={value || ""}
         init={{
           extended_valid_elements:
             "iframe[src|frameborder|style|scrolling|class|width|height|name|align]",
