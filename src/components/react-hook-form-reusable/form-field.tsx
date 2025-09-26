@@ -14,7 +14,6 @@ type FormFieldProps<T extends FieldValues> = {
   label?: string;
   placeholder?: string;
   type?: string;
-  render?: (field: ControllerRenderProps<T, Path<T>>) => React.ReactNode;
 };
 
 export function FormField<T extends FieldValues>({
@@ -23,7 +22,6 @@ export function FormField<T extends FieldValues>({
   label,
   placeholder,
   type = "text",
-  render,
 }: FormFieldProps<T>) {
   return (
     <Controller
@@ -33,12 +31,7 @@ export function FormField<T extends FieldValues>({
         <div className="flex flex-col gap-1.5">
           {label && <Label htmlFor={name}>{label}</Label>}
 
-          {render ? (
-            render(field)
-          ) : (
-            <Input id={name} type={type} placeholder={placeholder} {...field} />
-          )}
-
+          <Input id={name} type={type} placeholder={placeholder} {...field} />
           {fieldState.error && (
             <p className="text-sm text-red-500">{fieldState.error.message}</p>
           )}

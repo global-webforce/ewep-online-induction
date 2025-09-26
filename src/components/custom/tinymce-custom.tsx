@@ -13,13 +13,13 @@ interface TinyMECEditorProps {
 export default function TinyMECEditor({
   id,
   value,
-  initialValue,
+
   onChange,
 }: TinyMECEditorProps) {
   const [loading, setLoading] = useState(true);
   const height = 560;
 
-  const editorRef: any = useRef(null);
+  const editorRef = useRef(null);
 
   return (
     <div style={{ position: "relative", width: "100%", height: height }}>
@@ -45,7 +45,6 @@ export default function TinyMECEditor({
 
       <Editor
         id={id}
-        // initialValue={value}
         value={value}
         tinymceScriptSrc="/tinymce/tinymce.min.js"
         licenseKey="gpl"

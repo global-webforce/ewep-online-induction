@@ -1,8 +1,8 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
+import SlideMaker from "@/features/induction-resources/induction-builder-rhf";
 import { getInductionResourcesById } from "@/features/induction-resources/queries";
-import SlideMaker from "@/features/induction-resources/induction-builder/slide-maker";
 
 import { getInductionById } from "@/features/inductions";
 import { useQueries } from "@tanstack/react-query";
@@ -51,7 +51,7 @@ export default function SingleInductionPage() {
 
       <h1 className="text-xl font-bold">{inductionQuery.data?.title}</h1>
 
-      <SlideMaker value={inductionSlidesQuery.data} />
+      <SlideMaker />
     </>
   );
 }

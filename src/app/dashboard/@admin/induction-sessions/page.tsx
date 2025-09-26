@@ -1,16 +1,12 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useId } from "react";
-
-const ComponentA = dynamic(() => import("./slide-maker-controller-demo"), {
-  ssr: false,
-});
+import SlideMaker from "@/features/induction-resources/induction-builder-rhf";
+import React from "react";
 
 export default function Page() {
   return (
-    <>
-      <ComponentA key={useId()} />
-    </>
+    <div>
+      <SlideMaker />
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const questionSchema = z.object({
+export const quizSchema = z.object({
   question: z.string().min(1, "Question is required"),
   options: z
     .array(
@@ -15,21 +15,24 @@ export const questionSchema = z.object({
 
 export const slideSchema = z.object({
   id: z.string().optional(),
-  localId: z.string().optional(),
-  order: z.number().int().default(0).optional(),
+  localId: z.string().min(2),
+  order: z.number().int(),
   title: z.string().optional(),
   content: z.string().optional(),
-  quiz: questionSchema.optional(),
-});
-export const slidesSchema = z.array(slideSchema).optional();
-export const tableSchema = z.object({
-  id: z.string().optional(),
-  order: z.number().int().default(0).optional(),
-  title: z.string().optional(),
-  content: z.string().optional(),
-  quiz: questionSchema.optional(),
+  quiz: quizSchema.optional(),
 });
 
-export type QuestionFormSchema = z.infer<typeof questionSchema>;
+export const slidesSchema = z.array(slideSchema).optional();
+
+export const tableSchema = z.object({
+  id: z.string(),
+  order: z.number().optional(),
+  title: z.string().optional(),
+  content: z.string().optional(),
+  quiz: quizSchema.optional(),
+  induction_id: z.uuidv4(),
+});
+
+export type QuestionFormSchema = z.infer<typeof quizSchema>;
 export type SlideSchema = z.infer<typeof slideSchema>;
 export type TableSchema = z.infer<typeof tableSchema>;

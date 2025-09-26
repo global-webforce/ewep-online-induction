@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-export default function SingleInductionPage() {
+export default function Page() {
   const { id } = useParams<{ id: string }>();
 
   const { data, error, isLoading, refetch } = useQuery({

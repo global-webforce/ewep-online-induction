@@ -1,16 +1,18 @@
 import { createClient } from "@/utils/supabase/client-server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params; // ✅ unwrap params
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("inductions")
     .select("*")
-    .eq("id", params.id)
-    .maybeSingle(); // return null or single object on success/error.
+    .eq("id", id)
+    .maybeSingle(); // return null or single object on success/error
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 404 });
