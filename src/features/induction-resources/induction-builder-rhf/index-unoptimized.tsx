@@ -47,7 +47,6 @@ import SlideItem from "./slide/slide";
 import Thumbnail from "./slide/thumbnail";
 import { stripHtml } from "./utils";
 import { SlideScrollableList } from "./slide-list";
-import { FormField } from "@/components/react-hook-form-reusable/form-field";
 
 // ----------------- Schemas -----------------
 const quizSchema = z.object({
@@ -95,7 +94,6 @@ const QuizOptions = ({ slideIndex }: QuizOptionsProps) => {
     remove,
   } = useFieldArray<FormValues>({
     name: `slides.${slideIndex}.quiz.options`,
-    shouldUnregister: true,
   });
 
   return (
@@ -119,15 +117,13 @@ const QuizOptions = ({ slideIndex }: QuizOptionsProps) => {
                         value={String(optionIndex)}
                         id={`slide-${slideIndex}-option-${optionIndex}`}
                       />
-
-                      <FormField
-                        control={control}
-                        type="text"
-                        name={`slides.${slideIndex}.quiz.options.${optionIndex}.value`}
-                        label="Question"
-                        placeholder="Quiz Question"
+                      <Input
+                        {...register(
+                          `slides.${slideIndex}.quiz.options.${optionIndex}.value`
+                        )}
+                        placeholder={`Option ${optionIndex + 1}`}
+                        className="flex-1"
                       />
-
                       <Button
                         type="button"
                         variant="destructive"
@@ -198,8 +194,7 @@ export default function SlideMaker() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const { control, handleSubmit, register, watch, formState, unregister } =
-    form;
+  const { control, handleSubmit, register, watch, formState } = form;
 
   const myFieldArrayValues = watch("slides");
 
@@ -217,7 +212,6 @@ export default function SlideMaker() {
     control,
     name: "slides",
     keyName: "customId", //prevents rhf from overriding our id prop,
-    shouldUnregister: false,
   });
 
   function selectSlide(index: number) {
@@ -304,8 +298,6 @@ export default function SlideMaker() {
   function isEmpty(obj: Record<string, unknown>): boolean {
     return Object.keys(obj).length === 0;
   }
-
-  const watchSlide = myFieldArrayValues[currentIndex];
 
   useEffect(() => {
     inputRefs.current[currentIndex]?.focus();
@@ -464,13 +456,14 @@ export default function SlideMaker() {
                       type="submit"
                       disabled={form.formState.isDirty === false}
                       pending={loading}
+                      onClick={async () => {}}
                     >
                       Save Changes
                     </LoadingButton>
                   </div>
                 </div>
                 <div className="min-h-96 border-1 p-4">
-                  <p>{JSON.stringify(myFieldArrayValues)}</p>
+                  {/*  <p>{JSON.stringify(myFieldArrayValues)}</p>
                   <p>{JSON.stringify(currentIndex)}</p>
                   <p>
                     {JSON.stringify(
@@ -478,111 +471,112 @@ export default function SlideMaker() {
                         (obj) => JSON.stringify(obj) !== "{}"
                       )
                     )}
-                  </p>
-                  <Tabs
-                    key={slides[currentIndex].customId}
-                    defaultValue={tabView.current}
-                    className="gap-3"
-                    onValueChange={(value: string) => {
-                      tabView.current =
-                        (value as "content" | "quiz") || "content";
-                    }}
-                  >
-                    <TabsList>
-                      <TabsTrigger className="min-w-30" value="content">
-                        Content
-                      </TabsTrigger>
-                      <TabsTrigger className="min-w-30" value="quiz">
-                        Question
-                      </TabsTrigger>
-                    </TabsList>
+                  </p> */}
+                  {slides.map((slide, index) => {
+                    const watchSlide = myFieldArrayValues[index];
+                    return index !== currentIndex ? null : (
+                      <Tabs
+                        key={slide.customId}
+                        defaultValue={tabView.current}
+                        className="gap-3"
+                        onValueChange={(value: string) => {
+                          tabView.current =
+                            (value as "content" | "quiz") || "content";
+                        }}
+                      >
+                        <TabsList>
+                          <TabsTrigger className="min-w-30" value="content">
+                            Content
+                          </TabsTrigger>
+                          <TabsTrigger className="min-w-30" value="quiz">
+                            Question
+                          </TabsTrigger>
+                        </TabsList>
 
-                    <TabsContent value="content">
-                      {formState.errors.root && (
-                        <AlertPanel variant="error">
-                          `${JSON.stringify(formState.errors.root)}`
-                        </AlertPanel>
-                      )}
+                        <TabsContent value="content">
+                          {formState.errors.root && (
+                            <AlertPanel variant="error">
+                              `${JSON.stringify(formState.errors.root)}`
+                            </AlertPanel>
+                          )}
 
-                      <Card className="border p-4 gap-3">
-                        <div className="space-y-2">
-                          <Input
-                            {...register(`slides.${currentIndex}.title`)}
-                            ref={(el) => {
-                              register(`slides.${currentIndex}.title`).ref(el);
-                              inputRefs.current[currentIndex] = el;
-                            }}
-                            placeholder="Slide Title"
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <FormFieldCustom
-                            control={control}
-                            name={`slides.${currentIndex}.content`}
-                            render={({ field }) => (
-                              <TinyMECEditor
-                                value={field.value}
-                                id="content-editor"
-                                onChange={(e) => {
-                                  field.onChange(e);
-                                }}
-                              />
-                            )}
-                          />
-                        </div>
-                      </Card>
-                    </TabsContent>
-                    <TabsContent
-                      value="quiz"
-                      className="flex flex-col gap-4 max-w-2xl"
-                    >
-                      <Card className="border p-4 gap-3">
-                        <div className="flex items-center space-x-2">
-                          <Switch
-                            id="airplane-mode"
-                            checked={watchSlide.enableQuiz}
-                            onCheckedChange={(e) => {
-                              if (e) {
-                                update(currentIndex, {
-                                  ...myFieldArrayValues[currentIndex],
-                                  enableQuiz: e,
-                                  quiz: myFieldArrayValues[currentIndex]
-                                    .quizCache,
-                                });
-                              } else {
-                                unregister(`slides.${currentIndex}.quiz`);
-                                update(currentIndex, {
-                                  ...myFieldArrayValues[currentIndex],
-                                  enableQuiz: e,
-                                  quizCache:
-                                    myFieldArrayValues[currentIndex].quiz,
-                                  quiz: undefined,
-                                });
-                              }
-                            }}
-                          />
-                          <Label htmlFor="airplane-mode">Add Quiz</Label>
-                        </div>
-                        {watchSlide.enableQuiz == true && (
-                          <div className="mt-3 space-y-3">
+                          <Card className="border p-4 gap-3">
                             <div className="space-y-2">
-                              <Label>Quiz Question</Label>
-                              <FormField
-                                control={control}
-                                type="text"
-                                name={`slides.${currentIndex}.quiz.question`}
-                                label="Question"
-                                placeholder="Quiz Question"
+                              <Input
+                                {...register(`slides.${index}.title`)}
+                                ref={(el) => {
+                                  register(`slides.${index}.title`).ref(el);
+                                  inputRefs.current[index] = el;
+                                }}
+                                placeholder="Slide Title"
                               />
                             </div>
 
-                            <QuizOptions slideIndex={currentIndex} />
-                          </div>
-                        )}
-                      </Card>
-                    </TabsContent>
-                  </Tabs>
+                            <div className="space-y-2">
+                              <FormFieldCustom
+                                control={control}
+                                name={`slides.${index}.content`}
+                                render={({ field }) => (
+                                  <TinyMECEditor
+                                    value={field.value}
+                                    id="content-editor"
+                                    onChange={(e) => {
+                                      field.onChange(e);
+                                    }}
+                                  />
+                                )}
+                              />
+                            </div>
+                          </Card>
+                        </TabsContent>
+                        <TabsContent
+                          value="quiz"
+                          className="flex flex-col gap-4 max-w-2xl"
+                        >
+                          <Card className="border p-4 gap-3">
+                            <div className="flex items-center space-x-2">
+                              <Switch
+                                id="airplane-mode"
+                                checked={watchSlide.enableQuiz}
+                                onCheckedChange={(e) => {
+                                  if (e) {
+                                    update(index, {
+                                      ...myFieldArrayValues[index],
+                                      enableQuiz: e,
+                                      quiz: myFieldArrayValues[index].quizCache,
+                                    });
+                                  } else {
+                                    update(index, {
+                                      ...myFieldArrayValues[index],
+                                      enableQuiz: e,
+                                      quizCache: myFieldArrayValues[index].quiz,
+                                      quiz: undefined,
+                                    });
+                                  }
+                                }}
+                              />
+                              <Label htmlFor="airplane-mode">Add Quiz</Label>
+                            </div>
+                            {watchSlide.enableQuiz == true && (
+                              <div className="mt-3 space-y-3">
+                                <div className="space-y-2">
+                                  <Label>Quiz Question</Label>
+                                  <Input
+                                    {...register(
+                                      `slides.${index}.quiz.question`
+                                    )}
+                                    placeholder="Quiz Question"
+                                  />
+                                </div>
+
+                                <QuizOptions slideIndex={index} />
+                              </div>
+                            )}
+                          </Card>
+                        </TabsContent>
+                      </Tabs>
+                    );
+                  })}
                 </div>
               </div>
             </div>
