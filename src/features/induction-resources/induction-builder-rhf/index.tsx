@@ -71,7 +71,7 @@ const slideSchema = z.object({
 const formSchema = z.object({
   slides: z.array(slideSchema),
 });
-
+type QuizOption = z.infer<typeof quizSchema>["options"][number];
 export type FormValue = z.infer<typeof slideSchema>;
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -88,73 +88,105 @@ type HistoryEntry = {
 type TabType = "content" | "quiz";
 
 const QuizOptions = ({ slideIndex }: QuizOptionsProps) => {
-  const { register, control } = useFormContext<FormValues>();
+  const { register, control, formState } = useFormContext<FormValues>();
   const {
     fields: options,
     append,
     remove,
-  } = useFieldArray<FormValues>({
+  } = useFieldArray<FormValues, `slides.${number}.quiz.options`, "id">({
     name: `slides.${slideIndex}.quiz.options`,
-    shouldUnregister: true,
+    shouldUnregister: false,
   });
 
   return (
-    <Card className="p-0">
-      <CardContent className="space-y-3 p-3">
-        {options.length > 0 && (
-          <div className="space-y-3">
-            <Label>Options (atleast 2)</Label>
-            <Controller
-              control={control}
-              name={`slides.${slideIndex}.quiz.correctAnswer`}
-              render={({ field }) => (
-                <RadioGroup
-                  value={String(field.value)}
-                  onValueChange={(val) => field.onChange(Number(val))}
-                  className="gap-3"
-                >
-                  {options.map((opt, optionIndex) => (
-                    <div key={opt.id} className="flex items-center gap-2">
-                      <RadioGroupItem
-                        value={String(optionIndex)}
-                        id={`slide-${slideIndex}-option-${optionIndex}`}
-                      />
+    <div className="mt-3 space-y-3">
+      <div className="space-y-2">
+        <FormField
+          control={control}
+          type="text"
+          name={`slides.${slideIndex}.quiz.question`}
+          label="Question*"
+          placeholder="Quiz Question"
+        />
+      </div>
+      <Card className="p-0">
+        <CardContent className="space-y-3 p-3">
+          {options.filter((obj) => JSON.stringify(obj) !== "{}").length > 0 && (
+            <div className="space-y-3">
+              <Label>Options* (atleast 2)</Label>
 
-                      <FormField
-                        control={control}
-                        type="text"
-                        name={`slides.${slideIndex}.quiz.options.${optionIndex}.value`}
-                        label="Question"
-                        placeholder="Quiz Question"
-                      />
+              <Controller
+                control={control}
+                name={`slides.${slideIndex}.quiz.correctAnswer`}
+                render={({ field }) => (
+                  <RadioGroup
+                    value={String(field.value)}
+                    onValueChange={(val) => field.onChange(Number(val))}
+                    className="gap-3"
+                  >
+                    {options
+                      .filter((obj) => JSON.stringify(obj) !== "{}")
+                      .map((opt, optionIndex) => (
+                        <div key={opt.id} className="flex items-start gap-2">
+                          <Button asChild>
+                            <RadioGroupItem
+                              value={String(optionIndex)}
+                              id={`slide-${slideIndex}-option-${optionIndex}`}
+                              className="text-4xl"
+                            />
+                          </Button>
 
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => remove(optionIndex)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </RadioGroup>
-              )}
-            />
-          </div>
-        )}
+                          <FormField
+                            control={control}
+                            type="text"
+                            name={`slides.${slideIndex}.quiz.options.${optionIndex}.value`}
+                            placeholder="Question"
+                          />
 
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => append({ value: "" })}
-          className="flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          Append Option
-        </Button>
-      </CardContent>
-    </Card>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            onClick={() => remove(optionIndex)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                  </RadioGroup>
+                )}
+              />
+            </div>
+          )}
+          {/*    <p className="text-sm text-red-500">
+            {JSON.stringify(formState?.errors?.slides![slideIndex])}
+          </p>
+ */}
+          <p className="text-sm text-red-500">
+            {formState.errors?.slides?.[slideIndex]?.quiz?.correctAnswer
+              ?.message ||
+              formState.errors?.slides?.[slideIndex]?.quiz?.correctAnswer?.root
+                ?.message}
+          </p>
+
+          <p className="text-sm text-red-500">
+            {formState.errors?.slides?.[slideIndex]?.quiz?.options?.message ||
+              formState.errors?.slides?.[slideIndex]?.quiz?.options?.root
+                ?.message}
+          </p>
+
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => append({ value: "" })}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Append Option
+          </Button>
+        </CardContent>
+      </Card>{" "}
+    </div>
   );
 };
 const onSubmit: SubmitHandler<FormValues> = (data) =>
@@ -542,16 +574,21 @@ export default function SlideMaker() {
                           <Switch
                             id="airplane-mode"
                             checked={watchSlide.enableQuiz}
+                            className="data-[state=checked]:bg-amber-500 "
                             onCheckedChange={(e) => {
                               if (e) {
                                 update(currentIndex, {
                                   ...myFieldArrayValues[currentIndex],
                                   enableQuiz: e,
                                   quiz: myFieldArrayValues[currentIndex]
-                                    .quizCache,
+                                    .quizCache ?? {
+                                    question: "",
+                                    options: [],
+
+                                    correctAnswer: 0,
+                                  },
                                 });
                               } else {
-                                unregister(`slides.${currentIndex}.quiz`);
                                 update(currentIndex, {
                                   ...myFieldArrayValues[currentIndex],
                                   enableQuiz: e,
@@ -559,26 +596,14 @@ export default function SlideMaker() {
                                     myFieldArrayValues[currentIndex].quiz,
                                   quiz: undefined,
                                 });
+                                unregister(`slides.${currentIndex}.quiz`);
                               }
                             }}
                           />
                           <Label htmlFor="airplane-mode">Add Quiz</Label>
                         </div>
                         {watchSlide.enableQuiz == true && (
-                          <div className="mt-3 space-y-3">
-                            <div className="space-y-2">
-                              <Label>Quiz Question</Label>
-                              <FormField
-                                control={control}
-                                type="text"
-                                name={`slides.${currentIndex}.quiz.question`}
-                                label="Question"
-                                placeholder="Quiz Question"
-                              />
-                            </div>
-
-                            <QuizOptions slideIndex={currentIndex} />
-                          </div>
+                          <QuizOptions slideIndex={currentIndex} />
                         )}
                       </Card>
                     </TabsContent>
