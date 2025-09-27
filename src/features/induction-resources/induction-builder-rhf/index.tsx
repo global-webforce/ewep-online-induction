@@ -24,6 +24,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   Controller,
+  FieldArrayWithId,
   FormProvider,
   SubmitHandler,
   useFieldArray,
@@ -48,6 +49,7 @@ import Thumbnail from "./slide/thumbnail";
 import { stripHtml } from "./utils";
 import { SlideScrollableList } from "./slide-list";
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
+import { sampleSlides } from "./sample";
 
 // ----------------- Schemas -----------------
 const quizSchema = z.object({
@@ -55,7 +57,13 @@ const quizSchema = z.object({
   options: z
     .array(z.object({ value: z.string().min(1, "Option cannot be empty") }))
     .min(2, "At least 2 options required"),
-  correctAnswer: z.number().int(),
+  correctAnswer: z
+    .number()
+    .int()
+    .nonnegative({ message: "Correct answer is required" })
+    .refine((val) => val !== undefined && val !== null, {
+      message: "Correct answer is required",
+    }),
   answer: z.number().int().optional(),
 });
 
@@ -97,7 +105,7 @@ const QuizOptions = ({ slideIndex }: QuizOptionsProps) => {
     name: `slides.${slideIndex}.quiz.options`,
     shouldUnregister: false,
   });
-
+  const quizError = formState.errors?.slides?.[slideIndex]?.quiz;
   return (
     <div className="mt-3 space-y-3">
       <div className="space-y-2">
@@ -119,61 +127,65 @@ const QuizOptions = ({ slideIndex }: QuizOptionsProps) => {
                 control={control}
                 name={`slides.${slideIndex}.quiz.correctAnswer`}
                 render={({ field }) => (
-                  <RadioGroup
-                    value={String(field.value)}
-                    onValueChange={(val) => field.onChange(Number(val))}
-                    className="gap-3"
-                  >
-                    {options
-                      .filter((obj) => JSON.stringify(obj) !== "{}")
-                      .map((opt, optionIndex) => (
-                        <div key={opt.id} className="flex items-start gap-2">
-                          <Button asChild>
-                            <RadioGroupItem
-                              value={String(optionIndex)}
-                              id={`slide-${slideIndex}-option-${optionIndex}`}
-                              className="text-4xl"
+                  <>
+                    <RadioGroup
+                      value={String(field.value)}
+                      onValueChange={(val) => field.onChange(Number(val))}
+                      className="gap-3"
+                    >
+                      {options
+                        .filter((obj) => JSON.stringify(obj) !== "{}")
+                        .map((opt, optionIndex) => (
+                          <div key={opt.id} className="flex items-start gap-2">
+                            <Button asChild>
+                              <RadioGroupItem
+                                value={String(optionIndex)}
+                                id={`slide-${slideIndex}-option-${optionIndex}`}
+                                className="text-4xl"
+                              />
+                            </Button>
+
+                            <FormField
+                              control={control}
+                              type="text"
+                              name={`slides.${slideIndex}.quiz.options.${optionIndex}.value`}
+                              placeholder="Question"
                             />
-                          </Button>
 
-                          <FormField
-                            control={control}
-                            type="text"
-                            name={`slides.${slideIndex}.quiz.options.${optionIndex}.value`}
-                            placeholder="Question"
-                          />
-
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => remove(optionIndex)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                  </RadioGroup>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => {
+                                if (field.value === optionIndex) {
+                                  field.onChange(Number(optionIndex - 1));
+                                }
+                                remove(optionIndex);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                    </RadioGroup>
+                  </>
                 )}
               />
             </div>
           )}
-          {/*    <p className="text-sm text-red-500">
-            {JSON.stringify(formState?.errors?.slides![slideIndex])}
-          </p>
- */}
-          <p className="text-sm text-red-500">
-            {formState.errors?.slides?.[slideIndex]?.quiz?.correctAnswer
-              ?.message ||
-              formState.errors?.slides?.[slideIndex]?.quiz?.correctAnswer?.root
-                ?.message}
-          </p>
 
-          <p className="text-sm text-red-500">
-            {formState.errors?.slides?.[slideIndex]?.quiz?.options?.message ||
-              formState.errors?.slides?.[slideIndex]?.quiz?.options?.root
-                ?.message}
-          </p>
+          {quizError?.correctAnswer && (
+            <p className="text-sm text-red-500">
+              {quizError?.correctAnswer?.message ||
+                quizError?.correctAnswer?.root?.message}
+            </p>
+          )}
+
+          {quizError?.options && (
+            <p className="text-sm text-red-500">
+              {quizError?.options?.message || quizError?.options?.root?.message}
+            </p>
+          )}
 
           <Button
             type="button"
@@ -211,7 +223,7 @@ export default function SlideMaker() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: sampleSlides || {
       slides: [
         {
           title: "",
@@ -220,6 +232,7 @@ export default function SlideMaker() {
         },
       ],
     },
+    //values: sampleSlides,
     shouldUnregister: false,
   });
 
@@ -232,8 +245,6 @@ export default function SlideMaker() {
 
   const { control, handleSubmit, register, watch, formState, unregister } =
     form;
-
-  const myFieldArrayValues = watch("slides");
 
   const {
     fields: slides,
@@ -252,6 +263,17 @@ export default function SlideMaker() {
     shouldUnregister: false,
   });
 
+  const watchSlides = watch("slides");
+
+  type MergedSlide = FieldArrayWithId<FormValues, "slides", "customId"> &
+    FormValues["slides"][number];
+
+  const mergedSlides: MergedSlide[] = slides.map(
+    (field: MergedSlide, index: number) => ({
+      ...field,
+      ...watchSlides?.[index],
+    })
+  );
   function selectSlide(index: number) {
     setCurrentIndex(index);
   }
@@ -277,8 +299,7 @@ export default function SlideMaker() {
   function moveDownSlide(from: number) {
     if (
       from + 1 >
-        myFieldArrayValues.filter((obj) => JSON.stringify(obj) !== "{}")
-          .length -
+        mergedSlides.filter((obj) => JSON.stringify(obj) !== "{}").length -
           1 ===
       true
     )
@@ -301,19 +322,18 @@ export default function SlideMaker() {
 
   function copySlide(index: number) {
     writeHistory();
-    insert(index + 1, { ...myFieldArrayValues[index] });
-
+    insert(index + 1, { ...mergedSlides[index] });
     setCurrentIndex(index + 1);
   }
 
   function writeHistory() {
-    undoStack.current.push({ index: currentIndex, slides: myFieldArrayValues });
+    undoStack.current.push({ index: currentIndex, slides: mergedSlides });
   }
 
   function undo() {
     redoStack.current.push({
       index: currentIndex,
-      slides: myFieldArrayValues!,
+      slides: mergedSlides!,
     });
     const lastCommit = undoStack.current.at(-1);
     if (lastCommit) {
@@ -324,7 +344,7 @@ export default function SlideMaker() {
   }
 
   function redo() {
-    undoStack.current.push({ index: currentIndex, slides: myFieldArrayValues });
+    undoStack.current.push({ index: currentIndex, slides: mergedSlides });
     const lastCommit = redoStack.current.at(-1);
     if (lastCommit) {
       replace(lastCommit.slides);
@@ -337,7 +357,7 @@ export default function SlideMaker() {
     return Object.keys(obj).length === 0;
   }
 
-  const watchSlide = myFieldArrayValues[currentIndex];
+  const watchSlide = mergedSlides[currentIndex];
 
   useEffect(() => {
     inputRefs.current[currentIndex]?.focus();
@@ -386,91 +406,87 @@ export default function SlideMaker() {
                 </div>
 
                 <SlideScrollableList>
-                  {myFieldArrayValues &&
-                    myFieldArrayValues
-                      .filter((obj) => JSON.stringify(obj) !== "{}")
-                      .map((slide, index: number) => {
-                        if (isEmpty(myFieldArrayValues[index])) return null;
+                  {slides
+                    .filter((obj) => JSON.stringify(obj) !== "{}")
+                    .map((slide, index: number) => {
+                      return (
+                        <SlideItem
+                          key={slide?.customId}
+                          isActive={index === currentIndex}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            selectSlide(index);
+                          }}
+                        >
+                          <Thumbnail>
+                            <h1 className="font-semibold ">
+                              {mergedSlides[index].title || ""}
+                            </h1>
 
-                        const watchSlide = myFieldArrayValues[index];
-                        return (
-                          <SlideItem
-                            key={"slide" + index}
-                            isActive={index === currentIndex}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              selectSlide(index);
-                            }}
-                          >
-                            <Thumbnail>
-                              <h1 className="font-semibold ">
-                                {watchSlide.title || ""}
-                              </h1>
+                            <p className="text-sm text-muted-foreground truncate max-w-[250px]">
+                              {stripHtml(mergedSlides[index].content || "")}
+                            </p>
+                          </Thumbnail>
+                          <ActionBar isActive={index === currentIndex}>
+                            <div className="flex items-center  m-2 text-white gap-2">
+                              <span>{`${index + 1}`}</span>
 
-                              <p className="text-sm text-muted-foreground truncate max-w-[250px]">
-                                {stripHtml(watchSlide.content || "")}
-                              </p>
-                            </Thumbnail>
-                            <ActionBar isActive={index === currentIndex}>
-                              <div className="flex items-center  m-2 text-white gap-2">
-                                <span>{`${index + 1}`}</span>
+                              {mergedSlides[index].quiz && (
+                                <QuizFlag
+                                  hasProblem={
+                                    quizSchema.safeParse(slide.quiz).error !==
+                                    undefined
+                                  }
+                                />
+                              )}
+                            </div>
 
-                                {watchSlide.quiz && (
-                                  <QuizFlag
-                                    hasProblem={
-                                      quizSchema.safeParse(watchSlide.quiz)
-                                        .error !== undefined
-                                    }
-                                  />
-                                )}
-                              </div>
-
-                              <div className="flex justify-end space-x-2">
-                                {myFieldArrayValues.filter(
-                                  (obj) => JSON.stringify(obj) !== "{}"
-                                ).length > 1 && (
-                                  <DeleteButton
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      deleteSlide(index);
-                                    }}
-                                  />
-                                )}
-                                <CopyButton
+                            <div className="flex justify-end space-x-2">
+                              {mergedSlides.filter(
+                                (obj) => JSON.stringify(obj) !== "{}"
+                              ).length > 1 && (
+                                <DeleteButton
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    copySlide(index);
+                                    deleteSlide(index);
                                   }}
                                 />
-                                {index !== 0 && (
-                                  <MoveButton
-                                    direction="up"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      moveUpSlide(index);
-                                    }}
-                                  />
-                                )}
+                              )}
+                              <CopyButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  copySlide(index);
+                                }}
+                              />
+                              {index !== 0 && (
+                                <MoveButton
+                                  direction="up"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    moveUpSlide(index);
+                                  }}
+                                />
+                              )}
 
-                                {index !==
-                                  myFieldArrayValues.filter(
-                                    (obj) => JSON.stringify(obj) !== "{}"
-                                  ).length -
-                                    1 && (
-                                  <MoveButton
-                                    direction="down"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      moveDownSlide(index);
-                                    }}
-                                  />
-                                )}
-                              </div>
-                            </ActionBar>
-                          </SlideItem>
-                        );
-                      })}
+                              {index !==
+                                mergedSlides.filter(
+                                  (obj) => JSON.stringify(obj) !== "{}"
+                                ).length -
+                                  1 && (
+                                <MoveButton
+                                  direction="down"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    moveDownSlide(index);
+                                  }}
+                                />
+                              )}
+                            </div>
+                          </ActionBar>
+                        </SlideItem>
+                      );
+                    })}
                 </SlideScrollableList>
               </div>
               <div className="w-[75%] flex flex-col ">
@@ -501,18 +517,9 @@ export default function SlideMaker() {
                     </LoadingButton>
                   </div>
                 </div>
-                <div className="min-h-96 border-1 p-4">
-                  <p>{JSON.stringify(myFieldArrayValues)}</p>
-                  <p>{JSON.stringify(currentIndex)}</p>
-                  <p>
-                    {JSON.stringify(
-                      myFieldArrayValues.filter(
-                        (obj) => JSON.stringify(obj) !== "{}"
-                      )
-                    )}
-                  </p>
+                <div className="h-full border-1 p-4">
                   <Tabs
-                    key={slides[currentIndex].customId}
+                    key={slides[currentIndex]?.customId}
                     defaultValue={tabView.current}
                     className="gap-3"
                     onValueChange={(value: string) => {
@@ -578,22 +585,20 @@ export default function SlideMaker() {
                             onCheckedChange={(e) => {
                               if (e) {
                                 update(currentIndex, {
-                                  ...myFieldArrayValues[currentIndex],
+                                  ...mergedSlides[currentIndex],
                                   enableQuiz: e,
-                                  quiz: myFieldArrayValues[currentIndex]
+                                  quiz: mergedSlides[currentIndex]
                                     .quizCache ?? {
                                     question: "",
                                     options: [],
-
                                     correctAnswer: 0,
                                   },
                                 });
                               } else {
                                 update(currentIndex, {
-                                  ...myFieldArrayValues[currentIndex],
+                                  ...mergedSlides[currentIndex],
                                   enableQuiz: e,
-                                  quizCache:
-                                    myFieldArrayValues[currentIndex].quiz,
+                                  quizCache: mergedSlides[currentIndex].quiz,
                                   quiz: undefined,
                                 });
                                 unregister(`slides.${currentIndex}.quiz`);

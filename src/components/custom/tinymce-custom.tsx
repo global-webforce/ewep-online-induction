@@ -21,6 +21,20 @@ export default function TinyMECEditor({
 
   const editorRef = useRef(null);
 
+  //Very Important! The onchange triggers when value is given with plain text!!!!
+  function wrapIfPlainText(input?: string): string | undefined {
+    if (input === undefined) return undefined;
+
+    // Check if string contains any HTML tags
+    const hasHTML = /<\/?[a-z][\s\S]*>/i.test(input.trim());
+
+    if (hasHTML) {
+      return input; // already HTML, no wrapping
+    }
+
+    return `<p>${input}</p>`;
+  }
+
   return (
     <div style={{ position: "relative", width: "100%", height: height }}>
       {loading && (
@@ -45,7 +59,7 @@ export default function TinyMECEditor({
 
       <Editor
         id={id}
-        value={value}
+        value={wrapIfPlainText(value)}
         tinymceScriptSrc="/tinymce/tinymce.min.js"
         licenseKey="gpl"
         onEditorChange={(e) => onChange(e)}
