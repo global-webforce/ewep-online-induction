@@ -17,23 +17,25 @@ export default function DeleteButton({ onClick }: DeleteButtonProps) {
 
   return (
     <div className="flex items-center gap-1">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowDeleteConfirmation(true);
-            }}
-            aria-label="Delete slide"
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Delete slide</TooltipContent>
-      </Tooltip>
+      {!showDeleteConfirmation && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteConfirmation(true);
+              }}
+              aria-label="Delete slide"
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Delete slide</TooltipContent>
+        </Tooltip>
+      )}
       {showDeleteConfirmation && (
         <div className="flex items-center gap-2">
           <Button

@@ -18,7 +18,6 @@ export default function MoveButton({ direction, onClick }: MoveButtonProps) {
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          type="button"
           variant="ghost"
           size="icon"
           onClick={(e) => {

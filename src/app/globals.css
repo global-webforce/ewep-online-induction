@@ -127,3 +127,6 @@
     cursor: pointer;
   }
 }
+.tox .tox-edit-area::before {
+  border: 2px solid #fe9a00 !important;
+}

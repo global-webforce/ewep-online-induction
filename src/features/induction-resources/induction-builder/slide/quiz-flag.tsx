@@ -9,7 +9,7 @@ import React from "react";
 export default function QuizFlag({
   hasProblem = false,
 }: {
-  hasProblem: boolean;
+  hasProblem: boolean | undefined;
 }) {
   return (
     <Tooltip>

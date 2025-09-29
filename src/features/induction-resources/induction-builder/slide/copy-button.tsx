@@ -16,7 +16,6 @@ export default function CopyButton({ onClick }: CopyButtonProps) {
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          type="button"
           variant="ghost"
           size="icon"
           onClick={(e) => {

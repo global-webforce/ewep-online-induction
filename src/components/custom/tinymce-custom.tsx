@@ -1,39 +1,37 @@
 "use client";
 
-import { Editor } from "@tinymce/tinymce-react";
-import { useRef, useState } from "react";
+import { Editor, IAllProps } from "@tinymce/tinymce-react";
+import { forwardRef, useRef, useState } from "react";
+import { FieldError } from "react-hook-form";
 
-interface TinyMECEditorProps {
+/* interface TinyMECEditorProps {
   id: string;
   value?: string;
   initialValue?: string;
+  onBlur: (newValue: string) => void;
   onChange: (newValue: string) => void;
 }
+ */
+export function wrapIfPlainText(input?: string): string | undefined {
+  if (input === undefined) return undefined;
 
-export default function TinyMECEditor({
-  id,
-  value,
+  // Check if string contains any HTML tags
+  const hasHTML = /<\/?[a-z][\s\S]*>/i.test(input.trim());
 
-  onChange,
-}: TinyMECEditorProps) {
+  if (hasHTML) {
+    return input; // already HTML, no wrapping
+  }
+
+  return `<p>${input}</p>`;
+}
+
+export default function TinyMECEditor(tinyMECEditorProps: IAllProps) {
   const [loading, setLoading] = useState(true);
-  const height = 560;
+  const height = 600;
 
   const editorRef = useRef(null);
 
   //Very Important! The onchange triggers when value is given with plain text!!!!
-  function wrapIfPlainText(input?: string): string | undefined {
-    if (input === undefined) return undefined;
-
-    // Check if string contains any HTML tags
-    const hasHTML = /<\/?[a-z][\s\S]*>/i.test(input.trim());
-
-    if (hasHTML) {
-      return input; // already HTML, no wrapping
-    }
-
-    return `<p>${input}</p>`;
-  }
 
   return (
     <div style={{ position: "relative", width: "100%", height: height }}>
@@ -58,11 +56,9 @@ export default function TinyMECEditor({
       )}
 
       <Editor
-        id={id}
-        value={wrapIfPlainText(value)}
+        {...tinyMECEditorProps}
         tinymceScriptSrc="/tinymce/tinymce.min.js"
         licenseKey="gpl"
-        onEditorChange={(e) => onChange(e)}
         onInit={(editor) => {
           setLoading(false);
           editorRef.current = editor;
@@ -90,15 +86,18 @@ export default function TinyMECEditor({
           paste_data_images: true, // Allow pasting images
           menubar: false,
           body_id: "mamaloan",
-          setup: () => {
-            /*   editor.ui.registry.addButton("customInsertButton", {
+          /*    setup: (editor: any) => {
+              editor.on("blur", (e: any) => {
+              alert("blur!!!");
+            }); 
+               editor.ui.registry.addButton("customInsertButton", {
               text: "My Button",
               onAction: (_) =>
                 editor.insertContent(
                   `&nbsp;<strong>It's my button!</strong>&nbsp;`
                 ),
-            }); */
-          },
+            }); 
+          }, */
           link_default_target: "_blank",
           promotion: false,
           skin: "oxide",

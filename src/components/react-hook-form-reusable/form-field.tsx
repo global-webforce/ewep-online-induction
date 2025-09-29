@@ -1,27 +1,21 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Control,
-  Controller,
-  ControllerRenderProps,
-  FieldValues,
-  Path,
-} from "react-hook-form";
+import { Controller, Control, FieldValues, Path } from "react-hook-form";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
 
 type FormFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   label?: string;
-  placeholder?: string;
-  type?: string;
-};
+} & Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "name" | "value" | "onChange" | "ref"
+>;
 
 export function FormField<T extends FieldValues>({
   control,
   name,
   label,
-  placeholder,
-  type = "text",
+  ...inputProps
 }: FormFieldProps<T>) {
   return (
     <Controller
@@ -31,7 +25,7 @@ export function FormField<T extends FieldValues>({
         <div className="flex flex-col gap-1.5">
           {label && <Label htmlFor={name}>{label}</Label>}
 
-          <Input id={name} type={type} placeholder={placeholder} {...field} />
+          <Input id={name} {...field} {...inputProps} />
           {fieldState.error && (
             <p className="text-sm text-red-500">{fieldState.error.message}</p>
           )}
@@ -40,30 +34,3 @@ export function FormField<T extends FieldValues>({
     />
   );
 }
-
-/*USAGE*/
-
-/*
-
-<FormField
-  control={form.control}
-  name="email"
-  label="Email"
-  placeholder="you@example.com"
-  type="email"
-/>
-
-<FormField
-  control={form.control}
-  name="role"
-  label="Role"
-  render={({ value, onChange }) => (
-    <Select value={value} onValueChange={onChange}>
-      <SelectItem value="admin">Admin</SelectItem>
-      <SelectItem value="user">User</SelectItem>
-    </Select>
-  )}
-/>
-
-
-*/

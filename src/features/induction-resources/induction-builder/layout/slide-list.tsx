@@ -10,7 +10,7 @@ interface SlideScrollableListProps {
 export function SlideScrollableList({ children }: SlideScrollableListProps) {
   return (
     <TooltipProvider>
-      <div className=" overflow-auto min-h-[600] max-h-[600] border-1 border-r-0">
+      <div className="overflow-y-auto max-h-[700] border-b-1">
         <div className="space-y-3 p-3">{children}</div>
       </div>
     </TooltipProvider>

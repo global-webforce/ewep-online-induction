@@ -1,7 +1,8 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import SlideMaker from "@/features/induction-resources/induction-builder-rhf";
+import SlideMaker from "@/features/induction-resources/induction-builder/slide-maker";
+
 import { getInductionResourcesById } from "@/features/induction-resources/queries";
 
 import { getInductionById } from "@/features/inductions";
@@ -49,9 +50,14 @@ export default function SingleInductionPage() {
         </AlertPanelState>
       )}
 
-      <h1 className="text-xl font-bold">{inductionQuery.data?.title}</h1>
-
-      <SlideMaker />
+      {/*   <h1 className="text-xl font-bold">{inductionQuery.data?.title}</h1>
+       */}
+      {inductionQuery.data && inductionSlidesQuery.data && (
+        <SlideMaker
+          induction={inductionQuery.data}
+          value={inductionSlidesQuery.data}
+        />
+      )}
     </>
   );
 }
