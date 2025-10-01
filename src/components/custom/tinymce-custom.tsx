@@ -1,17 +1,8 @@
 "use client";
 
 import { Editor, IAllProps } from "@tinymce/tinymce-react";
-import { forwardRef, useRef, useState } from "react";
-import { FieldError } from "react-hook-form";
+import { useRef, useState } from "react";
 
-/* interface TinyMECEditorProps {
-  id: string;
-  value?: string;
-  initialValue?: string;
-  onBlur: (newValue: string) => void;
-  onChange: (newValue: string) => void;
-}
- */
 export function wrapIfPlainText(input?: string): string | undefined {
   if (input === undefined) return undefined;
 

@@ -1,9 +1,9 @@
 "use client";
 
+import { AlertPanel } from "@/components/custom/alert-panel";
 import TinyMECEditor, {
   wrapIfPlainText,
 } from "@/components/custom/tinymce-custom";
-import { AlertPanel } from "@/components/custom/alert-panel";
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
 import { FormField as FormFieldCustom } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,38 +16,38 @@ export default function SlidePreviewEditor({
   value,
   onChange,
 }: {
-  value: () => SlideSchema;
+  value: SlideSchema;
   onChange: (value: SlideSchema) => void;
 }) {
-  const { formState, control, getValues, reset, watch } = useForm<SlideSchema>({
+  const { formState, control, getValues, reset } = useForm<SlideSchema>({
     mode: "onChange",
     reValidateMode: "onChange",
     resolver: zodResolver(slideSchema),
     defaultValues: {
       title: "",
       content: "",
-      quiz: undefined,
-      order: 0,
-      localId: "1a1a1a",
+      localId: "",
+      quiz: null,
+      enableQuiz: false,
+      quizCache: null,
     },
-    values: value(),
+    values: value,
   });
-  const allFormValues = watch();
 
   useEffect(() => {
-    if (!isEqual(value()?.quiz, getValues()) && formState.isDirty) {
+    if (!isEqual(value, getValues()) && formState.isDirty) {
       onChange({
-        ...value(),
-        ...allFormValues,
+        ...value,
+        ...getValues(),
       } as SlideSchema);
     }
-  }, [formState.isDirty, allFormValues, value]);
+  }, [formState.isDirty, , value, getValues, onChange]);
 
   useEffect(() => {
-    if (!isEqual(value()?.quiz, getValues())) {
-      reset(value());
+    if (!isEqual(value?.quiz, getValues())) {
+      reset(value);
     }
-  }, [value]);
+  }, [value, getValues, reset]);
 
   return (
     <div className="">
@@ -63,14 +63,13 @@ export default function SlidePreviewEditor({
         <FormFieldCustom
           control={control}
           name={"content"}
-          render={({ field: { onChange, onBlur, value: val } }) => {
+          render={({ field: { onChange, value: val } }) => {
             return (
               <TinyMECEditor
-                id={`tiny-editor-${value().localId}`}
-                value={wrapIfPlainText(val)}
-                onBlur={() => onBlur()}
-                onEditorChange={(content, _editor) => {
-                  onChange(content);
+                id={`tiny-editor-${value.localId}`}
+                value={val || ""}
+                onEditorChange={(value, _editor) => {
+                  onChange(value);
                 }}
               />
             );

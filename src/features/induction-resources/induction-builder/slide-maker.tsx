@@ -6,13 +6,18 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Redo, Undo } from "lucide-react";
 import { useState } from "react";
-import { quizSchema, SlideSchema, TableSchema } from "../types";
+import {
+  quizSchema,
+  quizSchemaStrict,
+  SlideSchema,
+  TableSchema,
+} from "../types";
 
-import { SlideScrollableList } from "./layout/slide-list";
-
-import ExitDialog from "./exit-dialog";
-import { QuizForm } from "./quiz-editor";
-import QuizToggle from "./quiz-toggle";
+import { Card } from "@/components/ui/card";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { InductionSchema } from "@/features/inductions";
+import { QuizForm } from "./quiz/quiz-editor";
+import QuizToggle from "./quiz/quiz-toggle";
 import SlidePreviewEditor from "./slide-preview-editor";
 import ActionBar from "./slide/action-bar";
 import CopyButton from "./slide/copy-button";
@@ -23,10 +28,8 @@ import SlideItem from "./slide/slide";
 import Thumbnail from "./slide/thumbnail";
 import { useSlideController } from "./use-slide-controller";
 import { stripHtml } from "./utils";
-import { InductionSchema } from "@/features/inductions";
 
 export default function SlideMaker({
-  induction,
   value,
 }: {
   induction: InductionSchema | undefined;
@@ -35,10 +38,11 @@ export default function SlideMaker({
   const {
     slides,
     undoStack,
+
     redoStack,
     selectedSlide,
     selectedId,
-    selectedIndex,
+
     setSelectedId,
     updateSlide,
     isDirty,
@@ -65,21 +69,32 @@ export default function SlideMaker({
           }}
         >
           <Thumbnail>
-            <h1 className="font-semibold ">{slide.title || ""}</h1>
+            <>
+              <h1 className="font-semibold line-clamp-1">
+                {slide.title || ""}
+              </h1>
 
-            <p className="text-sm text-muted-foreground truncate max-w-[250px]">
-              {stripHtml(slide.content || "")}
-            </p>
+              <p className="text-sm text-muted-foreground line-clamp-2 ">
+                {stripHtml(slide.content || "")}
+              </p>
+            </>
+
+            <>
+              {!slide.title && !slide.content && (
+                <p className="text-sm text-muted-foreground line-clamp-2 ">
+                  {slide.quiz?.question}
+                </p>
+              )}
+            </>
           </Thumbnail>
           <ActionBar isActive={slide.localId === selectedId}>
             <div className="flex items-center  m-2 text-white gap-2">
               <span>{`${index + 1}`}</span>
               <QuizFlag
-                hasProblem={
-                  slide.quiz !== undefined &&
-                  quizSchema.safeParse(slide.quiz).error &&
-                  Object.keys(quizSchema.safeParse(slide.quiz).error!)
-                    .length === 0
+                error={
+                  (slide.quiz &&
+                    quizSchemaStrict.safeParse(slide.quiz).error) ||
+                  null
                 }
               />
             </div>
@@ -128,17 +143,16 @@ export default function SlideMaker({
   const topActionBar = () => {
     return (
       <div className="flex gap-2 p-3 border-b-1 items-center justify-between ">
-        <h1 className="text-xl font-bold">{induction?.title}</h1>
         <div className="flex gap-2">
           <Button
-            disabled={undoStack.length == 0}
+            disabled={undoStack.length === 0}
             size={"icon"}
             onClick={() => undo()}
           >
             <Undo />
           </Button>
           <Button
-            disabled={redoStack.length == 0}
+            disabled={redoStack.length === 0}
             size={"icon"}
             onClick={() => redo()}
           >
@@ -176,31 +190,36 @@ export default function SlideMaker({
             >
               <SlidePreviewEditor
                 key={`editor-${selectedSlide.localId}`}
-                value={() => selectedSlide}
+                value={selectedSlide}
                 onChange={(value) => {
                   updateSlide(value);
                 }}
               />
             </TabsContent>
-            <TabsContent value="quiz" className="flex flex-col gap-3 max-w-2xl">
-              <div className="flex items-center space-x-4 mt-3">
+            <TabsContent
+              value="quiz"
+              className="flex flex-col gap-4 pt-3 pb-3 max-w-xl"
+            >
+              <Card className="flex flex-row gap-4 p-3 ">
                 <QuizToggle
                   key={`quiz-toggle-${selectedSlide.localId}`}
                   slide={selectedSlide}
                   onEnabled={(e) => updateSlide(e)}
                   onDisabled={(e) => updateSlide(e)}
                 />
-
                 <Label htmlFor="airplane-mode">Enable Quiz</Label>
-              </div>
+              </Card>
+
               {(selectedSlide.enableQuiz || selectedSlide.quiz) && (
-                <QuizForm
-                  key={`quiz-editor-${selectedSlide.localId}`}
-                  value={selectedSlide}
-                  onChange={(value) => {
-                    updateSlide(value);
-                  }}
-                />
+                <Card className="p-4">
+                  <QuizForm
+                    key={`quiz-editor-${selectedSlide.localId}`}
+                    value={selectedSlide}
+                    onChange={(value) => {
+                      updateSlide(value);
+                    }}
+                  />
+                </Card>
               )}
             </TabsContent>
           </Tabs>
@@ -211,31 +230,33 @@ export default function SlideMaker({
 
   return (
     <>
-      <ExitDialog isDirty={isDirty()} />
+      {/* <ExitDialog isDirty={isDirty()} /> */}
+      {/*  <p>{JSON.stringify(slides)}</p> */}
+      <div className="flex h-full border-1  relative">
+        <div className="w-[25%] border-r-1 flex flex-col  flex-1 basis-auto absolute left-0 top-0 bottom-0">
+          <div className="p-3 border-b-1">
+            <Button onClick={() => addSlide()} className="w-full">
+              <Plus className="mr-2 h-4 w-4" /> Add Slide
+            </Button>
+          </div>
 
-      <div className="flex flex-col border-1 h-auto min-h-[600] ">
-        <div className="flex flex-1">
-          <div className="w-[25%] border-r-1 ">
-            <div className="p-3 border-b-1">
-              <Button onClick={() => addSlide()} className="w-full">
-                <Plus className="mr-2 h-4 w-4" /> Add Slide
-              </Button>
+          <div className=" overflow-y-auto basis-auto p-3 space-y-3">
+            <TooltipProvider>{slideItems()}</TooltipProvider>
+          </div>
+        </div>
+        <div className="w-[25%] "></div>
+        <div className=" flex flex-col  flex-1 basis-auto ">
+          {topActionBar()}
+
+          {selectedSlide ? (
+            <div className="p-4">{preview()}</div>
+          ) : (
+            <div className="flex-1 m-4 p-4 flex items-center justify-center border-2 border-dashed rounded-xl text-gray-500 ">
+              <p className="text-lg font-medium">
+                Select a slide to get started
+              </p>
             </div>
-            <SlideScrollableList>{slideItems()}</SlideScrollableList>
-          </div>
-          <div className="w-[75%] flex flex-col ">
-            {topActionBar()}
-
-            {selectedSlide ? (
-              <div className="p-4">{preview()}</div>
-            ) : (
-              <div className="flex-1 m-4 p-4 flex items-center justify-center border-2 border-dashed rounded-xl text-gray-500 ">
-                <p className="text-lg font-medium">
-                  Select a slide to get started
-                </p>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </>

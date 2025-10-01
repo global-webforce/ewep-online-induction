@@ -14,7 +14,7 @@ export default function SlideItem({
   return (
     <div
       onClick={() => onClick()}
-      className={`border cursor-pointer transition-colors ${
+      className={`border cursor-pointer transition-colors rounded-lg overflow-hidden ${
         isActive ? "bg-accent border-amber-500 border-1" : "hover:bg-accent/50"
       }`}
     >

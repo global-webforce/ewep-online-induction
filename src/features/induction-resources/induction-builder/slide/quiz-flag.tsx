@@ -5,23 +5,41 @@ import {
 } from "@/components/ui/tooltip";
 import { HelpCircle } from "lucide-react";
 import React from "react";
+import { ZodError } from "zod";
 
-export default function QuizFlag({
-  hasProblem = false,
-}: {
-  hasProblem: boolean | undefined;
-}) {
+export default function QuizFlag({ error }: { error: ZodError | null }) {
+  const formattedErrors: string[] = [];
+
+  if (error) {
+    for (const issue of error.issues) {
+      // Group all option errors into one
+      if (issue.path[0] === "options") {
+        if (!formattedErrors.includes("One of the options has a problem")) {
+          formattedErrors.push("One of the options has a problem");
+        }
+      } else {
+        formattedErrors.push(issue.message);
+      }
+    }
+  }
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <HelpCircle
-          className={`h-4 w-4 ${hasProblem === true && "text-amber-500"}`}
+          className={`h-4 w-4 ${error != null && "text-amber-500"}`}
         />
       </TooltipTrigger>
-      {hasProblem === true && <TooltipContent>Incomplete Quiz!</TooltipContent>}
-      {hasProblem === false && (
-        <TooltipContent>This slide has a quiz!</TooltipContent>
+      {error != null && (
+        <TooltipContent>
+          <li>
+            {formattedErrors.map((err, idx) => (
+              <p key={`quiz-error-${idx}`}>{err}</p>
+            ))}
+          </li>
+        </TooltipContent>
       )}
+      {error == null && <TooltipContent>This slide has a quiz!</TooltipContent>}
     </Tooltip>
   );
 }

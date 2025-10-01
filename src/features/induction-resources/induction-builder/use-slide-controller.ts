@@ -3,7 +3,7 @@
 import { isEqual } from "lodash";
 import { useMemo, useRef, useState } from "react";
 import { SlideSchema, TableSchema } from "../types";
-
+import DOMPurify from "dompurify";
 function randomId() {
   return (Math.random() + 1).toString(36).substring(7);
 }
@@ -17,7 +17,7 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
   const undoStack = useRef<HistoryEntry[]>([]);
   const redoStack = useRef<HistoryEntry[]>([]);
   const pristineValue = useRef<SlideSchema[]>([]);
-
+  const deletedSlidesWithId = useRef<SlideSchema[]>([]);
   const [slides, setSlides] = useState<SlideSchema[]>([]);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
@@ -31,51 +31,61 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
     return slides.findIndex((slide) => slide.localId === selectedId);
   }, [slides, selectedId]);
 
+  const onSave = () => {};
+
   useMemo(() => {
     if (value && value.length > 0) {
-      const sorted = value.sort((a, b) => {
+      const sorted = [...value].sort((a, b) => {
         if (a.order === undefined && b.order === undefined) return 0;
         if (a.order === undefined) return 1;
         if (b.order === undefined) return -1;
         return a.order - b.order;
       });
-      const mapped = sorted.map((slide, index) => ({
+      const mapped = [...sorted].map((slide, index) => ({
         ...slide,
+        content: DOMPurify.sanitize(slide.content || ""),
         order: index, // db order replaced with local order
-        localId: slide.localId || randomId(), // local id is used instead of db id
+        localId: randomId(), // local id is used instead of db id
         enableQuiz: slide.quiz !== null,
-        quizCache: slide.quiz,
+        quizCache: null,
       }));
-      pristineValue.current = mapped;
+
       setSelectedId(mapped[mapped.length - 1].localId);
+      pristineValue.current = mapped;
       setSlides(mapped);
     }
   }, [value]);
 
   const addSlide = () => {
-    undoStack.current.push({ selectedId: selectedId, slides: slides });
-    let newSlides;
-    let newSlide;
-
+    handleChange();
     const id = randomId();
 
-    setSlides((prev) => {
-      newSlide = {
-        title: "",
-        content: "",
-        quiz: null,
-        localId: id,
-      };
-      newSlides = [
-        ...prev.toSpliced(
-          selectedIndex !== undefined && selectedIndex >= 0
-            ? selectedIndex + 1
-            : prev.length - 1,
-          0,
-          newSlide
-        ),
-      ];
-      return newSlides;
+    setSlides((prevSlides) => {
+      return selectedIndex !== undefined && selectedIndex >= 0
+        ? [
+            ...prevSlides.slice(0, selectedIndex + 1),
+            {
+              title: "",
+              content: "",
+
+              localId: id,
+              quiz: null,
+              enableQuiz: false,
+              quizCache: null,
+            },
+            ...prevSlides.slice(selectedIndex + 1),
+          ]
+        : [
+            ...prevSlides,
+            {
+              title: "",
+              content: "",
+              localId: id,
+              quiz: null,
+              enableQuiz: false,
+              quizCache: null,
+            },
+          ];
     });
 
     setSelectedId(id);
@@ -83,19 +93,22 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
 
   const copySlide = (targetIndex: number) => {
     undoStack.current.push({ selectedId: selectedId, slides: slides });
-    let newSlides;
 
     const id = randomId();
 
-    setSlides((prev) => {
-      let newSlide = prev[targetIndex];
-      newSlide = {
-        ...newSlide,
+    setSlides((prevSlides) => {
+      const copiedSlide = {
+        ...prevSlides[targetIndex],
+        id: undefined,
+        title: `${prevSlides[targetIndex].title}`,
         localId: id,
       };
-      newSlides = prev.toSpliced(targetIndex + 1, 0, newSlide);
 
-      return newSlides;
+      return [
+        ...prevSlides.slice(0, targetIndex + 1),
+        copiedSlide,
+        ...prevSlides.slice(targetIndex + 1),
+      ];
     });
 
     setSelectedId(id);
@@ -103,31 +116,29 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
 
   const deleteSlide = (targetIndex: number) => {
     undoStack.current.push({ selectedId: selectedId, slides: slides });
-    let newSlides;
-
-    setSlides((prev) => {
-      newSlides = prev.filter((_, i) => i !== targetIndex);
-      return newSlides;
+    if (slides[targetIndex].id !== null) {
+      deletedSlidesWithId.current = [
+        ...deletedSlidesWithId.current,
+        slides[targetIndex],
+      ];
+    }
+    setSlides((prevSlides) => {
+      return prevSlides.filter((_, i) => i !== targetIndex);
     });
   };
 
-  const updateSlide = (updatedData: Partial<SlideSchema>) => {
+  const updateSlide = (updatedData: SlideSchema) => {
     // Intentionally disabled undo tracking on this
-    let newSlides;
     setSlides((prev) => {
-      newSlides = prev.map((slide) =>
+      return prev.map((slide) =>
         slide.localId === updatedData.localId
           ? { ...slide, ...updatedData }
           : slide
       );
-      return newSlides;
     });
   };
 
   const moveSlide = (direction: "up" | "down", targetIndex: number) => {
-    let newSlides;
-    let newSlide;
-
     const isMovingUp = direction === "up";
     const isMovingDown = direction === "down";
 
@@ -138,37 +149,47 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
       return;
     }
 
-    undoStack.current.push({ selectedId: selectedId, slides: slides! });
-    setSlides((prevSlides) => {
+    undoStack.current.push({ selectedId: selectedId, slides: slides });
+
+    setSlides((prev) => {
+      const prevSlides = [...prev];
+
       const swapIndex = isMovingUp ? targetIndex - 1 : targetIndex + 1;
-      newSlide = prevSlides[targetIndex];
+      const newSlide = prevSlides[targetIndex];
       const adjacentSlide = prevSlides[swapIndex];
 
-      newSlides = [...prevSlides];
-      newSlides[targetIndex] = { ...adjacentSlide };
-      newSlides[swapIndex] = { ...newSlide };
+      prevSlides[targetIndex] = { ...adjacentSlide };
+      prevSlides[swapIndex] = { ...newSlide };
 
-      return newSlides;
+      return prevSlides;
     });
   };
 
+  const handleChange = () => {
+    undoStack.current.push({ selectedId: selectedId, slides: slides });
+  };
+  //   undoStack.current.push({ selectedId: selectedId, slides: slides });
   const undo = () => {
-    const lastCommit = undoStack.current.at(-1);
-    if (lastCommit) {
-      redoStack.current.push({ selectedId: selectedId, slides: slides! });
-      setSlides(lastCommit.slides);
-      setSelectedId(lastCommit.selectedId);
-      undoStack.current.pop();
-    }
+    const lastCommit = undoStack.current[undoStack.current.length - 1];
+    setSlides(lastCommit.slides);
+    setSelectedId(lastCommit.selectedId);
+    undoStack.current = [...undoStack.current.slice(0, -1)];
+    redoStack.current = [
+      { slides: slides, selectedId: selectedId },
+      ...redoStack.current,
+    ];
   };
 
   const redo = () => {
-    const lastCommit = redoStack.current.at(-1);
+    const lastCommit = redoStack.current[0];
     if (lastCommit) {
-      undoStack.current.push({ selectedId: selectedId, slides: slides! });
       setSlides(lastCommit.slides);
       setSelectedId(lastCommit.selectedId);
-      redoStack.current.pop();
+      undoStack.current = [
+        ...undoStack.current,
+        { slides: slides, selectedId: selectedId },
+      ];
+      redoStack.current = [...redoStack.current.slice(1)];
     }
   };
 
@@ -179,6 +200,7 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
   return {
     undoStack: undoStack.current,
     redoStack: redoStack.current,
+
     selectedSlide,
     selectedIndex,
     setSelectedId,

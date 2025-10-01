@@ -1,6 +1,6 @@
 import { Switch } from "@/components/custom/switch-custom";
 import React from "react";
-import { SlideSchema } from "../types";
+import { SlideSchema } from "../../types";
 
 export default function QuizToggle({
   slide,
@@ -14,7 +14,7 @@ export default function QuizToggle({
   return (
     <Switch
       size={"default"}
-      checked={slide.enableQuiz || slide.quiz != null}
+      checked={slide.enableQuiz === true}
       className="data-[state=checked]:bg-amber-500 "
       onCheckedChange={(e) => {
         if (e) {
@@ -23,6 +23,7 @@ export default function QuizToggle({
             enableQuiz: true,
             quiz: slide.quizCache || slide.quiz,
           } as SlideSchema;
+          console.log(value);
           onEnabled(value);
         } else {
           const value = {
@@ -31,6 +32,7 @@ export default function QuizToggle({
             enableQuiz: false,
             quiz: null,
           } as SlideSchema;
+          console.log(value);
           onDisabled(value);
         }
       }}
