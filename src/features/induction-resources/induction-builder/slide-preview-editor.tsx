@@ -1,16 +1,23 @@
 "use client";
-
+import DOMPurify from "dompurify";
 import { AlertPanel } from "@/components/custom/alert-panel";
 import TinyMECEditor, {
   wrapIfPlainText,
 } from "@/components/custom/tinymce-custom";
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import { FormField as FormFieldCustom } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField as FormFieldCustom,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEqual } from "lodash";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { slideSchema, SlideSchema } from "../types";
+import { fi } from "date-fns/locale";
 
 export default function SlidePreviewEditor({
   value,
@@ -19,20 +26,15 @@ export default function SlidePreviewEditor({
   value: SlideSchema;
   onChange: (value: SlideSchema) => void;
 }) {
-  const { formState, control, getValues, reset } = useForm<SlideSchema>({
+  const form = useForm<SlideSchema>({
     mode: "onChange",
     reValidateMode: "onChange",
     resolver: zodResolver(slideSchema),
-    defaultValues: {
-      title: "",
-      content: "",
-      localId: "",
-      quiz: null,
-      enableQuiz: false,
-      quizCache: null,
-    },
-    values: value,
+    defaultValues: value,
   });
+  const { formState, control, getValues, reset, watch } = form;
+
+  watch();
 
   useEffect(() => {
     if (!isEqual(value, getValues()) && formState.isDirty) {
@@ -41,7 +43,7 @@ export default function SlidePreviewEditor({
         ...getValues(),
       } as SlideSchema);
     }
-  }, [formState.isDirty, , value, getValues, onChange]);
+  }, [formState.isDirty, value, getValues, onChange]);
 
   useEffect(() => {
     if (!isEqual(value?.quiz, getValues())) {
@@ -57,25 +59,33 @@ export default function SlidePreviewEditor({
         </AlertPanel>
       )}
 
-      <form className="flex flex-col gap-4">
-        <FormField control={control} type="text" name="title" label="" />
+      <Form key={value.localId} {...form}>
+        <form className="flex flex-col gap-4">
+          <FormField control={control} type="text" name="title" label="" />
 
-        <FormFieldCustom
-          control={control}
-          name={"content"}
-          render={({ field: { onChange, value: val } }) => {
-            return (
-              <TinyMECEditor
-                id={`tiny-editor-${value.localId}`}
-                value={val || ""}
-                onEditorChange={(value, _editor) => {
-                  onChange(value);
-                }}
-              />
-            );
-          }}
-        />
-      </form>
+          <FormFieldCustom
+            control={form.control}
+            name={"content"}
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormControl>
+                    <TinyMECEditor
+                      id={`editor-${value.localId}`}
+                      apiKey="nh02gna9iklugsf1ygr50mi8ra9tmeswjj9u7cpo6jin8veq"
+                      value={field.value || ""}
+                      onEditorChange={(x, _editor) => {
+                        field.onChange(x);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+        </form>
+      </Form>
     </div>
   );
 }

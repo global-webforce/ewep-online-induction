@@ -2,7 +2,7 @@ import z from "zod";
 import { tableSchema } from "../types";
 
 export const sampleData: z.infer<typeof tableSchema> = {
-  id: "tbl_001",
+  id: 1,
   induction_id: "550e8400-e29b-41d4-a716-446655440000", // valid UUID v4
 
   order: 1,

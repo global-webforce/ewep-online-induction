@@ -1,9 +1,9 @@
 "use client";
 
+import { InductionSchema } from "@/features/inductions";
 import { isEqual } from "lodash";
 import { useMemo, useRef, useState } from "react";
-import { SlideSchema, TableSchema } from "../types";
-import DOMPurify from "dompurify";
+import { SlideSchema, TableSchema, UpsertSchema, upsertSchema } from "../types";
 function randomId() {
   return (Math.random() + 1).toString(36).substring(7);
 }
@@ -13,11 +13,17 @@ type HistoryEntry = {
   selectedId: string | undefined;
 };
 
-export const useSlideController = (value: TableSchema[] | undefined) => {
+export const useSlideController = ({
+  induction,
+  value,
+}: {
+  induction: InductionSchema | undefined;
+  value: TableSchema[] | undefined;
+}) => {
   const undoStack = useRef<HistoryEntry[]>([]);
   const redoStack = useRef<HistoryEntry[]>([]);
   const pristineValue = useRef<SlideSchema[]>([]);
-  const deletedSlidesWithId = useRef<SlideSchema[]>([]);
+  const deletedSlidesWithId = useRef<number[]>([]);
   const [slides, setSlides] = useState<SlideSchema[]>([]);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
@@ -31,7 +37,23 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
     return slides.findIndex((slide) => slide.localId === selectedId);
   }, [slides, selectedId]);
 
-  const onSave = () => {};
+  const onSave = (): {
+    slidesToUpsert: UpsertSchema[];
+    slidesToDelete: number[];
+  } => {
+    const slidesToUpsert = slides.map((slide, index) => {
+      return upsertSchema.parse({
+        ...slide,
+        order: index,
+        induction_id: induction?.id || "",
+      });
+    });
+
+    return {
+      slidesToUpsert: slidesToUpsert,
+      slidesToDelete: deletedSlidesWithId.current,
+    };
+  };
 
   useMemo(() => {
     if (value && value.length > 0) {
@@ -43,14 +65,14 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
       });
       const mapped = [...sorted].map((slide, index) => ({
         ...slide,
-        content: DOMPurify.sanitize(slide.content || ""),
+
         order: index, // db order replaced with local order
         localId: randomId(), // local id is used instead of db id
         enableQuiz: slide.quiz !== null,
         quizCache: null,
       }));
 
-      setSelectedId(mapped[mapped.length - 1].localId);
+      //   setSelectedId(mapped[mapped.length - 1].localId);
       pristineValue.current = mapped;
       setSlides(mapped);
     }
@@ -119,7 +141,7 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
     if (slides[targetIndex].id !== null) {
       deletedSlidesWithId.current = [
         ...deletedSlidesWithId.current,
-        slides[targetIndex],
+        slides[targetIndex].id!,
       ];
     }
     setSlides((prevSlides) => {
@@ -200,7 +222,7 @@ export const useSlideController = (value: TableSchema[] | undefined) => {
   return {
     undoStack: undoStack.current,
     redoStack: redoStack.current,
-
+    onSave,
     selectedSlide,
     selectedIndex,
     setSelectedId,

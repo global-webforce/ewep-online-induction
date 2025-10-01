@@ -11,6 +11,7 @@ import {
   quizSchemaStrict,
   SlideSchema,
   TableSchema,
+  UpsertSchema,
 } from "../types";
 
 import { Card } from "@/components/ui/card";
@@ -28,17 +29,50 @@ import SlideItem from "./slide/slide";
 import Thumbnail from "./slide/thumbnail";
 import { useSlideController } from "./use-slide-controller";
 import { stripHtml } from "./utils";
+import { on } from "events";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { updateAction } from "../mutations";
 
 export default function SlideMaker({
+  induction,
   value,
 }: {
   induction: InductionSchema | undefined;
   value: TableSchema[] | undefined;
 }) {
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({
+      slidesToUpsert,
+      slidesToDelete,
+    }: {
+      slidesToUpsert: UpsertSchema[];
+      slidesToDelete: number[];
+    }) =>
+      updateAction({
+        slidesToUpsert: slidesToUpsert,
+        slidesToDelete: slidesToDelete,
+      }),
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: [`induction-resources`, induction!.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["inductions"],
+      });
+      toast.success("Record has been updated.");
+      // form.reset(data);
+    },
+  });
+
   const {
     slides,
     undoStack,
-
+    onSave,
     redoStack,
     selectedSlide,
     selectedId,
@@ -52,9 +86,7 @@ export default function SlideMaker({
     moveSlide,
     undo,
     redo,
-  } = useSlideController(value);
-
-  const [loading] = useState<boolean>(false);
+  } = useSlideController({ induction: induction, value: value });
 
   const slideItems = () => {
     return (
@@ -90,13 +122,11 @@ export default function SlideMaker({
           <ActionBar isActive={slide.localId === selectedId}>
             <div className="flex items-center  m-2 text-white gap-2">
               <span>{`${index + 1}`}</span>
-              <QuizFlag
-                error={
-                  (slide.quiz &&
-                    quizSchemaStrict.safeParse(slide.quiz).error) ||
-                  null
-                }
-              />
+              {slide.quiz && (
+                <QuizFlag
+                  error={quizSchemaStrict.safeParse(slide.quiz).error || null}
+                />
+              )}
             </div>
 
             <div className="flex justify-end gap-2">
@@ -160,8 +190,13 @@ export default function SlideMaker({
           </Button>
           <LoadingButton
             disabled={!isDirty()}
-            pending={loading}
-            onClick={async () => {}}
+            pending={isPending}
+            onClick={async () => {
+              const { slidesToUpsert, slidesToDelete } = onSave();
+              console.log("Slides to upsert:", slidesToUpsert);
+              console.log("Slides to delete:", slidesToDelete);
+              mutate({ slidesToUpsert, slidesToDelete });
+            }}
           >
             Save Changes
           </LoadingButton>
@@ -172,7 +207,8 @@ export default function SlideMaker({
 
   const preview = () => {
     return (
-      selectedSlide && (
+      selectedSlide &&
+      slides && (
         <>
           <Tabs defaultValue="content">
             <TabsList>
@@ -191,9 +227,7 @@ export default function SlideMaker({
               <SlidePreviewEditor
                 key={`editor-${selectedSlide.localId}`}
                 value={selectedSlide}
-                onChange={(value) => {
-                  updateSlide(value);
-                }}
+                onChange={updateSlide}
               />
             </TabsContent>
             <TabsContent

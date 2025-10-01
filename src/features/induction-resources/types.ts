@@ -25,7 +25,7 @@ export const quizSchemaStrict = z
   );
 
 export const slideSchema = z.object({
-  id: z.string().optional(),
+  id: z.number().optional(),
   localId: z.string().min(1),
   title: z.string().nullable(),
   content: z.string().nullable(),
@@ -37,7 +37,16 @@ export const slideSchema = z.object({
 export const slidesSchema = z.array(slideSchema).optional();
 
 export const tableSchema = z.object({
-  id: z.string(),
+  id: z.number(),
+  induction_id: z.uuidv4(),
+  order: z.number(),
+  title: z.string().nullable(),
+  content: z.string().nullable(),
+  quiz: quizSchema.nullable(),
+});
+
+export const upsertSchema = z.object({
+  id: z.number().optional(),
   induction_id: z.uuidv4(),
   order: z.number(),
   title: z.string().nullable(),
@@ -60,3 +69,4 @@ export const tableSchema = z.object({
 export type QuizFormSchema = z.infer<typeof quizSchema>;
 export type SlideSchema = z.infer<typeof slideSchema>;
 export type TableSchema = z.infer<typeof tableSchema>;
+export type UpsertSchema = z.infer<typeof upsertSchema>;

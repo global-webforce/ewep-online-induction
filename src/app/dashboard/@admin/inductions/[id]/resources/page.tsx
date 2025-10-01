@@ -1,11 +1,8 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import { sampleData } from "@/features/induction-resources/induction-builder/sample";
 import SlideMaker from "@/features/induction-resources/induction-builder/slide-maker";
-
 import { getInductionResourcesById } from "@/features/induction-resources/queries";
-
 import { getInductionById } from "@/features/inductions";
 import { useQueries } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
@@ -21,7 +18,7 @@ export default function SingleInductionPage() {
       },
 
       {
-        queryKey: [`inductions-resources`, id],
+        queryKey: [`induction-resources`, id],
         queryFn: async () => await getInductionResourcesById(id),
       },
     ],
@@ -56,8 +53,8 @@ export default function SingleInductionPage() {
       {inductionQuery.data && inductionSlidesQuery.data && (
         <SlideMaker
           induction={inductionQuery.data}
-          /*  value={inductionSlidesQuery.data} */
-          value={[sampleData]}
+          value={inductionSlidesQuery.data}
+          //  value={[sampleData]}
         />
       )}
     </>

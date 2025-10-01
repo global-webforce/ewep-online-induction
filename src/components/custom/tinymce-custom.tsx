@@ -1,8 +1,17 @@
 "use client";
 
 import { Editor, IAllProps } from "@tinymce/tinymce-react";
-import { useRef, useState } from "react";
+import { forwardRef, useRef, useState } from "react";
+import { FieldError } from "react-hook-form";
 
+/* interface TinyMECEditorProps {
+  id: string;
+  value?: string;
+  initialValue?: string;
+  onBlur: (newValue: string) => void;
+  onChange: (newValue: string) => void;
+}
+ */
 export function wrapIfPlainText(input?: string): string | undefined {
   if (input === undefined) return undefined;
 
@@ -49,6 +58,7 @@ export default function TinyMECEditor(tinyMECEditorProps: IAllProps) {
       <Editor
         {...tinyMECEditorProps}
         tinymceScriptSrc="/tinymce/tinymce.min.js"
+        apiKey="nh02gna9iklugsf1ygr50mi8ra9tmeswjj9u7cpo6jin8veq"
         licenseKey="gpl"
         onInit={(editor) => {
           setLoading(false);
@@ -77,11 +87,8 @@ export default function TinyMECEditor(tinyMECEditorProps: IAllProps) {
           paste_data_images: true, // Allow pasting images
           menubar: false,
           body_id: "mamaloan",
-          /*    setup: (editor: any) => {
-              editor.on("blur", (e: any) => {
-              alert("blur!!!");
-            }); 
-               editor.ui.registry.addButton("customInsertButton", {
+
+          /*  editor.ui.registry.addButton("customInsertButton", {
               text: "My Button",
               onAction: (_) =>
                 editor.insertContent(
