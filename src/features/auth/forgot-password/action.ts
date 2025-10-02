@@ -1,12 +1,29 @@
 "use server";
 
-import { authRepository } from "@/features/auth-repository";
+import { mapError } from "@/adapters/errors-schema-adapter";
+import { createClient } from "@/utils/supabase/client-server";
 import { EmailInput, emailInputSchema } from "./schema";
 
-export async function forgotPasswordAction(params: EmailInput) {
-  const parsed = emailInputSchema.safeParse(params);
+export async function forgotPasswordAction(values: EmailInput) {
+  const parsed = emailInputSchema.safeParse(values);
   if (!parsed.success) {
     throw new Error(parsed.error.message);
   }
-  await authRepository.forgotPassword(parsed.data.email);
+  /*****************************************************
+ * 
+NOTE: Important!
+ON Supabase > Authentication > Configuration > Emails > Recovery, update the content with this:
+
+<h2>Reset Password</h2>
+
+<p>Follow this link to reset the password for your user:</p>
+<p><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&redirect_to={{ .RedirectTo  }}">Reset Password</a></p>
+
+****************************************************/
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    parsed.data.email
+  );
+  if (error) throw mapError(error);
 }

@@ -1,12 +1,12 @@
-import { authRepository } from "@/features/auth-repository";
+import { requireUser } from "@/features/auth/require-user";
 
 export default async function AdminDashboard() {
-  const x = await authRepository.getUser();
+  const user = await requireUser();
   return (
     <main>
       <h1 className="text-lg font-semibold">User Dashboard</h1>
 
-      <p>{JSON.stringify(x)}</p>
+      <p>{JSON.stringify(user)}</p>
     </main>
   );
 }

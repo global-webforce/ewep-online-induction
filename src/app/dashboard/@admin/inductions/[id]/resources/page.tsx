@@ -1,6 +1,9 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
+import { BackButton } from "@/components/custom/back-button";
+import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import SlideMaker from "@/features/induction-resources/induction-builder/slide-maker";
 import { getInductionResourcesById } from "@/features/induction-resources/queries";
 import { getInductionById } from "@/features/inductions";
@@ -25,7 +28,17 @@ export default function SingleInductionPage() {
   });
 
   return (
-    <>
+    <div className="space-y-4 h-full">
+      <header className="flex gap-4 align-middle items-center mb-4">
+        <div className="space-x-2">
+          <Button asChild variant="outline" size="icon">
+            <SidebarTrigger />
+          </Button>
+          <BackButton />
+        </div>
+        <h1 className="text-xl font-semibold">Manage Induction Resources</h1>
+      </header>
+
       {inductionQuery.error && (
         <AlertPanelState
           onRetry={async () => await inductionQuery.refetch()}
@@ -42,21 +55,19 @@ export default function SingleInductionPage() {
           {inductionSlidesQuery.error.message}
         </AlertPanelState>
       )}
+
       {(inductionQuery.isLoading || inductionSlidesQuery.isLoading) && (
         <AlertPanelState variant="loading">
           Loading Induction and Resources
         </AlertPanelState>
       )}
 
-      <h1 className="text-xl font-bold">{inductionQuery.data?.title}</h1>
-
       {inductionQuery.data && inductionSlidesQuery.data && (
         <SlideMaker
           induction={inductionQuery.data}
           value={inductionSlidesQuery.data}
-          //  value={[sampleData]}
         />
       )}
-    </>
+    </div>
   );
 }

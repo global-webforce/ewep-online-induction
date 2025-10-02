@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { authRepository } from "../../features/auth-repository";
+import { fetchUser } from "../fetch-user";
 
 export async function AuthGroupButtons() {
-  const user = await authRepository.getUser();
+  const user = await fetchUser();
   return (
     <div className="flex items-center">
       {!user && ( // show signIn/register if NOT logged in

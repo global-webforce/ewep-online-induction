@@ -31,16 +31,10 @@ export const QuizForm = ({
     control,
     getValues,
     reset,
+    watch,
   } = form;
 
-  /*   useEffect(() => {
-    return () => {
-      onChange({
-        ...value,
-        quiz: getValues(),
-      } as SlideSchema);
-    };
-  }, []); */
+  const watchValues = watch();
 
   useEffect(() => {
     if (!isEqual(value?.quiz, getValues()) && isDirty) {
@@ -49,7 +43,7 @@ export const QuizForm = ({
         quiz: getValues(),
       } as SlideSchema);
     }
-  }, [isDirty, value, getValues, onChange]);
+  }, [isDirty, value, getValues, onChange, watchValues]);
 
   useEffect(() => {
     if (!isEqual(value?.quiz, getValues())) {

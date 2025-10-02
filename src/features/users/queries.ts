@@ -2,14 +2,14 @@
 
 import { createClient } from "@/utils/supabase/client-server";
 import { TableSchema } from "./types";
+import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 
 export async function getAll() {
-  const supabase = await createClient();
+  const supabase = createClientAdmin();
   const { data, error } = await supabase
-    .from("inductions")
+    .from("users")
     .select("*")
     .order("created_at", { ascending: false });
-
   if (error) {
     throw Error(error.message);
   }

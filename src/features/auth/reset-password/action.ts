@@ -1,6 +1,7 @@
 "use server";
 
-import { authRepository } from "@/features/auth-repository";
+import { mapError } from "@/adapters/errors-schema-adapter";
+import { createClient } from "@/utils/supabase/client-server";
 import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
 
 export async function resetPasswordAction(values: ResetPasswordInput) {
@@ -9,5 +10,9 @@ export async function resetPasswordAction(values: ResetPasswordInput) {
     throw new Error(parsed.error.message);
   }
 
-  await authRepository.updatePassword(parsed.data.confirmPassword);
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.confirmPassword,
+  });
+  if (error) throw mapError(error);
 }

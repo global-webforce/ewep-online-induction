@@ -8,15 +8,5 @@ export default async function UserDashboard({
 }: {
   children: ReactNode;
 }) {
-  return (
-    <div className="p-4 h-screen flex flex-col gap-3">
-      <header className="flex gap-2 pb-2">
-        <Button asChild variant="outline" size="icon">
-          <SidebarTrigger className="-ml-1" />
-        </Button>
-        <BackButton />
-      </header>
-      {children}
-    </div>
-  );
+  return <div className="p-4 h-full">{children}</div>;
 }

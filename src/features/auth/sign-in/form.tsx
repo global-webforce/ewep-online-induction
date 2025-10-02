@@ -86,7 +86,7 @@ export default function SignInForm() {
           </LoadingButton>
 
           <div className="mt-4 text-center text-sm">
-            Don`&apos;`t have an account?&nbsp;
+            Don&apos;t have an account?&nbsp;
             <Link href="/sign-up" className="underline underline-offset-4">
               Sign up
             </Link>

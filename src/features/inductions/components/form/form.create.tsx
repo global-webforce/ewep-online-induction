@@ -4,32 +4,25 @@ import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { updateAction } from "../mutations";
-import Form from "./form";
-import { formSchema, FormSchema } from "../types";
+import { createAction } from "../../mutations";
+import Form from "./form.base";
+import { formSchema, FormSchema } from "../../types";
 
-//https://nextjs.org/docs/14/app/building-your-application/data-fetching/patterns
-
-export function FormUpdate({
-  id,
-  data,
-}: {
-  id: string;
-  data: FormSchema | undefined;
-}) {
+export function FormCreate() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: (values: FormSchema) => updateAction(id, values),
+    mutationFn: (values: FormSchema) => createAction(values),
     onError: (error) => {
       toast.error(error.message);
     },
     onSuccess: async (data) => {
-      await queryClient.invalidateQueries({ queryKey: [`inductions`, id] });
-      await queryClient.invalidateQueries({ queryKey: ["inductions"] });
-      toast.success("Record has been updated.");
-      form.reset(data);
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast.success("Record has been created.");
+      router.replace("/dashboard/users/" + data.id);
     },
   });
 
@@ -40,9 +33,7 @@ export function FormUpdate({
       description: "",
       validity_days: 0,
     },
-    values: data,
   });
-
   const onSubmit = (values: FormSchema) => mutate(values);
   return (
     <Card className="w-full p-4">
@@ -59,7 +50,7 @@ export function FormUpdate({
             disabled={!form.formState.isDirty}
             pending={isPending}
           >
-            Update
+            Create
           </LoadingButton>
         </form>
       </FormProvider>

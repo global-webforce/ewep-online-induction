@@ -24,7 +24,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import SignOutForm from "../../features/auth/sign-out/form";
-import { User } from "../../models/user-schema";
+import { User } from "../../features/auth/user-schema";
 
 export default function SideBarAdmin({ user }: { user: User }) {
   const nav = [
@@ -47,9 +47,9 @@ export default function SideBarAdmin({ user }: { user: User }) {
     },
 
     {
-      title: "Contacts",
+      title: "Users",
       icon: Users, // More appropriate for contacts or groups
-      href: "/dashboard/contacts",
+      href: "/dashboard/users",
     },
 
     {

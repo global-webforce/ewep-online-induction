@@ -16,7 +16,7 @@ import { BookText, Calendar, Home, UserCheck, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SignOutForm from "../../features/auth/sign-out/form";
-import { User } from "../../models/user-schema";
+import { User } from "../../features/auth/user-schema";
 
 export default function SideBarDefault({ user }: { user: User }) {
   const nav = [

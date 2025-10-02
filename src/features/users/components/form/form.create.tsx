@@ -7,9 +7,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { createAction } from "../mutations";
-import Form from "./form";
-import { formSchema, FormSchema } from "../types";
+import { createAction } from "../../mutations";
+import Form from "./form.base";
+import { formSchema, FormSchema } from "../../types";
 
 export function FormCreate() {
   const router = useRouter();
@@ -29,9 +29,8 @@ export function FormCreate() {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      validity_days: 0,
+      first_name: "",
+      last_name: "",
     },
   });
   const onSubmit = (values: FormSchema) => mutate(values);

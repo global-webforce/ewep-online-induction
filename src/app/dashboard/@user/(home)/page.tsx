@@ -1,7 +1,7 @@
-import { authRepository } from "@/features/auth-repository";
+import { requireUser } from "@/features/auth/require-user";
 
 export default async function Page() {
-  const user = await authRepository.getUser();
+  const user = await requireUser();
   return (
     <div>
       <h2 className="text-lg font-semibold">User Dashboard</h2>

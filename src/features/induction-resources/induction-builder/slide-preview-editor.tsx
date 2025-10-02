@@ -1,9 +1,6 @@
 "use client";
-import DOMPurify from "dompurify";
 import { AlertPanel } from "@/components/custom/alert-panel";
-import TinyMECEditor, {
-  wrapIfPlainText,
-} from "@/components/custom/tinymce-custom";
+import TinyMECEditor from "@/components/custom/tinymce-custom";
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
 import {
   Form,
@@ -14,10 +11,9 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEqual } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { slideSchema, SlideSchema } from "../types";
-import { fi } from "date-fns/locale";
 
 export default function SlidePreviewEditor({
   value,
@@ -34,7 +30,7 @@ export default function SlidePreviewEditor({
   });
   const { formState, control, getValues, reset, watch } = form;
 
-  watch();
+  const watchValues = watch();
 
   useEffect(() => {
     if (!isEqual(value, getValues()) && formState.isDirty) {
@@ -43,7 +39,7 @@ export default function SlidePreviewEditor({
         ...getValues(),
       } as SlideSchema);
     }
-  }, [formState.isDirty, value, getValues, onChange]);
+  }, [formState.isDirty, value, getValues, onChange, watchValues]);
 
   useEffect(() => {
     if (!isEqual(value?.quiz, getValues())) {
@@ -74,7 +70,7 @@ export default function SlidePreviewEditor({
                       id={`editor-${value.localId}`}
                       apiKey="nh02gna9iklugsf1ygr50mi8ra9tmeswjj9u7cpo6jin8veq"
                       value={field.value || ""}
-                      onEditorChange={(x, _editor) => {
+                      onEditorChange={(x) => {
                         field.onChange(x);
                       }}
                     />

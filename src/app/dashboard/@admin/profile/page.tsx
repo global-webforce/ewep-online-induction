@@ -1,19 +1,22 @@
-import { mapUser } from "@/adapters/user-schema-adapter";
+import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import ProfileForm from "@/features/auth/profile/form";
-
-import { createClient } from "@/utils/supabase/client-server";
-import { redirect } from "next/navigation";
+import { requireUser } from "@/features/auth/require-user";
 
 export default async function Profile() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user) redirect("/signIn");
-
-  const user = mapUser(data.user);
-
+  const user = await requireUser();
   return (
-    <main>
-      <ProfileForm data={user} />
-    </main>
+    <>
+      <div className="flex gap-4 items-center mb-4">
+        <div className="space-x-2">
+          <Button asChild variant="outline" size="icon">
+            <SidebarTrigger />
+          </Button>
+        </div>
+        <h1 className="text-xl font-semibold">Profile</h1>
+      </div>
+
+      {user && <ProfileForm user={user} />}
+    </>
   );
 }

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
 import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
-import { User } from "@/models/user-schema";
+import { User } from "@/features/auth/user-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -13,12 +13,12 @@ import { toast } from "sonner";
 import { profileUpdateAction } from "./action";
 import { ProfileInput, profileInputSchema } from "./schema";
 
-export default function ProfileForm({ data }: { data?: User }) {
+export default function ProfileForm({ user }: { user?: User }) {
   const { mutate, isPending } = useMutation({
     mutationFn: (values: ProfileInput) => profileUpdateAction(values),
     onError: (error) => {
       toast.error(error.message);
-      form.reset(data?.profile);
+      form.reset(user?.profile);
     },
     onSuccess: (_, data) => {
       toast.success("Profile has been updated.");
@@ -28,7 +28,7 @@ export default function ProfileForm({ data }: { data?: User }) {
 
   const form = useForm<ProfileInput>({
     resolver: zodResolver(profileInputSchema),
-    defaultValues: data?.profile,
+    defaultValues: user?.profile,
   });
 
   return (
@@ -76,11 +76,11 @@ export default function ProfileForm({ data }: { data?: User }) {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={"email"}>Email</Label>
-            <Input name="email" readOnly type="email" value={data?.email} />
+            <Input name="email" readOnly type="email" value={user?.email} />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={"role"}>Role</Label>
-            <Input value={data?.app_role} readOnly type="text" />
+            <Input value={user?.app_role} readOnly type="text" />
           </div>
         </div>
       </Card>

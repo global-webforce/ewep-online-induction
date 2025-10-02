@@ -1,4 +1,4 @@
-import { User } from "@/models/user-schema";
+import { User } from "@/features/auth/user-schema";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 
 export function mapUser(user: SupabaseUser): User {

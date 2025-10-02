@@ -1,6 +1,7 @@
 "use server";
 
-import { authRepository } from "@/features/auth-repository";
+import { mapError } from "@/adapters/errors-schema-adapter";
+import { createClient } from "@/utils/supabase/client-server";
 import { SignInInput, signInInputSchema } from "./schema";
 
 export async function signInAction(params: SignInInput) {
@@ -8,5 +9,8 @@ export async function signInAction(params: SignInInput) {
   if (!parsed.success) {
     throw new Error(parsed.error.message);
   }
-  await authRepository.signIn(params);
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword(params);
+  // Will return error if email not verified
+  if (error) throw mapError(error);
 }

@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
-import { authRepository } from "@/features/auth-repository";
-import { AuthGroupButtons } from "@/components/custom/auth-group-buttons";
+
+import { AuthGroupButtons } from "@/features/auth/components/auth-group-buttons";
+import { fetchUser } from "@/features/auth/fetch-user";
 import Link from "next/link";
 
 export default async function AuthLayout({
@@ -8,7 +9,7 @@ export default async function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const x = await authRepository.getUser();
+  const user = await fetchUser();
   return (
     <div className="min-h-screen flex flex-col relative">
       <div className="absolute inset-0 bg-background opacity-50" />
@@ -29,9 +30,9 @@ export default async function AuthLayout({
       </nav>
 
       <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
-        {x ? (
+        {user ? (
           <Card className="flex flex-col items-center gap-4 p-6">
-            <h1>You`&apos;`re already signed-in!!</h1> <AuthGroupButtons />
+            <h1>You&apos;re already signed-in!!</h1> <AuthGroupButtons />
           </Card>
         ) : (
           children

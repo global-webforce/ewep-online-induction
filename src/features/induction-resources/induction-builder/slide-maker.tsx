@@ -5,9 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Redo, Undo } from "lucide-react";
-import { useState } from "react";
 import {
-  quizSchema,
   quizSchemaStrict,
   SlideSchema,
   TableSchema,
@@ -17,6 +15,9 @@ import {
 import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { InductionSchema } from "@/features/inductions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { updateAction } from "../mutations";
 import { QuizForm } from "./quiz/quiz-editor";
 import QuizToggle from "./quiz/quiz-toggle";
 import SlidePreviewEditor from "./slide-preview-editor";
@@ -29,10 +30,7 @@ import SlideItem from "./slide/slide";
 import Thumbnail from "./slide/thumbnail";
 import { useSlideController } from "./use-slide-controller";
 import { stripHtml } from "./utils";
-import { on } from "events";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { updateAction } from "../mutations";
+import { useEffect, useRef } from "react";
 
 export default function SlideMaker({
   induction,
@@ -57,7 +55,7 @@ export default function SlideMaker({
     onError: (error) => {
       toast.error(error.message);
     },
-    onSuccess: async (data) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: [`induction-resources`, induction!.id],
       });
@@ -87,6 +85,17 @@ export default function SlideMaker({
     undo,
     redo,
   } = useSlideController({ induction: induction, value: value });
+  const refs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    if (selectedId && refs.current[selectedId]) {
+      refs.current[selectedId]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "nearest",
+      });
+    }
+  }, [selectedId]);
 
   const slideItems = () => {
     return (
@@ -95,6 +104,7 @@ export default function SlideMaker({
       slides.map((slide: SlideSchema, index: number) => (
         <SlideItem
           key={`slide-item-${slide?.localId}`}
+          ref={(el: any) => (refs.current[slide?.localId] = el)}
           isActive={slide.localId === selectedId}
           onClick={() => {
             setSelectedId(slide.localId);

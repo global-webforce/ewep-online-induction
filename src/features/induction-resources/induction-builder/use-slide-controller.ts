@@ -26,6 +26,7 @@ export const useSlideController = ({
   const deletedSlidesWithId = useRef<number[]>([]);
   const [slides, setSlides] = useState<SlideSchema[]>([]);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+  const refs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const selectedSlide = useMemo(() => {
     if (!selectedId) return undefined;
@@ -67,12 +68,12 @@ export const useSlideController = ({
         ...slide,
 
         order: index, // db order replaced with local order
-        localId: randomId(), // local id is used instead of db id
+        localId: slides[index]?.localId || randomId(), // local id is used instead of db id
         enableQuiz: slide.quiz !== null,
         quizCache: null,
       }));
 
-      //   setSelectedId(mapped[mapped.length - 1].localId);
+      setSelectedId(selectedId || mapped[mapped.length - 1].localId);
       pristineValue.current = mapped;
       setSlides(mapped);
     }

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { InductionsTable } from "@/features/inductions";
+import { UsersTable } from "@/features/users";
 
 export default function Page() {
   return (
@@ -11,10 +12,10 @@ export default function Page() {
             <SidebarTrigger />
           </Button>
         </div>
-        <h1 className="text-xl font-semibold">Inductions</h1>
+        <h1 className="text-xl font-semibold">Users</h1>
       </div>
 
-      {<InductionsTable />}
+      {<UsersTable />}
     </>
   );
 }

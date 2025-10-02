@@ -1,8 +1,7 @@
 "use client";
 
 import { Editor, IAllProps } from "@tinymce/tinymce-react";
-import { forwardRef, useRef, useState } from "react";
-import { FieldError } from "react-hook-form";
+import { useRef, useState } from "react";
 
 /* interface TinyMECEditorProps {
   id: string;

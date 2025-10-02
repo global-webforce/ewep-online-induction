@@ -1,55 +1,22 @@
-"use client";
-import { AlertPanelState } from "@/components/custom/alert-panel-state";
+import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { getInductionById, InductionFormUpdate } from "@/features/inductions";
-import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { InductionFormUpdate } from "@/features/inductions";
 
 export default function Page() {
-  const { id } = useParams<{ id: string }>();
-
-  const { data, error, isLoading, refetch } = useQuery({
-    queryKey: [`inductions`, id],
-    queryFn: async () => await getInductionById(id),
-  });
-
   return (
-    <>
-      {error && (
-        <AlertPanelState onRetry={async () => await refetch()} variant="error">
-          {error.message}
-        </AlertPanelState>
-      )}
-      {isLoading && <AlertPanelState variant="loading" />}
-      <h1 className="text-xl font-bold">{data?.title}</h1>
-      <InductionFormUpdate id={id} data={data} />
+    <div className="space-y-4">
+      <div className="flex gap-4 items-center mb-4">
+        <div className="space-x-2">
+          <Button asChild variant="outline" size="icon">
+            <SidebarTrigger />
+          </Button>
+          <BackButton />
+        </div>
+        <h1 className="text-xl font-semibold">Manage Induction</h1>
+      </div>
 
-      {id && (
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Create Presentation</CardTitle>
-            <CardDescription>
-              Quickly create and customize your presentation slides.
-            </CardDescription>
-          </CardHeader>
-
-          <CardFooter>
-            <Button asChild>
-              <Link href={"/dashboard/inductions/" + id + "/resources"}>
-                <span>Go to Presentation</span>
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
-    </>
+      <InductionFormUpdate />
+    </div>
   );
 }
