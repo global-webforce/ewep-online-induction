@@ -56,7 +56,7 @@ export default function ResetPasswordForm() {
     disabled: isPending,
     defaultValues: {
       password: "",
-      confirmPassword: "",
+      confirm_password: "",
     },
   });
 
@@ -97,7 +97,7 @@ export default function ResetPasswordForm() {
           <FormField
             control={form.control}
             type="password"
-            name="confirmPassword"
+            name="confirm_password"
             label="Confirm New Password"
           />
 

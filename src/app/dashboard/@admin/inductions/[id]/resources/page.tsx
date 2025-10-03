@@ -4,9 +4,9 @@ import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import SlideMaker from "@/features/induction-resources/induction-builder/slide-maker";
-import { getInductionResourcesById } from "@/features/induction-resources/queries";
-import { getInductionById } from "@/features/inductions";
+import SlideMaker from "@/features/admin-induction-resources/induction-builder/slide-maker";
+import { getInductionResourcesById } from "@/features/admin-induction-resources/queries";
+import { fetchInductionById } from "@/features/admin/inductions";
 import { useQueries } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
@@ -17,7 +17,7 @@ export default function SingleInductionPage() {
     queries: [
       {
         queryKey: [`inductions`, id],
-        queryFn: async () => await getInductionById(id),
+        queryFn: async () => await fetchInductionById(id),
       },
 
       {
@@ -28,7 +28,7 @@ export default function SingleInductionPage() {
   });
 
   return (
-    <div className="space-y-4 h-full">
+    <div className="space-y-4 h-full flex flex-col ">
       <header className="flex gap-4 align-middle items-center mb-4">
         <div className="space-x-2">
           <Button asChild variant="outline" size="icon">

@@ -130,3 +130,7 @@
 .tox .tox-edit-area::before {
   border: 2px solid #fe9a00 !important;
 }
+.tox-tinymce:not(.tox-fullscreen) {
+  flex: 1;
+  height: max(calc(100vh - 300px), 400px) !important;
+}

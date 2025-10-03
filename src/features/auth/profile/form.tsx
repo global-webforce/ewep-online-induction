@@ -28,7 +28,11 @@ export default function ProfileForm({ user }: { user?: User }) {
 
   const form = useForm<ProfileInput>({
     resolver: zodResolver(profileInputSchema),
-    defaultValues: user?.profile,
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+    },
+    values: user?.profile,
   });
 
   return (
@@ -48,13 +52,13 @@ export default function ProfileForm({ user }: { user?: User }) {
           <FormField
             control={form.control}
             type="text"
-            name="firstName"
+            name="first_name"
             label="First Name"
           />
           <FormField
             control={form.control}
             type="text"
-            name="lastName"
+            name="last_name"
             label="Last Name"
           />
 

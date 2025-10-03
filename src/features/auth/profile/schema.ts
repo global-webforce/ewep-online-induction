@@ -1,8 +1,8 @@
 import z from "zod";
 
 export const profileInputSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
+  first_name: z.string(),
+  last_name: z.string(),
 });
 
 export type ProfileInput = z.infer<typeof profileInputSchema>;

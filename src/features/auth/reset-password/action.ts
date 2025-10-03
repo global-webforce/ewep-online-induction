@@ -12,7 +12,7 @@ export async function resetPasswordAction(values: ResetPasswordInput) {
 
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({
-    password: parsed.data.confirmPassword,
+    password: parsed.data.confirm_password,
   });
   if (error) throw mapError(error);
 }

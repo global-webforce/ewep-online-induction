@@ -1,15 +1,12 @@
-import { Card } from "@/components/ui/card";
-import { AuthGroupButtons } from "@/features/auth/components/auth-group-buttons";
-import { fetchUser } from "@/features/auth/fetch-user";
-import { requireUser } from "@/features/auth/require-user";
+import AlreadySignedIn from "@/features/auth/components/already-signed-in";
+import { AuthGroupButtons } from "@/features/auth/components/auth-group-buttons-client";
 import Link from "next/link";
 
-export default async function AuthLayout({
+export default function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await fetchUser();
   return (
     <div className="min-h-screen flex flex-col relative">
       <div className="absolute inset-0 bg-background opacity-50" />
@@ -30,13 +27,7 @@ export default async function AuthLayout({
       </nav>
 
       <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
-        {user ? (
-          <Card className="flex flex-col items-center gap-4 p-6">
-            <h1>You&apos;re already signed-in!!</h1> <AuthGroupButtons />
-          </Card>
-        ) : (
-          children
-        )}
+        <AlreadySignedIn>{children}</AlreadySignedIn>
       </main>
 
       <footer className="relative bg-background bg-opacity-90 shadow-md mt-8 z-10">

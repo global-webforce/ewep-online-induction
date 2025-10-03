@@ -1,8 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-
 import { AuthGroupButtons } from "@/features/auth/components/auth-group-buttons";
-import { fetchUser } from "@/features/auth/fetch-user";
+import MustBeSignedIn from "@/features/auth/components/must-be-signed-in";
 import Link from "next/link";
 
 export default async function AuthLayout({
@@ -10,7 +7,6 @@ export default async function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await fetchUser();
   return (
     <div className="min-h-screen flex flex-col relative">
       <div className="absolute inset-0 bg-background opacity-50" />
@@ -31,21 +27,7 @@ export default async function AuthLayout({
       </nav>
 
       <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
-        {!user ? (
-          <Card className="flex flex-col items-center gap-4 p-6">
-            <h1>You must be signed-in to reset your password. </h1>{" "}
-            <div className="flex gap-2 justify-center">
-              <Link href="/sign-in">
-                <Button variant="default">Sign In</Button>
-              </Link>
-              <Link href="/forgot-password">
-                <Button variant="outline">Forgot Password?</Button>
-              </Link>{" "}
-            </div>
-          </Card>
-        ) : (
-          children
-        )}
+        <MustBeSignedIn>{children}</MustBeSignedIn>
       </main>
 
       <footer className="relative bg-background bg-opacity-90 shadow-md mt-8 z-10">

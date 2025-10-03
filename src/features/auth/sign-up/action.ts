@@ -30,6 +30,12 @@ export async function signUpAction(values: SignUpInput) {
   const { data, error } = await supabase.auth.signUp({
     email: values.email,
     password: values.password,
+    options: {
+      data: {
+        first_name: values.first_name,
+        last_name: values.last_name,
+      },
+    },
   });
 
   if (error) throw mapError(error);

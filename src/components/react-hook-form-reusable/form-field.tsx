@@ -22,7 +22,7 @@ export function FormField<T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <div className="flex flex-col gap-1.5">
+        <div className="space-y-1.5 w-full">
           {label && <Label htmlFor={name}>{label}</Label>}
 
           <Input id={name} {...field} {...inputProps} />

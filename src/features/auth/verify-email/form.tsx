@@ -37,7 +37,7 @@ export default function VerifyEmailForm({ email, onBack }: Props) {
 
       <div className="flex flex-col gap-3">
         <span className="text-center text-sm text-muted-foreground">
-          Didn`&apos;`t get the email? Check your Spam/Junk folder, or
+          Didn&apos;t get the email? Check your Spam/Junk folder, or
         </span>
         <LoadingButton
           variant="outline"

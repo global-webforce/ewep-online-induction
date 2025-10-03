@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { InductionsTable } from "@/features/inductions";
+import { InductionsTable } from "@/features/admin/inductions";
 
 export default function Page() {
   return (

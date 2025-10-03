@@ -8,8 +8,8 @@ export function mapUser(user: SupabaseUser): User {
     app_role: user.app_metadata?.app_role,
     emailConfirmedAt: user?.email_confirmed_at,
     profile: {
-      firstName: user?.user_metadata?.firstName || "",
-      lastName: user?.user_metadata?.lastName || "",
+      first_name: user?.user_metadata?.first_name || "",
+      last_name: user?.user_metadata?.last_name || "",
     },
   };
 }

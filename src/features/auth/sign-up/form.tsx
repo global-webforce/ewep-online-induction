@@ -21,8 +21,10 @@ export default function SignUpForm() {
     resolver: zodResolver(signUpInputSchema),
     defaultValues: {
       email: "",
+      first_name: "",
+      last_name: "",
       password: "",
-      confirmPassword: "",
+      confirm_password: "",
     },
   });
 
@@ -51,6 +53,23 @@ export default function SignUpForm() {
         onSubmit={form.handleSubmit((values) => mutate(values))}
         className="flex flex-col gap-4"
       >
+        <div className="flex gap-3">
+          <FormField
+            control={form.control}
+            type="text"
+            name="first_name"
+            label="First Name"
+            placeholder="First Name"
+          />
+
+          <FormField
+            control={form.control}
+            type="text"
+            name="last_name"
+            label="Last Name"
+            placeholder="Last Name"
+          />
+        </div>{" "}
         <FormField
           control={form.control}
           type="email"
@@ -58,25 +77,21 @@ export default function SignUpForm() {
           label="Email"
           placeholder="you@example.com"
         />
-
         <FormField
           control={form.control}
           type="password"
           name="password"
           label="Password"
         />
-
         <FormField
           control={form.control}
           type="password"
-          name="confirmPassword"
+          name="confirm_password"
           label="Confirm Password"
         />
-
         <LoadingButton type="submit" className="w-full" pending={isPending}>
           Sign Up
         </LoadingButton>
-
         <div className="mt-2 text-center text-sm">
           Already have an account?{" "}
           <Link href="/sign-in" className="underline underline-offset-4">
