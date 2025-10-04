@@ -1,5 +1,5 @@
-export { upsertAction } from "./actions/upsert-action";
-export { fetchById } from "./actions/fetch-by-id";
-export { upsertSchema } from "./types/upsert";
-export type { TableSchema } from "./types/table";
-export type { UpsertSchema } from "./types/upsert";
+export * from "./actions/upsert-action";
+export * from "./actions/fetch-by-id";
+export * from "./types/upsert";
+export type * from "./types/table";
+export type * from "./types/upsert";

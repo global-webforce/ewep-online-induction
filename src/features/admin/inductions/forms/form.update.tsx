@@ -18,7 +18,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { fetchById } from "../actions/fetch-by-id";
 import { updateAction } from "../actions/update-action";
-import { formSchema, FormSchema } from "../types";
+import { formSchema, FormSchema } from "../types/form";
 import FormBase from "./form.base";
 
 export function FormUpdate() {

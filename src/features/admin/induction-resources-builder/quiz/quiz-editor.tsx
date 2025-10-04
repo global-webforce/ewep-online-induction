@@ -3,7 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { isEqual } from "lodash";
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { QuizFormSchema, quizSchema, FormSchema } from "../types/form";
+import {
+  QuizFormSchema,
+  quizSchema,
+  FormSchema,
+} from "@/features/admin/induction-resources-builder";
 import QuizOptions from "./quiz-options";
 
 export const QuizForm = ({

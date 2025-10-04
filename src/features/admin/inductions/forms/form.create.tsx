@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createAction } from "../actions/create-action";
-import { formSchema, FormSchema } from "../types";
+import { formSchema, FormSchema } from "../types/form";
 import FormBase from "./form.base";
 
 export function FormCreate() {

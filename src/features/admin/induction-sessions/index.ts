@@ -1,1 +1,1 @@
-export { Table } from "./tables/table";
+export * from "./tables/table";

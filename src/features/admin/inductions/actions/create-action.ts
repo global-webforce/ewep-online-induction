@@ -1,7 +1,7 @@
 "use server";
 
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { formSchema, FormSchema } from "../types";
+import { formSchema, FormSchema } from "../types/form";
 
 export async function createAction(values: FormSchema) {
   const parsed = formSchema.safeParse(values);

@@ -2,9 +2,8 @@
 
 import { isEqual } from "lodash";
 import { useMemo, useRef, useState, useEffect } from "react";
-
 import { FormSchema } from "./types/form";
-import { TableSchema as InductionSchema } from "@/features/admin/inductions";
+import { TableSchema as InductionSchema } from "@/features/admin/inductions/";
 import {
   UpsertSchema,
   upsertSchema,

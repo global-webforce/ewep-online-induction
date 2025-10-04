@@ -15,8 +15,9 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-import { TableSchema } from "../types";
+
 import ColumnDate from "@/components/tanstack-table/column-date";
+import { TableSchema } from "../types/table";
 
 export const columnHelper = createColumnHelper<TableSchema>();
 

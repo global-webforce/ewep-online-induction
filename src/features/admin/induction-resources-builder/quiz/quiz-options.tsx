@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2 } from "lucide-react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
-import { QuizFormSchema } from "../types/form";
+import { QuizFormSchema } from "@/features/admin/induction-resources-builder";
 export default function QuizOptions() {
   const { control } = useFormContext<QuizFormSchema>();
 

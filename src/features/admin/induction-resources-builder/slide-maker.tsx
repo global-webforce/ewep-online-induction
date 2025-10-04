@@ -8,7 +8,7 @@ import { Plus, Redo, Undo } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { TableSchema as InductionSchema } from "@/features/admin/inductions";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { QuizForm } from "./quiz/quiz-editor";
@@ -19,23 +19,24 @@ import CopyButton from "./slide/copy-button";
 import DeleteButton from "./slide/delete-button";
 import MoveButton from "./slide/move-button";
 import QuizFlag from "./slide/quiz-flag";
-import SlideItem from "./slide/slide";
+import SlideItem from "./slide/slide-item";
 import Thumbnail from "./slide/thumbnail";
 import { useSlideController } from "./use-slide-controller";
 import { stripHtml } from "./utils";
-import { useEffect, useRef } from "react";
 
+import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import {
   upsertAction,
-  TableSchema,
   UpsertSchema,
 } from "@/features/admin/induction-resources";
-import { quizSchemaStrict, FormSchema } from "./types/form";
-import { useParams } from "next/navigation";
 import { fetchById as fetchInductionResourcesById } from "@/features/admin/induction-resources/actions/fetch-by-id";
-import { fetchById } from "@/features/admin/inductions";
+import { fetchById } from "@/features/admin/inductions/";
 import { useQueries } from "@tanstack/react-query";
-import { AlertPanelState } from "@/components/custom/alert-panel-state";
+import { useParams } from "next/navigation";
+import {
+  FormSchema,
+  quizStrictSchema,
+} from "@/features/admin/induction-resources-builder";
 
 export default function SlideMaker() {
   const { id } = useParams<{ id: string }>();
@@ -142,7 +143,7 @@ export default function SlideMaker() {
               <span>{`${index + 1}`}</span>
               {slide.quiz && (
                 <QuizFlag
-                  error={quizSchemaStrict.safeParse(slide.quiz).error || null}
+                  error={quizStrictSchema.safeParse(slide.quiz).error || null}
                 />
               )}
             </div>

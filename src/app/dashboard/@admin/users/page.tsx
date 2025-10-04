@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { UsersTable } from "@/features/admin/users";
+import { Table } from "@/features/admin/users";
 
 export default function Page() {
   return (
@@ -14,7 +14,7 @@ export default function Page() {
         <h1 className="text-xl font-semibold">Users</h1>
       </div>
 
-      {<UsersTable />}
+      {<Table />}
     </>
   );
 }
