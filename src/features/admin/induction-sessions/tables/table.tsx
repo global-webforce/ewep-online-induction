@@ -5,13 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { DataTable } from "@/components/tanstack-table/datatable";
 import { useColumns } from "./columns";
-import { fetchAll } from "../actions/fetch-all";
 import { TableSchema } from "../types/table";
 import { DataTableToolbar } from "./toolbar";
+import { fetchAll } from "../actions/fetch-all";
 
 export function Table() {
   const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ["inductions"],
+    queryKey: ["induction-sessions"],
     queryFn: fetchAll,
   });
 

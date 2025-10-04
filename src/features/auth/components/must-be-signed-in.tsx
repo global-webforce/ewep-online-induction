@@ -3,9 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
-import { fetchUserClient } from "../fetch-user-client";
+
 import { useEffect, useState } from "react";
 import { User } from "../user-schema";
+import { fetchUser } from "../fetch-user";
 
 export default function MustBeSignedIn({
   children,
@@ -15,11 +16,11 @@ export default function MustBeSignedIn({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const u = await fetchUserClient();
+    const fetchUserFn = async () => {
+      const u = await fetchUser();
       setUser(u);
     };
-    fetchUser();
+    fetchUserFn();
   }, []);
 
   return !user ? (

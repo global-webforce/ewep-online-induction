@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import AdminStats from "@/features/admin-stats/admin-stats";
+import { MetricCardsGridAdmin } from "@/features/admin/home/metric-cards-grid";
 import { requireUser } from "@/features/auth/require-user";
 
 export default async function Page() {
@@ -19,7 +19,7 @@ export default async function Page() {
       <h1 className="text-xl font-semibold">
         Welcome! {user.profile?.first_name || "Admin"}
       </h1>
-      <AdminStats />
+      <MetricCardsGridAdmin />
     </div>
   );
 }

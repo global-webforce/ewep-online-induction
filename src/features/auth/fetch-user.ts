@@ -1,16 +1,14 @@
-import "server-only";
+import "client-only";
 
 import { mapUser } from "@/adapters/user-schema-adapter";
-import { createClient } from "@/utils/supabase/client-server";
+import { createClient } from "@/utils/supabase/client-browser";
 import { cache } from "react";
 
-/***********************************
-https://www.youtube.com/watch?v=Eywzqiv29Zk 26:46
-cache - scoped to only 1 render pass, good for repeatedly called requests.
-************************************/
+// https://www.youtube.com/watch?v=Eywzqiv29Zk 26:46
+// Use to get current user on client component, no redirect on error;
+
 export const fetchUser = cache(async () => {
-  // await new Promise((resolve) => setTimeout(resolve, 2_000));
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error) return null;
   return mapUser(data.user);

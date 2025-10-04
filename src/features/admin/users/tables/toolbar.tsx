@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
-import { formatLabel } from "@/components/custom/tanstack-table/column-badge";
+import { formatLabel } from "@/components/tanstack-table/column-badge";
 import { TableSchema } from "../types/table";
 
 interface DataTableToolbarProps<TData> {

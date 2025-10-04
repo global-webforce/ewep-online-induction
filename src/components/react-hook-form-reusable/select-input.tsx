@@ -23,7 +23,6 @@ type SelectInputProps<
   ComponentPropsWithoutRef<"select"> & {
     options: { value: string; label: string }[] | undefined;
     label?: string | ReactNode;
-    onValueChange: (e: string) => void;
   };
 
 export function SelectInput<
@@ -36,7 +35,6 @@ export function SelectInput<
   options = [],
   label,
   disabled,
-  onValueChange,
 }: SelectInputProps<T, U>) {
   return (
     <FormField
@@ -57,7 +55,6 @@ export function SelectInput<
               disabled={disabled}
               onValueChange={(e) => {
                 field.onChange(e);
-                onValueChange(e);
               }}
               value={field.value || ""}
             >

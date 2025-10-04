@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { InductionFormUpdate } from "@/features/admin/inductions";
+import { FormUpdate } from "@/features/admin/inductions";
 
 export default function Page() {
   return (
@@ -16,7 +16,7 @@ export default function Page() {
         <h1 className="text-xl font-semibold">Manage Induction</h1>
       </div>
 
-      <InductionFormUpdate />
+      <FormUpdate />
     </div>
   );
 }

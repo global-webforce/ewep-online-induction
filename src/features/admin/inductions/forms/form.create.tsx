@@ -22,7 +22,7 @@ export function FormCreate() {
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("Record has been created.");
-      router.replace("/dashboard/users/" + data.id);
+      router.replace("/dashboard/inductions/" + data.id);
     },
   });
 

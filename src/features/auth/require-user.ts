@@ -5,12 +5,10 @@ import { createClient } from "@/utils/supabase/client-server";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
-/***********************************
-https://www.youtube.com/watch?v=Eywzqiv29Zk 26:46
-cache - scoped to only 1 render pass, good for repeatedly called requests.
-************************************/
+// https://www.youtube.com/watch?v=Eywzqiv29Zk 26:46
+// Use to require and use current user on server component, redirect on error;
+
 export const requireUser = cache(async () => {
-  // await new Promise((resolve) => setTimeout(resolve, 2_000));
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error) redirect("/sign-in");

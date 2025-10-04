@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,19 +11,18 @@ import {
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-import ColumnBadge from "@/components/tanstack-table/column-badge";
-import { TableSchema } from "../types";
+import { TableSchema } from "../types/table";
 import ColumnDate from "@/components/tanstack-table/column-date";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 export const columnHelper = createColumnHelper<TableSchema>();
-
 export function useColumns(): ColumnDef<TableSchema, any>[] {
   const router = useRouter();
 
   return [
     {
-      id: "select",
+      accessorKey: "select",
       header: ({ table }) => (
         <Checkbox
           checked={
@@ -47,59 +44,46 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
       enableHiding: false,
     },
 
-    columnHelper.accessor("title", {
-      cell: ({ cell }) => <div className="">{cell.getValue()}</div>,
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Title
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-    }),
-
-    columnHelper.accessor("description", {
+    columnHelper.accessor("user_id", {
       cell: ({ cell }) => (
-        <div className="truncate max-w-[400px]">{cell.getValue()}</div>
+        <div className="truncate max-w-[200px]">{cell.getValue()}</div>
       ),
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Description
+          User ID
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
     }),
 
-    columnHelper.accessor("validity_days", {
-      cell: ({ cell }) => <div>{cell.getValue()} days</div>,
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Validity
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-    }),
-
-    columnHelper.accessor("status", {
+    columnHelper.accessor("induction_id", {
       cell: ({ cell }) => (
-        <div>
-          <ColumnBadge value={cell.getValue()} />
-        </div>
+        <div className="truncate max-w-[200px]">{cell.getValue()}</div>
       ),
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          Induction ID
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    }),
+
+    columnHelper.accessor("valid_until", {
+      cell: ({ cell }) => {
+        return <ColumnDate value={cell.getValue()} />;
+      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Valid Until
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -137,7 +121,7 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => {
-                  router.push(`/dashboard/inductions/${rowData.id}`);
+                  router.push(`/dashboard/induction-sessions/${rowData.id}`);
                 }}
               >
                 Manage

@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { InductionFormCreate } from "@/features/admin/inductions";
+import { FormCreate } from "@/features/admin/inductions";
 
 export default async function Page() {
   return (
@@ -15,7 +15,7 @@ export default async function Page() {
         </div>
         <h1 className="text-xl font-semibold">Create Induction</h1>
       </div>
-      <InductionFormCreate />
+      <FormCreate />
     </>
   );
 }

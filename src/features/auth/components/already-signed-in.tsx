@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { fetchUserClient } from "../fetch-user-client";
+import { fetchUser } from "../fetch-user";
 import { AuthGroupButtons } from "./auth-group-buttons";
 import { User } from "../user-schema";
 
@@ -14,12 +14,13 @@ export default function AlreadySignedIn({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const u = await fetchUserClient();
+    const fetchUserFn = async () => {
+      const u = await fetchUser();
       setUser(u);
     };
-    fetchUser();
+    fetchUserFn();
   }, []);
+
   return (
     <>
       {user ? (
