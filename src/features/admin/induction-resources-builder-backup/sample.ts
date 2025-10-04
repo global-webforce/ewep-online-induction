@@ -11,6 +11,7 @@ export const sampleData: TableSchema = {
       "Which of the following is the most important first step when starting work abroad?",
     options: [
       { value: "Ignore cultural differences and focus only on work" },
+
       { value: "Skip induction and start immediately" },
       { value: "Rely only on colleagues for guidance" },
     ],

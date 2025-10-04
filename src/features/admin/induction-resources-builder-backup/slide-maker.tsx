@@ -2,12 +2,18 @@
 
 import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Redo, Undo } from "lucide-react";
 
+import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { QuizForm } from "./quiz/quiz-editor";
+import QuizToggle from "./quiz/quiz-toggle";
+import SlidePreviewEditor from "./slide-preview-editor";
 import ActionBar from "./slide/action-bar";
 import CopyButton from "./slide/copy-button";
 import DeleteButton from "./slide/delete-button";
@@ -23,15 +29,14 @@ import {
   upsertAction,
   UpsertSchema,
 } from "@/features/admin/induction-resources";
-import {
-  FormSchema,
-  quizStrictSchema,
-} from "@/features/admin/induction-resources-builder";
 import { fetchById as fetchInductionResourcesById } from "@/features/admin/induction-resources/actions/fetch-by-id";
 import { fetchById } from "@/features/admin/inductions/";
 import { useQueries } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import FormX from "./form/form";
+import {
+  FormSchema,
+  quizStrictSchema,
+} from "@/features/admin/induction-resources-builder";
 
 export default function SlideMaker() {
   const { id } = useParams<{ id: string }>();
@@ -77,17 +82,6 @@ export default function SlideMaker() {
     },
   });
 
-  const defaultSlides = [
-    {
-      id: 1,
-      induction_id: "550e8400-e29b-41d4-a716-446655440000",
-      order: 1,
-      title: "Induction Program: Working Abroad",
-      content: `<h2>Welcome to Your Induction Abroad 🌍</h2>`,
-      quiz: null,
-    },
-  ];
-
   const {
     slides,
     undoStack,
@@ -107,7 +101,6 @@ export default function SlideMaker() {
     redo,
   } = useSlideController({
     induction: inductionQuery.data,
-    // value: defaultSlides,
     value: inductionResourcesQuery.data,
   });
 
@@ -231,6 +224,63 @@ export default function SlideMaker() {
     );
   };
 
+  const preview = () => {
+    return (
+      selectedSlide &&
+      slides && (
+        <>
+          <Tabs defaultValue="content">
+            <TabsList>
+              <TabsTrigger className="min-w-30" value="content">
+                Content
+              </TabsTrigger>
+              <TabsTrigger className="min-w-30" value="quiz">
+                Quiz
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent
+              value="content"
+              className="flex flex-col gap-4 pt-3 pb-3"
+            >
+              <SlidePreviewEditor
+                key={`editor-${selectedSlide.localId}`}
+                value={selectedSlide}
+                onChange={updateSlide}
+              />
+            </TabsContent>
+            <TabsContent
+              value="quiz"
+              className="flex flex-col gap-4 pt-3 pb-3 max-w-xl"
+            >
+              <Card className="flex flex-row gap-4 p-3 ">
+                <QuizToggle
+                  key={`quiz-toggle-${selectedSlide.localId}`}
+                  slide={selectedSlide}
+                  onEnabled={(e) => updateSlide(e)}
+                  onDisabled={(e) => updateSlide(e)}
+                />
+                <Label htmlFor="airplane-mode">Enable Quiz</Label>
+              </Card>
+
+              {(selectedSlide.enableQuiz || selectedSlide.quiz) && (
+                <Card className="p-4">
+                  <QuizForm
+                    key={`quiz-editor-${selectedSlide.localId}`}
+                    value={selectedSlide}
+                    onChange={(value) => {
+                      updateSlide(value);
+                    }}
+                  />
+                </Card>
+              )}
+            </TabsContent>
+          </Tabs>
+        </>
+      )
+    );
+  };
+
   return (
     <>
       {/* <ExitDialog isDirty={isDirty()} /> */}
@@ -283,13 +333,7 @@ export default function SlideMaker() {
             {topActionBar()}
 
             {selectedSlide ? (
-              <div className="p-4">
-                <FormX
-                  key={selectedId}
-                  value={selectedSlide}
-                  onChange={(value) => updateSlide(value)}
-                />
-              </div>
+              <div className="p-4">{preview()}</div>
             ) : (
               <div className="flex-1 m-4 p-4 flex items-center justify-center border-2 border-dashed rounded-xl text-gray-500 ">
                 <p className="text-lg font-medium">

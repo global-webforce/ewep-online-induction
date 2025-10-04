@@ -24,20 +24,23 @@ export function wrapIfPlainText(input?: string): string | undefined {
   return `<p>${input}</p>`;
 }
 
-export default function TinyMECEditor(tinyMECEditorProps: IAllProps) {
-  const editorRef = useRef(null);
+//Critical Bug Solved!
+// https://github.com/tinymce/tinymce-react/issues/298#issuecomment-1145456849
 
-  //Very Important! The onchange triggers when value is given with plain text!!!!
-
+export default function TinyMECEditor(
+  tinyMECEditorProps: IAllProps & {
+    onInitialValue: (value: string | null) => void; // 👈 your extra prop
+  }
+) {
   return (
     <Editor
       {...tinyMECEditorProps}
+      onInit={(_, editor) =>
+        tinyMECEditorProps.onInitialValue(editor.getContent())
+      }
       tinymceScriptSrc="/tinymce/tinymce.min.js"
       apiKey="nh02gna9iklugsf1ygr50mi8ra9tmeswjj9u7cpo6jin8veq"
       licenseKey="gpl"
-      onInit={(editor) => {
-        editorRef.current = editor;
-      }}
       init={{
         extended_valid_elements:
           "iframe[src|frameborder|style|scrolling|class|width|height|name|align]",
