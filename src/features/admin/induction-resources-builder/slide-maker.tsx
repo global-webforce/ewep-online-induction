@@ -32,6 +32,7 @@ import { fetchById } from "@/features/admin/inductions/";
 import { useQueries } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import FormX from "./form/form";
+import { values } from "lodash";
 
 export default function SlideMaker() {
   const { id } = useParams<{ id: string }>();
@@ -77,17 +78,6 @@ export default function SlideMaker() {
     },
   });
 
-  const defaultSlides = [
-    {
-      id: 1,
-      induction_id: "550e8400-e29b-41d4-a716-446655440000",
-      order: 1,
-      title: "Induction Program: Working Abroad",
-      content: `<h2>Welcome to Your Induction Abroad 🌍</h2>`,
-      quiz: null,
-    },
-  ];
-
   const {
     slides,
     undoStack,
@@ -107,7 +97,6 @@ export default function SlideMaker() {
     redo,
   } = useSlideController({
     induction: inductionQuery.data,
-    // value: defaultSlides,
     value: inductionResourcesQuery.data,
   });
 
@@ -233,23 +222,17 @@ export default function SlideMaker() {
 
   return (
     <>
-      {/* <ExitDialog isDirty={isDirty()} /> */}
-      {/*  <p>{JSON.stringify(slides)}</p> */}
-
-      {inductionQuery.error && (
+      {(inductionQuery.error || inductionResourcesQuery.error) && (
         <AlertPanelState
-          onRetry={async () => await inductionQuery.refetch()}
+          onRetry={async () => {
+            await Promise.all([
+              inductionQuery.refetch(),
+              inductionResourcesQuery.refetch(),
+            ]);
+          }}
           variant="error"
         >
-          {inductionQuery.error.message}
-        </AlertPanelState>
-      )}
-      {inductionResourcesQuery.error && (
-        <AlertPanelState
-          onRetry={async () => await inductionResourcesQuery.refetch()}
-          variant="error"
-        >
-          {inductionResourcesQuery.error.message}
+          Failed to load induction and its resources
         </AlertPanelState>
       )}
 

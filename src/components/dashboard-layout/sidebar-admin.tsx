@@ -104,7 +104,6 @@ export default function SideBarAdmin({ user }: { user: User }) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <p>{user.profile?.first_name + " " + user.profile?.last_name}</p>
         <SignOutForm />
       </SidebarFooter>
     </Sidebar>

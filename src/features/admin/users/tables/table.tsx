@@ -12,7 +12,7 @@ import { TableSchema } from "../types/table";
 
 export function Table() {
   const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["users_view"],
     queryFn: fetchAll,
   });
 

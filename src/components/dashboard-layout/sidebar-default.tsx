@@ -27,13 +27,13 @@ export default function SideBarDefault({ user }: { user: User }) {
     },
 
     {
-      title: "Induction",
+      title: "Inductions",
       icon: UserCheck, // More relevant for the Induction section
       href: "/dashboard/inductions",
     },
 
     {
-      title: "Sessions",
+      title: "My Sessions",
       icon: Calendar, // Better represents sessions or events
       href: "/dashboard/induction-sessions",
     },
@@ -90,7 +90,6 @@ export default function SideBarDefault({ user }: { user: User }) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <p>{user.profile?.first_name + " " + user.profile?.last_name}</p>
         <SignOutForm />
       </SidebarFooter>
     </Sidebar>

@@ -1,5 +1,5 @@
 // ColumnDate.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 type Props = {
   value: string | number | Date | null | undefined;
@@ -9,15 +9,19 @@ export default function ColumnDate({ value }: Props) {
   if (!value) return null;
 
   const date = new Date(value);
+  const [formatted, setFormatted] = useState(date.toISOString()); // SSR-safe
 
-  // Format: M/D/YYYY, H:MM AM/PM (without seconds)
-  const formatted = date.toLocaleString(undefined, {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  useEffect(() => {
+    setFormatted(
+      date.toLocaleString(undefined, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    );
+  }, [value]);
 
   return <span>{formatted}</span>;
 }

@@ -62,7 +62,7 @@ export function DataTable<TData>({
         ? columns.map((col) => ({
             ...col,
             cell: () => (
-              <div className="h-[25px] min-w-[32px] w-full animate-pulse rounded bg-muted" />
+              <div className="h-[18px] min-w-[32px] w-full animate-pulse rounded bg-muted" />
             ),
           }))
         : columns,

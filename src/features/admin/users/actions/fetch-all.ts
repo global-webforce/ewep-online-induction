@@ -6,7 +6,7 @@ import { TableSchema } from "../types/table";
 export async function fetchAll() {
   const supabase = createClientAdmin();
   const { data, error } = await supabase
-    .from("users")
+    .from("users_view")
     .select("*")
     .order("created_at", { ascending: false });
   if (error) {

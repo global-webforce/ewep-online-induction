@@ -233,7 +233,14 @@ export const useSlideController = ({
   };
 
   const isDirty = () => {
-    return !isEqual(pristineValue.current, slides);
+    return !isEqual(
+      pristineValue.current.map((val) => ({
+        ...val,
+        quizCache: null,
+        enableQuiz: null,
+      })),
+      slides.map((val) => ({ ...val, quizCache: null, enableQuiz: null }))
+    );
   };
 
   return {

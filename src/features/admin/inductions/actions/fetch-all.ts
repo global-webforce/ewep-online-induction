@@ -1,13 +1,12 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/client-server";
+import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 import { TableSchema } from "../types/table";
 
 export async function fetchAll() {
-  const supabase = await createClient();
+  const supabase = createClientAdmin();
   const { data, error } = await supabase
-    .from("inductions_admin_view")
-    .select("*")
+    .from("inductions")
     .select("*")
     .order("created_at", { ascending: false });
 
