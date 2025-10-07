@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Table } from "@/features/default/induction-sessions/";
+import { Table } from "@/features/user/induction-sessions";
 
 export default function Page() {
   return (

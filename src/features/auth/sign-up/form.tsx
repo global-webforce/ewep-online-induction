@@ -53,23 +53,22 @@ export default function SignUpForm() {
         onSubmit={form.handleSubmit((values) => mutate(values))}
         className="flex flex-col gap-4"
       >
-        <div className="flex gap-3">
-          <FormField
-            control={form.control}
-            type="text"
-            name="first_name"
-            label="First Name"
-            placeholder="First Name"
-          />
+        <FormField
+          control={form.control}
+          type="text"
+          name="first_name"
+          label="First Name"
+          placeholder="First Name"
+        />
 
-          <FormField
-            control={form.control}
-            type="text"
-            name="last_name"
-            label="Last Name"
-            placeholder="Last Name"
-          />
-        </div>{" "}
+        <FormField
+          control={form.control}
+          type="text"
+          name="last_name"
+          label="Last Name"
+          placeholder="Last Name"
+        />
+
         <FormField
           control={form.control}
           type="email"

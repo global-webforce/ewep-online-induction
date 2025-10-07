@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/client-server";
+import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -7,11 +7,29 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const supabase = await createClient();
+  const supabase = createClientAdmin();
   const { data, error } = await supabase
-    .from("induction_resources")
-    .select("*")
-    .eq("induction_id", id);
+    .from("inductions")
+    .select(
+      `
+    id,
+    title,
+    description,
+    validity_days,
+    status,
+    created_at,   
+    induction_resources (
+      id,
+      induction_id,
+      title,
+      content,
+      "order",
+      quiz,
+      created_at
+    )`
+    )
+    .eq("id", id)
+    .maybeSingle();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 404 });

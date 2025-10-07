@@ -2,7 +2,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import SlideMaker from "@/features/admin/induction-resources-builder/slide-maker";
+import SlideMaker from "@/features/super-admin/induction-resources-builder/slide-maker";
 
 export default function Page() {
   return (

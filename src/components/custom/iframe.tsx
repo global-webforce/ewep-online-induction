@@ -40,9 +40,7 @@ const IframeWithHtml: React.FC<IframeWithHtmlProps> = ({ htmlContent }) => {
           }
         </style>
             </head>
-            <body style="margin-inline:0"
-            
-            >
+            <body >
               ${htmlContent}
             </body>
             <script type='text/javascript' src='/tinymce/skins/content/default/iframeResizer.contentWindow.js'></script></html>
@@ -51,6 +49,7 @@ const IframeWithHtml: React.FC<IframeWithHtmlProps> = ({ htmlContent }) => {
           padding: 0,
           width: "100%",
           height: iframeRef.current?.height || "100vh",
+          borderRadius: "8px",
         }}
       />
     </>

@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { FormUpdate } from "@/features/admin/inductions/";
+import { FormView } from "@/features/user/inductions/";
 
 export default function Page() {
   return (
@@ -13,10 +13,10 @@ export default function Page() {
           </Button>
           <BackButton />
         </div>
-        <h1 className="text-xl font-semibold">Manage Induction</h1>
+        <h1 className="text-xl font-semibold">Induction Overview</h1>
       </div>
 
-      <FormUpdate />
+      <FormView />
     </div>
   );
 }

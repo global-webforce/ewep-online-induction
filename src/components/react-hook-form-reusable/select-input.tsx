@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { ComponentPropsWithoutRef, ReactNode } from "react";
 import { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
 
@@ -23,6 +22,7 @@ type SelectInputProps<
   ComponentPropsWithoutRef<"select"> & {
     options: { value: string; label: string }[] | undefined;
     label?: string | ReactNode;
+    readOnly?: boolean;
   };
 
 export function SelectInput<
@@ -35,6 +35,7 @@ export function SelectInput<
   options = [],
   label,
   disabled,
+  readOnly = false,
 }: SelectInputProps<T, U>) {
   return (
     <FormField
@@ -45,35 +46,42 @@ export function SelectInput<
         <FormItem>
           <FormLabel className="space-y-1 leading-none">
             {typeof label === "string"
-              ? label.charAt(0).toUpperCase() + label.slice(1) // Capitalize if it's a string
+              ? label.charAt(0).toUpperCase() + label.slice(1)
               : name.charAt(0).toUpperCase() + name.slice(1)}
             {required && <span className="text-destructive"> *</span>}
           </FormLabel>
+
           <FormControl>
-            <Select
-              {...field}
-              disabled={disabled}
-              onValueChange={(e) => {
-                field.onChange(e);
-              }}
-              value={field.value || ""}
+            <div
+              className={readOnly ? "pointer-events-none opacity-80" : ""}
+              onClick={(e) => readOnly && e.preventDefault()}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={"Select an option"} />
-              </SelectTrigger>
-              <SelectContent className="w-full">
-                {options?.map((option) => (
-                  <SelectItem
-                    id={option.value}
-                    key={option.value}
-                    value={option.value.toString()}
-                  >
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <Select
+                {...field}
+                disabled={disabled}
+                onValueChange={(e) => {
+                  if (!readOnly) field.onChange(e);
+                }}
+                value={field.value || ""}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select an option" />
+                </SelectTrigger>
+                <SelectContent className="w-full">
+                  {options?.map((option) => (
+                    <SelectItem
+                      id={option.value}
+                      key={option.value}
+                      value={option.value.toString()}
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </FormControl>
+
           <FormMessage />
         </FormItem>
       )}

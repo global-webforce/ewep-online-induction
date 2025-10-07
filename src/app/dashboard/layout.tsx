@@ -3,7 +3,7 @@ import { requireUser } from "@/features/auth/require-user";
 import { redirect, RedirectType } from "next/navigation";
 import { ReactNode } from "react";
 import SideBarAdmin from "../../components/dashboard-layout/sidebar-admin";
-import SideBarDefault from "../../components/dashboard-layout/sidebar-default";
+import SideBarDefault from "../../components/dashboard-layout/sidebar-user";
 
 export default async function DashboardLayout({
   admin,

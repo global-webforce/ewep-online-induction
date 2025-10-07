@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { MetricCardsGridAdmin } from "@/features/admin/home/metric-cards-grid";
+import { MetricCardsGridAdmin } from "@/features/super-admin/home/metric-cards-grid";
 import { requireUser } from "@/features/auth/require-user";
 
 export default async function Page() {

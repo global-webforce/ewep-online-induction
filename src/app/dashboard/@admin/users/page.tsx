@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Table } from "@/features/admin/users";
+import { Table } from "@/features/super-admin/users";
 
 export default function Page() {
   return (
