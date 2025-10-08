@@ -13,7 +13,6 @@ export default function Page() {
           </Button>
           <BackButton />
         </div>
-        <h1 className="text-xl font-semibold">Induction Session</h1>
       </div>
 
       <SlidePresenter />

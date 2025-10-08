@@ -1,5 +1,4 @@
-export * from "./actions/upsert-action";
 export * from "./actions/fetch-by-id";
-export * from "./types/upsert";
-export * from "./types/table";
+export * from "./actions/upsert-action";
+export * from "./types/row";
 export * from "./types/upsert";

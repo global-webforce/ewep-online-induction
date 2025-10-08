@@ -22,11 +22,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
 import SignOutForm from "../../features/auth/sign-out/form";
 import { User } from "../../features/auth/user-schema";
 
-export default function SideBarAdmin({ user }: { user: User }) {
+export default function SideBarAdmin({}: { user: User }) {
   const nav = [
     {
       title: "Home",

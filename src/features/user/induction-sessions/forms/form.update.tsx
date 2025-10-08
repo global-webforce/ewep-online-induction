@@ -28,7 +28,7 @@ export function FormUpdate() {
   });
 
   const queryClient = useQueryClient();
-  const { mutate, isPending, isError } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (values: FormSchema) => updateAction(id, values),
     onError: (error) => {
       toast.error(error.message);
@@ -46,7 +46,7 @@ export function FormUpdate() {
     defaultValues: data || {
       induction_id: "",
       user_id: "",
-      valid_until: null,
+      valid_until: "",
     },
     values: data,
   });

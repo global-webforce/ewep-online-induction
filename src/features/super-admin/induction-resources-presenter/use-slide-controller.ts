@@ -1,18 +1,13 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { InductionWithResourcesSchema } from "../inductions/types/induction-with-resources";
 import { FormSchema } from "./types/form";
 import { quizStrictSchema } from "./types/quiz-strict";
 
-function randomId() {
-  return (Math.random() + 1).toString(36).substring(7);
-}
-
 export const useSlideController = (
   value: InductionWithResourcesSchema | undefined
 ) => {
-  const quizCounter = useRef<number>(1);
   const [slides, setSlides] = useState<FormSchema[]>([]);
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
 
@@ -51,6 +46,7 @@ export const useSlideController = (
   return {
     selectedSlide,
     selectedIndex,
+
     setSelectedId,
     selectedId,
     slides,

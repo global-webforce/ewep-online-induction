@@ -1,7 +1,7 @@
 import z from "zod";
 import { quizSchema } from "./quiz";
 
-export const tableSchema = z.object({
+export const rowSchema = z.object({
   id: z.number(),
   induction_id: z.uuidv4(),
   order: z.number(),
@@ -10,4 +10,4 @@ export const tableSchema = z.object({
   quiz: quizSchema.nullable(),
 });
 
-export type TableSchema = z.infer<typeof tableSchema>;
+export type RowSchema = z.infer<typeof rowSchema>;

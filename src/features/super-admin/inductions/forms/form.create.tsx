@@ -31,7 +31,7 @@ export function FormCreate() {
     defaultValues: {
       title: "",
       description: "",
-      validity_days: null,
+      validity_days: 888,
       status: "draft",
     },
   });

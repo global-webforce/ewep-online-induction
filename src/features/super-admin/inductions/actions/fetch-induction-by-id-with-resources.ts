@@ -27,14 +27,15 @@ export async function fetchInductionResourcesById(id: string) {
     )
     .eq("id", id)
     .order("order", { referencedTable: "induction_resources", ascending: true })
-    .maybeSingle();
+    .single();
 
   if (error) throw Error(error.message);
 
+  if (data) {
+  }
   const parsed = inductionWithResourcesSchema.safeParse(data);
   if (!parsed.success) {
-    console.error(JSON.stringify(parsed.error.message));
-    throw new Error("fetchInductionResourcesById : Error parsing data");
+    throw new Error(parsed.error.message);
   }
 
   return parsed.data;

@@ -27,7 +27,6 @@ export function FormUpdate() {
   const {
     data,
     error,
-    isLoading,
     refetch,
     isError: isErrorFetch,
   } = useQuery({
@@ -52,7 +51,7 @@ export function FormUpdate() {
     defaultValues: data || {
       title: "",
       description: "",
-      validity_days: undefined,
+      validity_days: null,
       status: "draft",
     },
     values: data,
@@ -65,10 +64,8 @@ export function FormUpdate() {
         <AlertPanelState onRetry={async () => await refetch()} variant="error">
           {error.message}
         </AlertPanelState>
-      )}{" "}
-      {isLoading && (
-        <AlertPanelState variant="loading">Loading Inductions</AlertPanelState>
       )}
+
       <Card className="w-full p-4">
         <FormProvider {...form}>
           <form

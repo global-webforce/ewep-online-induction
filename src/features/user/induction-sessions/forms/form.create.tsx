@@ -31,7 +31,7 @@ export function FormCreate() {
     defaultValues: {
       induction_id: "",
       user_id: "",
-      valid_until: null,
+      valid_until: "",
     },
   });
   const onSubmit = (values: FormSchema) => mutate(values);

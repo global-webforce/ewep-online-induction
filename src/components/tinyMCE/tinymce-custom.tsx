@@ -1,7 +1,6 @@
 "use client";
 
 import { Editor, IAllProps } from "@tinymce/tinymce-react";
-import { useRef } from "react";
 
 /* interface TinyMECEditorProps {
   id: string;

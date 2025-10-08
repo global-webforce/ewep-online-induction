@@ -17,11 +17,11 @@ import { useRouter } from "next/navigation";
 import ColumnBadge from "@/components/tanstack-table/column-badge";
 
 import ColumnDate from "@/components/tanstack-table/column-date";
-import { TableSchema } from "../types/table";
+import { RowSchema } from "../types/row";
 
-export const columnHelper = createColumnHelper<TableSchema>();
+export const columnHelper = createColumnHelper<RowSchema>();
 
-export function useColumns(): ColumnDef<TableSchema, any>[] {
+export function useColumns(): ColumnDef<RowSchema, any>[] {
   const router = useRouter();
 
   return [

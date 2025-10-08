@@ -43,10 +43,11 @@ export function NumberInput<
           <FormControl>
             <Input
               type="number"
-              value={field.value ?? ""} // Handles nullable (null → empty)
+              value={field.value || ""}
               onChange={(e) => {
-                const value = e.target.value;
-                field.onChange(value === "" ? null : Number(value));
+                field.onChange(
+                  Number(e.target.value) === 0 ? null : Number(e.target.value)
+                );
               }}
               {...props}
             />

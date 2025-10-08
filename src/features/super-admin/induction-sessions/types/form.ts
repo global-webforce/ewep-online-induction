@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const formSchema = z.object({
   user_id: z.uuid(),
-  valid_until: z.coerce.date().nullable(),
+  valid_until: z.iso.date().nullable(),
   induction_id: z.uuid(),
 });
 

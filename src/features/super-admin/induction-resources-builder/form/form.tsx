@@ -1,8 +1,8 @@
 "use client";
 
 import { Switch } from "@/components/custom/switch-custom";
-import TinyMECEditor from "@/components/tinyMCE/tinymce-custom";
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
+import TinyMECEditor from "@/components/tinyMCE/tinymce-custom";
 import { Card } from "@/components/ui/card";
 import {
   Form,

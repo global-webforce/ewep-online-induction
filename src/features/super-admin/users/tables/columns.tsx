@@ -14,13 +14,12 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
 import ColumnDate from "@/components/tanstack-table/column-date";
-import { TableSchema } from "../types/table";
+import { RowSchema } from "../types/row";
 
-export const columnHelper = createColumnHelper<TableSchema>();
+export const columnHelper = createColumnHelper<RowSchema>();
 
-export function useColumns(): ColumnDef<TableSchema, any>[] {
+export function useColumns(): ColumnDef<RowSchema, any>[] {
   return [
-    // ✅ Select Checkbox
     {
       accessorKey: "select",
       header: ({ table }) => (
@@ -44,7 +43,6 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
       enableHiding: false,
     },
 
-    // ✅ Email
     columnHelper.accessor("email", {
       cell: ({ cell }) => <div>{cell.getValue()}</div>,
       header: ({ column }) => (
@@ -58,7 +56,6 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
       ),
     }),
 
-    // ✅ Role
     columnHelper.accessor("app_role", {
       cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
       filterFn: (row, columnId, filterValue: string[]) => {
@@ -77,20 +74,17 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
       ),
     }),
 
-    // ✅ First Name
     columnHelper.accessor("first_name", {
       cell: ({ cell }) => <div>{cell.getValue() ?? "-"}</div>,
       header: "First Name",
     }),
 
-    // ✅ Last Name
     columnHelper.accessor("last_name", {
       cell: ({ cell }) => <div>{cell.getValue() ?? "-"}</div>,
       header: "Last Name",
     }),
 
-    // ✅ Email Confirmed At
-    columnHelper.accessor("email_confirmed_at", {
+    columnHelper.accessor("confirmed_at", {
       cell: ({ cell }) => {
         return cell.getValue() ? (
           <ColumnDate value={cell.getValue()} />
@@ -98,10 +92,9 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
           "Not confirmed"
         );
       },
-      header: "Email Confirmed At",
+      header: "Confirmed At",
     }),
 
-    // ✅ Created At
     columnHelper.accessor("created_at", {
       cell: ({ cell }) => {
         return <ColumnDate value={cell.getValue()} />;
@@ -117,7 +110,6 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
       ),
     }),
 
-    // ✅ Actions Column
     {
       id: "actions",
       enableHiding: false,

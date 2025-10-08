@@ -1,5 +1,8 @@
 "use client";
 
+import ColumnDate from "@/components/tanstack-table/column-date";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,13 +14,10 @@ import {
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { TableSchema } from "../types/table";
-import ColumnDate from "@/components/tanstack-table/column-date";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
+import { RowSchema } from "../types/row";
 
-export const columnHelper = createColumnHelper<TableSchema>();
-export function useColumns(): ColumnDef<TableSchema, any>[] {
+export const columnHelper = createColumnHelper<RowSchema>();
+export function useColumns(): ColumnDef<RowSchema, any>[] {
   const router = useRouter();
 
   return [

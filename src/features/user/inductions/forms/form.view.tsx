@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -19,7 +18,6 @@ import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { fetchById } from "../actions/fetch-by-id";
 
-import { formSchema, FormSchema } from "../types/form";
 import FormBase from "./form.base";
 
 export function FormView() {
@@ -75,7 +73,7 @@ export function FormView() {
           />
           <label
             htmlFor="agreement"
-            className="text-sm leading-tight text-muted-foreground cursor-pointer select-none"
+            className="text-sm leading-tight  cursor-pointer select-none"
           >
             By taking this induction, I agree to comply with all company
             policies and safety procedures as outlined in the induction

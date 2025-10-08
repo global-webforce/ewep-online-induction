@@ -1,7 +1,8 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/client-server";
-import { TableSchema } from "../types/table";
+import z from "zod";
+import { rowSchema } from "../types/row";
 
 export async function fetchById(id: string) {
   const supabase = await createClient();
@@ -14,5 +15,9 @@ export async function fetchById(id: string) {
   if (error) {
     throw Error(error.message);
   }
-  return (data ?? []) as TableSchema[];
+
+  const parsed = z.array(rowSchema).safeParse(data);
+  if (!parsed.success) throw Error(parsed.error.message);
+
+  return parsed.data;
 }

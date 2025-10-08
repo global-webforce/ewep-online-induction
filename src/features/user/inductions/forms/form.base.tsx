@@ -1,9 +1,8 @@
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import { SelectInput } from "@/components/react-hook-form-reusable/select-input";
-import { useFormContext } from "react-hook-form";
-import { FormSchema } from "../types/form";
 import { NumberInput } from "@/components/react-hook-form-reusable/number-input";
 import { TextAreaInput } from "@/components/react-hook-form-reusable/text-area-input";
+import { useFormContext } from "react-hook-form";
+import { FormSchema } from "../types/form";
 
 export default function FormBase() {
   const { control } = useFormContext<FormSchema>();

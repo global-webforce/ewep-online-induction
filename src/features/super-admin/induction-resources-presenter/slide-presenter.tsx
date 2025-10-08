@@ -1,18 +1,20 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useSlideController } from "./use-slide-controller";
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import {
   upsertAction,
   UpsertSchema,
 } from "@/features/super-admin/induction-resources";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useSlideController } from "./use-slide-controller";
 
-import { useParams } from "next/navigation";
 import { fetchInductionResourcesById } from "@/features/super-admin/inductions/";
+import { useParams } from "next/navigation";
+import HtmlPreview from "../../../components/html-viewer/html-preview";
+import SlideFooter from "./design/footer";
+import SlideHeader from "./design/header";
 import FormComponent from "./form/form";
-import IframeWithHtml from "@/components/custom/iframe";
 
 export default function SlidePresenter() {
   const { id } = useParams<{ id: string }>();
@@ -46,7 +48,7 @@ export default function SlidePresenter() {
     },
   });
 
-  const { slides, selectedSlide, selectedId, setSelectedId } =
+  const { selectedSlide, slides, selectedIndex, setSelectedId } =
     useSlideController(data || undefined);
 
   return (
@@ -64,22 +66,52 @@ export default function SlidePresenter() {
       )}
 
       {
-        <div className="flex flex-1    relative">
-          <div className="absolute top-0 bottom-0 overflow-y-scroll w-full space-y-4">
-            {selectedSlide?.content && (
-              <IframeWithHtml
-                htmlContent={selectedSlide.content || ""}
-              ></IframeWithHtml>
-            )}
+        <div className="flex flex-col flex-1">
+          <SlideHeader />
 
-            {selectedSlide?.quiz && (
-              <>
-                <FormComponent
-                  value={selectedSlide?.quiz!}
-                  onChange={() => {}}
-                />
-              </>
-            )}
+          <div className="flex flex-col flex-1  relative">
+            <div className="absolute top-0 bottom-0 overflow-y-scroll border-1 w-full space-y-4">
+              <div className="p-4 space-y-4">
+                {selectedSlide?.title?.trim() !== "" && (
+                  <h1 className="text-2xl font-bold">{selectedSlide?.title}</h1>
+                )}
+
+                {selectedSlide?.content &&
+                  selectedSlide?.content.trim() !== "" && (
+                    <HtmlPreview htmlContent={selectedSlide.content} />
+                  )}
+
+                {selectedSlide?.quiz && (
+                  <>
+                    <FormComponent
+                      value={selectedSlide?.quiz!}
+                      onChange={() => {}}
+                    />
+                  </>
+                )}
+              </div>
+
+              <SlideFooter />
+            </div>
+            {/*   <footer className="fixed bottom-0 left-0 right-0 bg-background ">
+              <Separator />
+
+              <div className=" flex items-center justify-center gap-4 h-16 px-4 ">
+                <Button
+                  variant="outline"
+                  onClick={goToPreviousSlide}
+                  disabled={currentIndex() === 0}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  Previous
+                </Button>
+                Page {currentIndex() + 1} of {slides.length}
+                <Button variant="outline" onClick={set}>
+                  {currentIndex() === slides.length - 1 ? "Finish" : "Next"}
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </footer> */}
           </div>
         </div>
       }

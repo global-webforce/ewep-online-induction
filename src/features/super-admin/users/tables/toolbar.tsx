@@ -1,5 +1,6 @@
 "use client";
 
+import { formatLabel } from "@/components/tanstack-table/column-badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,8 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
-import { formatLabel } from "@/components/tanstack-table/column-badge";
-import { TableSchema } from "../types/table";
+import { RowSchema } from "../types/row";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -22,7 +22,7 @@ export function DataTableToolbar<TData>({
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
-  function getColumn<T extends keyof TableSchema>(key: T) {
+  function getColumn<T extends keyof RowSchema>(key: T) {
     return table.getColumn(key as string);
   }
 

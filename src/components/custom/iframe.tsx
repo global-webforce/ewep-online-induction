@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
 import IframeResizer from "@iframe-resizer/react";
+import React, { useEffect, useRef } from "react";
 
 // Define the types for the props
 interface IframeWithHtmlProps {
@@ -40,7 +40,9 @@ const IframeWithHtml: React.FC<IframeWithHtmlProps> = ({ htmlContent }) => {
           }
         </style>
             </head>
-            <body >
+            <body style="margin-inline:0"
+            
+            >
               ${htmlContent}
             </body>
             <script type='text/javascript' src='/tinymce/skins/content/default/iframeResizer.contentWindow.js'></script></html>
@@ -49,7 +51,6 @@ const IframeWithHtml: React.FC<IframeWithHtmlProps> = ({ htmlContent }) => {
           padding: 0,
           width: "100%",
           height: iframeRef.current?.height || "100vh",
-          borderRadius: "8px",
         }}
       />
     </>

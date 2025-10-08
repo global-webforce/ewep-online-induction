@@ -28,7 +28,7 @@ export function FormUpdate() {
   });
 
   const queryClient = useQueryClient();
-  const { mutate, isPending, isError } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (values: FormSchema) => updateAction(id, values),
     onError: (error) => {
       toast.error(error.message);

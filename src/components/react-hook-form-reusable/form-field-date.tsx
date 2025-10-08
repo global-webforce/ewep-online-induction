@@ -1,7 +1,7 @@
-import { Controller, Control, FieldValues, Path } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { FormControl, FormItem, FormMessage } from "../ui/form";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 // ✅ Helper: safely check if a value is a Date
 function isDate(value: unknown): value is Date {
@@ -35,14 +35,10 @@ export function FormFieldDate<T extends FieldValues>({
               id={name}
               type="date"
               {...inputProps}
-              value={
-                isDate(field.value)
-                  ? field.value.toISOString().split("T")[0]
-                  : (field.value as string) ?? ""
-              }
+              value={field.value || ""}
               onChange={(e) => {
                 const val = e.target.value;
-                field.onChange(val ? new Date(val) : null);
+                field.onChange(val.trim() !== "" ? val : null);
               }}
             />
           </FormControl>

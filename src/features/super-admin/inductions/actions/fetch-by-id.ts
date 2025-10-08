@@ -1,18 +1,18 @@
 "use server";
 
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { TableSchema } from "../types/table";
+import { RowSchema } from "../types/row";
 
 export async function fetchById(id: string) {
-  const supabase = await createClientAdmin();
+  const supabase = createClientAdmin();
   const { data, error } = await supabase
     .from("inductions")
     .select("*")
     .eq("id", id)
-    .maybeSingle();
+    .single();
   if (error) {
     throw Error(error.message);
   }
 
-  return (data || undefined) as TableSchema | undefined;
+  return data as RowSchema;
 }

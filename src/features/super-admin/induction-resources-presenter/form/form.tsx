@@ -1,6 +1,6 @@
 "use client";
 
-import { FormField } from "@/components/react-hook-form-reusable/form-field";
+import { TextAreaInput } from "@/components/react-hook-form-reusable/text-area-input";
 import { Card } from "@/components/ui/card";
 import {
   Form,
@@ -17,7 +17,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { quizSchema } from "../../induction-resources-builder";
 import { QuizFormSchema } from "../types/quiz";
-import { TextAreaInput } from "@/components/react-hook-form-reusable/text-area-input";
 export default function FormComponent({
   value,
   onChange,
@@ -89,7 +88,10 @@ export default function FormComponent({
                   >
                     {getValues("options").map((e) => {
                       return (
-                        <FormItem className="flex items-center gap-3">
+                        <FormItem
+                          key={e.value}
+                          className="flex items-center gap-3"
+                        >
                           <FormControl>
                             <RadioGroupItem value={e.value} />
                           </FormControl>
