@@ -15,17 +15,17 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-
 import ColumnDate from "@/components/tanstack-table/column-date";
 import { RowSchema } from "../types/row";
 
-export const columnHelper = createColumnHelper<RowSchema>();
+const columnHelper = createColumnHelper<RowSchema>();
 
-export function useColumns(): ColumnDef<RowSchema, any>[] {
+export function useColumns(): ColumnDef<RowSchema>[] {
   const router = useRouter();
 
-  return [
-    {
+  const proxyColumns = [
+    // ✅ Select checkbox column (non-data)
+    columnHelper.display({
       id: "select",
       header: ({ table }) => (
         <Checkbox
@@ -46,10 +46,10 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
       ),
       enableSorting: false,
       enableHiding: false,
-    },
+    }),
 
+    // ✅ Title
     columnHelper.accessor("title", {
-      cell: ({ cell }) => <div className="">{cell.getValue()}</div>,
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -59,12 +59,11 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <div>{cell.getValue()}</div>,
     }),
 
+    // ✅ Description
     columnHelper.accessor("description", {
-      cell: ({ cell }) => (
-        <div className="truncate max-w-[400px]">{cell.getValue()}</div>
-      ),
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -74,12 +73,13 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => (
+        <div className="truncate max-w-[400px]">{cell.getValue()}</div>
+      ),
     }),
 
+    // ✅ Validity days
     columnHelper.accessor("validity_days", {
-      cell: ({ cell }) => (
-        <div>{cell.getValue() ? cell.getValue() + " days" : ""} </div>
-      ),
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -89,14 +89,13 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => (
+        <div>{cell.getValue() ? `${cell.getValue()} days` : ""}</div>
+      ),
     }),
 
+    // ✅ Status badge
     columnHelper.accessor("status", {
-      cell: ({ cell }) => (
-        <div>
-          <ColumnBadge value={cell.getValue()} />
-        </div>
-      ),
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -106,12 +105,11 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
     }),
 
+    // ✅ Created At
     columnHelper.accessor("created_at", {
-      cell: ({ cell }) => {
-        return <ColumnDate value={cell.getValue()} />;
-      },
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -121,9 +119,11 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
     }),
 
-    {
+    // ✅ Actions column (non-data)
+    columnHelper.display({
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
@@ -139,9 +139,9 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => {
-                  router.push(`/dashboard/inductions/${rowData.id}`);
-                }}
+                onClick={() =>
+                  router.push(`/dashboard/inductions/${rowData.id}`)
+                }
               >
                 Manage
               </DropdownMenuItem>
@@ -151,12 +151,15 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
               >
                 Copy ID
               </DropdownMenuItem>
+
               <DropdownMenuSeparator />
               <DropdownMenuItem>View History</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
       },
-    },
+    }),
   ];
+
+  return proxyColumns as ColumnDef<RowSchema>[];
 }

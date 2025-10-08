@@ -1,6 +1,14 @@
 "use client";
 
-import * as React from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,24 +21,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import * as React from "react";
 
 interface DataTableProps<TData> {
   data: TData[];
-  columns: ColumnDef<TData, unknown>[];
+  columns: {
+    [K in keyof Required<TData>]: ColumnDef<TData, TData[K]>;
+  }[keyof TData][];
   loading?: boolean;
-  /**
-   * Optional render prop that exposes the `table` instance
-   * Use this to inject toolbars, filters, etc.
-   */
   children?: (
     table: ReturnType<typeof useReactTable<TData>>
   ) => React.ReactNode;
@@ -49,29 +47,11 @@ export function DataTable<TData>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [globalFilter, setGlobalFilter] = React.useState(""); // ✅ global search
-
-  const tableData = React.useMemo(
-    () => (loading ? Array(3).fill({}) : data),
-    [loading, data]
-  );
-
-  const tableColumns = React.useMemo(
-    () =>
-      loading
-        ? columns.map((col) => ({
-            ...col,
-            cell: () => (
-              <div className="h-[18px] min-w-[32px] w-full animate-pulse rounded bg-muted" />
-            ),
-          }))
-        : columns,
-    [loading, columns]
-  );
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable<TData>({
-    data: tableData,
-    columns: tableColumns,
+    data,
+    columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -115,7 +95,16 @@ export function DataTable<TData>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

@@ -15,17 +15,17 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-
 import ColumnDate from "@/components/tanstack-table/column-date";
 import { TableSchema } from "../types/table";
 
-export const columnHelper = createColumnHelper<TableSchema>();
+const columnHelper = createColumnHelper<TableSchema>();
 
-export function useColumns(): ColumnDef<TableSchema, any>[] {
+export function useColumns(): ColumnDef<TableSchema>[] {
   const router = useRouter();
 
-  return [
-    {
+  const columns = [
+    // ✅ Selection column (non-data)
+    columnHelper.display({
       id: "select",
       header: ({ table }) => (
         <Checkbox
@@ -46,10 +46,10 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
       ),
       enableSorting: false,
       enableHiding: false,
-    },
+    }),
 
+    // ✅ Title
     columnHelper.accessor("title", {
-      cell: ({ cell }) => <div className="">{cell.getValue()}</div>,
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -59,12 +59,11 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <div>{cell.getValue()}</div>,
     }),
 
+    // ✅ Description
     columnHelper.accessor("description", {
-      cell: ({ cell }) => (
-        <div className="truncate max-w-[400px]">{cell.getValue()}</div>
-      ),
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -74,10 +73,13 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => (
+        <div className="truncate max-w-[400px]">{cell.getValue()}</div>
+      ),
     }),
 
+    // ✅ Validity Days
     columnHelper.accessor("validity_days", {
-      cell: ({ cell }) => <div>{cell.getValue()} days</div>,
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -87,14 +89,11 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <div>{cell.getValue()} days</div>,
     }),
 
+    // ✅ Status
     columnHelper.accessor("status", {
-      cell: ({ cell }) => (
-        <div>
-          <ColumnBadge value={cell.getValue()} />
-        </div>
-      ),
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -104,12 +103,11 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
     }),
 
+    // ✅ Created At
     columnHelper.accessor("created_at", {
-      cell: ({ cell }) => {
-        return <ColumnDate value={cell.getValue()} />;
-      },
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -119,9 +117,11 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
     }),
 
-    {
+    // ✅ Actions column (non-data)
+    columnHelper.display({
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
@@ -136,6 +136,7 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
               <DropdownMenuItem
                 onClick={() => {
                   router.push(`/dashboard/inductions/${rowData.id}`);
@@ -149,12 +150,16 @@ export function useColumns(): ColumnDef<TableSchema, any>[] {
               >
                 Copy ID
               </DropdownMenuItem>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuItem>View History</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
       },
-    },
+    }),
   ];
+
+  return columns as ColumnDef<TableSchema>[];
 }

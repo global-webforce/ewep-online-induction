@@ -38,7 +38,7 @@ export const useSlideController = (
         };
       });
 
-      setSelectedId(selectedId || mapped[0].id);
+      setSelectedId((prev) => prev || mapped[0].id);
       setSlides(mapped);
     }
   }, [value]);

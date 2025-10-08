@@ -3,11 +3,6 @@ import { FormControl, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-// ✅ Helper: safely check if a value is a Date
-function isDate(value: unknown): value is Date {
-  return value instanceof Date;
-}
-
 type FormFieldDateProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;

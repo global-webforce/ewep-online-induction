@@ -43,10 +43,8 @@ export default function FormComponent({
     control,
     watch,
     reset,
-    handleSubmit,
     setValue,
     getValues,
-    unregister,
   } = form;
   const data = watch();
 

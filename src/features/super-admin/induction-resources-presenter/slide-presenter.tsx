@@ -84,7 +84,7 @@ export default function SlidePresenter() {
                 {selectedSlide?.quiz && (
                   <>
                     <FormComponent
-                      value={selectedSlide?.quiz!}
+                      value={selectedSlide?.quiz}
                       onChange={() => {}}
                     />
                   </>

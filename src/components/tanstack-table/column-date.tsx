@@ -1,17 +1,19 @@
-// ColumnDate.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-type Props = {
-  value: string | number | Date | null | undefined;
-};
+interface Props {
+  value?: string | Date | null;
+}
 
 export default function ColumnDate({ value }: Props) {
-  if (!value) return null;
-
-  const date = new Date(value);
-  const [formatted, setFormatted] = useState(date.toISOString()); // SSR-safe
+  const [formatted, setFormatted] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!value) {
+      setFormatted(null);
+      return;
+    }
+
+    const date = new Date(value);
     setFormatted(
       date.toLocaleString(undefined, {
         year: "numeric",
@@ -23,5 +25,6 @@ export default function ColumnDate({ value }: Props) {
     );
   }, [value]);
 
+  if (!formatted) return null;
   return <span>{formatted}</span>;
 }

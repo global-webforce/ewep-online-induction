@@ -16,13 +16,15 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { RowSchema } from "../types/row";
 
-export const columnHelper = createColumnHelper<RowSchema>();
-export function useColumns(): ColumnDef<RowSchema, any>[] {
+const columnHelper = createColumnHelper<RowSchema>();
+
+export function useColumns(): ColumnDef<RowSchema>[] {
   const router = useRouter();
 
-  return [
-    {
-      accessorKey: "select",
+  const columns = [
+    // ✅ Selection checkbox column
+    columnHelper.display({
+      id: "select",
       header: ({ table }) => (
         <Checkbox
           checked={
@@ -42,12 +44,10 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
       ),
       enableSorting: false,
       enableHiding: false,
-    },
+    }),
 
+    // ✅ Induction title
     columnHelper.accessor("induction_title", {
-      cell: ({ cell }) => (
-        <div className="truncate max-w-[200px]">{cell.getValue()}</div>
-      ),
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -57,12 +57,13 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => (
+        <div className="truncate max-w-[200px]">{cell.getValue()}</div>
+      ),
     }),
 
+    // ✅ Valid Until
     columnHelper.accessor("valid_until", {
-      cell: ({ cell }) => {
-        return <ColumnDate value={cell.getValue()} />;
-      },
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -72,12 +73,11 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
     }),
 
+    // ✅ Created At
     columnHelper.accessor("created_at", {
-      cell: ({ cell }) => {
-        return <ColumnDate value={cell.getValue()} />;
-      },
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -87,9 +87,11 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
     }),
 
-    {
+    // ✅ Actions column
+    columnHelper.display({
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
@@ -104,10 +106,11 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
               <DropdownMenuItem
-                onClick={() => {
-                  router.push(`/dashboard/induction-sessions/${rowData.id}`);
-                }}
+                onClick={() =>
+                  router.push(`/dashboard/induction-sessions/${rowData.id}`)
+                }
               >
                 Manage
               </DropdownMenuItem>
@@ -117,11 +120,13 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
               >
                 Copy ID
               </DropdownMenuItem>
+
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(rowData.user_id)}
               >
                 Copy User ID
               </DropdownMenuItem>
+
               <DropdownMenuItem
                 onClick={() =>
                   navigator.clipboard.writeText(rowData.induction_id)
@@ -129,12 +134,16 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
               >
                 Copy Induction ID
               </DropdownMenuItem>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuItem>View History</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
       },
-    },
+    }),
   ];
+
+  return columns as ColumnDef<RowSchema>[];
 }

@@ -16,12 +16,13 @@ import ColumnBadge from "@/components/tanstack-table/column-badge";
 import ColumnDate from "@/components/tanstack-table/column-date";
 import { RowSchema } from "../types/row";
 
-export const columnHelper = createColumnHelper<RowSchema>();
+const columnHelper = createColumnHelper<RowSchema>();
 
-export function useColumns(): ColumnDef<RowSchema, any>[] {
-  return [
-    {
-      accessorKey: "select",
+export function useColumns(): ColumnDef<RowSchema>[] {
+  const proxyColumns = [
+    // ✅ Select column (non-data)
+    columnHelper.display({
+      id: "select",
       header: ({ table }) => (
         <Checkbox
           checked={
@@ -41,10 +42,10 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
       ),
       enableSorting: false,
       enableHiding: false,
-    },
+    }),
 
+    // ✅ Email
     columnHelper.accessor("email", {
-      cell: ({ cell }) => <div>{cell.getValue()}</div>,
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -54,15 +55,11 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <div>{cell.getValue()}</div>,
     }),
 
+    // ✅ App Role with filter function
     columnHelper.accessor("app_role", {
-      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
-      filterFn: (row, columnId, filterValue: string[]) => {
-        if (!filterValue?.length) return true;
-        const value = row.getValue(columnId) as string;
-        return filterValue.includes(value);
-      },
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -72,33 +69,39 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
+      filterFn: (row, columnId, filterValue: string[]) => {
+        if (!filterValue?.length) return true;
+        const value = row.getValue(columnId) as string;
+        return filterValue.includes(value);
+      },
     }),
 
+    // ✅ First Name
     columnHelper.accessor("first_name", {
-      cell: ({ cell }) => <div>{cell.getValue() ?? "-"}</div>,
       header: "First Name",
-    }),
-
-    columnHelper.accessor("last_name", {
       cell: ({ cell }) => <div>{cell.getValue() ?? "-"}</div>,
-      header: "Last Name",
     }),
 
+    // ✅ Last Name
+    columnHelper.accessor("last_name", {
+      header: "Last Name",
+      cell: ({ cell }) => <div>{cell.getValue() ?? "-"}</div>,
+    }),
+
+    // ✅ Confirmed At
     columnHelper.accessor("confirmed_at", {
-      cell: ({ cell }) => {
-        return cell.getValue() ? (
+      header: "Confirmed At",
+      cell: ({ cell }) =>
+        cell.getValue() ? (
           <ColumnDate value={cell.getValue()} />
         ) : (
           "Not confirmed"
-        );
-      },
-      header: "Confirmed At",
+        ),
     }),
 
+    // ✅ Created At
     columnHelper.accessor("created_at", {
-      cell: ({ cell }) => {
-        return <ColumnDate value={cell.getValue()} />;
-      },
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -108,9 +111,11 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
     }),
 
-    {
+    // ✅ Actions column (non-data)
+    columnHelper.display({
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
@@ -134,6 +139,9 @@ export function useColumns(): ColumnDef<RowSchema, any>[] {
           </DropdownMenu>
         );
       },
-    },
+    }),
   ];
+
+  // ✅ Return fully typed columns
+  return proxyColumns as ColumnDef<RowSchema>[];
 }
