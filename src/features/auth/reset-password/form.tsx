@@ -1,28 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
+import { AlertPanel } from "@/components/custom/alert-panel";
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
 import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
-import { AlertPanel } from "@/components/custom/alert-panel";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { resetPasswordAction } from "./action";
-import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
-import { logoutAction } from "../sign-out/action";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { logoutAction } from "../sign-out/action";
+import { resetPasswordAction } from "./action";
+import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
 
 // This component changes the flow so that when the user clicks "Reset Password",
 // we first show a confirmation dialog. If the user confirms, we perform the

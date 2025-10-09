@@ -10,7 +10,7 @@ import { DataTableToolbar } from "./toolbar";
 
 export function Table() {
   const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ["inductions"],
+    queryKey: ["inductions-user"],
     queryFn: fetchAll,
   });
 

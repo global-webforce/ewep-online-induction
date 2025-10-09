@@ -1,6 +1,6 @@
 "use client";
 
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -20,7 +20,7 @@ export function FormCreate() {
       toast.error(error.message);
     },
     onSuccess: async (data) => {
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
+      await queryClient.invalidateQueries({ queryKey: ["inductions"] });
       toast.success("Record has been created.");
       router.replace("/dashboard/inductions/" + data.id);
     },
@@ -39,20 +39,16 @@ export function FormCreate() {
   return (
     <Card className="w-full p-4">
       <FormProvider {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
-        >
+        <form className="flex flex-col gap-4">
           <FormBase />
 
-          <LoadingButton
-            type="submit"
-            className="w-min"
+          <FormSubmitButton
             disabled={!form.formState.isDirty}
-            pending={isPending}
+            isSubmitting={isPending}
+            onClick={form.handleSubmit(onSubmit)}
           >
             Create
-          </LoadingButton>
+          </FormSubmitButton>
         </form>
       </FormProvider>
     </Card>

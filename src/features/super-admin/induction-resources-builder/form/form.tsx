@@ -33,7 +33,7 @@ export default function FormComponent({
       question: "",
       correctAnswer: "",
       answer: "",
-      options: [{ value: "" }, { value: "" }],
+      options: [{ value: "" }],
     },
     values: value,
   });

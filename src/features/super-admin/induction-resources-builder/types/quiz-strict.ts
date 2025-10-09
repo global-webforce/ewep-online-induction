@@ -5,7 +5,7 @@ export const quizStrictSchema = z
     question: z.string().min(1, "Question is required"),
     options: z
       .array(z.object({ value: z.string().min(1, "Option required") }))
-      .min(2, "At least 2 options required"),
+      .min(1, "At least 2 options required"),
     correctAnswer: z.string().min(1, "Correct answer required"),
     answer: z.string().optional(),
   })

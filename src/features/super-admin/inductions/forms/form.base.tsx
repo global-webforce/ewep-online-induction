@@ -1,7 +1,7 @@
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import { NumberInput } from "@/components/react-hook-form-reusable/number-input";
-import { SelectInput } from "@/components/react-hook-form-reusable/select-input";
-import { TextAreaInput } from "@/components/react-hook-form-reusable/text-area-input";
+import { FormFieldNumberNullable } from "@/components/react-hook-form-reusable/form-field-number-nullable";
+import { FormFieldSelect } from "@/components/react-hook-form-reusable/form-field-select";
+import { FormFieldTextArea } from "@/components/react-hook-form-reusable/form-field-textarea";
 import { useFormContext } from "react-hook-form";
 import { FormSchema } from "../types/form";
 
@@ -10,16 +10,20 @@ export default function FormBase() {
   return (
     <>
       <FormField control={control} type="text" name="title" label="Title" />
-      <TextAreaInput control={control} name="description" label="Description" />
+      <FormFieldTextArea
+        control={control}
+        name="description"
+        label="Description"
+      />
 
-      <NumberInput
+      <FormFieldNumberNullable
         control={control}
         type="number"
         name="validity_days"
         label="Days of Validity (if applicable)"
       />
 
-      <SelectInput
+      <FormFieldSelect
         name="status"
         control={control}
         options={[

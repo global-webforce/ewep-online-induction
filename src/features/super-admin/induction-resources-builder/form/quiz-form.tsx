@@ -59,6 +59,7 @@ export const QuizForm = () => {
                     <div className="flex flex-col gap-1.5">
                       <Input
                         {...field}
+                        value={field.value || ""}
                         placeholder={`Option ${optionIndex + 1}`}
                       />
                       {fieldState.error && (
@@ -75,7 +76,7 @@ export const QuizForm = () => {
                 variant="destructive"
                 size="icon"
                 onClick={() => remove(optionIndex)}
-                disabled={fields.length <= 2} // minimum 2 options
+                disabled={fields.length <= 1}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

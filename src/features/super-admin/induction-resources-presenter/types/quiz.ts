@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const quizSchema = z.object({
+  index: z.number().optional(),
   question: z.string(),
   options: z.array(z.object({ value: z.string() })),
   correctAnswer: z.string(),

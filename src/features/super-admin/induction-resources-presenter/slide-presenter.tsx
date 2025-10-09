@@ -9,7 +9,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useSlideController } from "./use-slide-controller";
 
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { fetchInductionResourcesById } from "@/features/super-admin/inductions/";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "next/navigation";
 import HtmlPreview from "../../../components/html-viewer/html-preview";
 import SlideFooter from "./design/footer";
@@ -48,7 +51,7 @@ export default function SlidePresenter() {
     },
   });
 
-  const { selectedSlide, slides, selectedIndex, setSelectedId } =
+  const { selectedSlide, slides, selectedIndex, setSelectedIndex } =
     useSlideController(data || undefined);
 
   return (
@@ -65,15 +68,15 @@ export default function SlidePresenter() {
         </AlertPanelState>
       )}
 
-      {
-        <div className="flex flex-col flex-1">
+      {selectedSlide && (
+        <div className="flex flex-col flex-1  bg-white text-black ">
           <SlideHeader />
 
           <div className="flex flex-col flex-1  relative">
-            <div className="absolute top-0 bottom-0 overflow-y-scroll border-1 w-full space-y-4">
-              <div className="p-4 space-y-4">
+            <div className="absolute top-0 bottom-0 overflow-y-scroll w-full">
+              <div className="p-4 flex flex-col gap-4 ">
                 {selectedSlide?.title?.trim() !== "" && (
-                  <h1 className="text-2xl font-bold">{selectedSlide?.title}</h1>
+                  <h1 className="text-3xl font-bold">{selectedSlide?.title}</h1>
                 )}
 
                 {selectedSlide?.content &&
@@ -85,7 +88,18 @@ export default function SlidePresenter() {
                   <>
                     <FormComponent
                       value={selectedSlide?.quiz}
-                      onChange={() => {}}
+                      onChange={(value) => {
+                        const currentSlide = slides[selectedIndex];
+                        slides[selectedIndex] = {
+                          ...currentSlide,
+                          quiz: currentSlide.quiz
+                            ? {
+                                ...currentSlide.quiz,
+                                answer: value.answer,
+                              }
+                            : null,
+                        };
+                      }}
                     />
                   </>
                 )}
@@ -93,28 +107,39 @@ export default function SlidePresenter() {
 
               <SlideFooter />
             </div>
-            {/*   <footer className="fixed bottom-0 left-0 right-0 bg-background ">
-              <Separator />
+          </div>
 
-              <div className=" flex items-center justify-center gap-4 h-16 px-4 ">
+          {selectedSlide && (
+            <div className="bg-background border-1 text-white ">
+              <Separator />
+              <div className=" flex items-center justify-center gap-4 p-3">
                 <Button
                   variant="outline"
-                  onClick={goToPreviousSlide}
-                  disabled={currentIndex() === 0}
+                  onClick={() =>
+                    setSelectedIndex((prev) => Math.max(prev - 1, 0))
+                  }
+                  //disabled={selectedIndex === 0}
                 >
                   <ChevronLeft className="h-4 w-4 mr-2" />
                   Previous
                 </Button>
-                Page {currentIndex() + 1} of {slides.length}
-                <Button variant="outline" onClick={set}>
-                  {currentIndex() === slides.length - 1 ? "Finish" : "Next"}
+                Page {selectedIndex! + 1} of {slides.length}
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setSelectedIndex((prev) =>
+                      Math.min(prev + 1, slides.length - 1)
+                    )
+                  }
+                >
+                  {selectedIndex === slides.length - 1 ? "Finish" : "Next"}
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
               </div>
-            </footer> */}
-          </div>
+            </div>
+          )}
         </div>
-      }
+      )}
     </>
   );
 }

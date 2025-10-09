@@ -1,10 +1,10 @@
 "use client";
 
+import { FormField } from "@/components/react-hook-form-reusable/form-field";
+import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
 import { User } from "@/features/auth/user-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -34,7 +34,7 @@ export default function ProfileForm({ user }: { user?: User }) {
     },
     values: user?.profile,
   });
-
+  const onSubmit = (values: ProfileInput) => mutate(values);
   return (
     <div className="space-y-4">
       <Card className="w-full p-4">
@@ -46,7 +46,7 @@ export default function ProfileForm({ user }: { user?: User }) {
         </div>
 
         <form
-          onSubmit={form.handleSubmit((values) => mutate(values))}
+          // onSubmit={form.handleSubmit((values) => mutate(values))}
           className="flex flex-col gap-4"
         >
           <FormField
@@ -62,14 +62,13 @@ export default function ProfileForm({ user }: { user?: User }) {
             label="Last Name"
           />
 
-          <LoadingButton
-            type="submit"
-            className="w-min"
+          <FormSubmitButton
             disabled={!form.formState.isDirty}
-            pending={isPending}
+            isSubmitting={isPending}
+            onClick={form.handleSubmit(onSubmit)}
           >
             Update Profile
-          </LoadingButton>
+          </FormSubmitButton>
         </form>
       </Card>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -35,23 +35,16 @@ export function FormCreate() {
     },
   });
   const onSubmit = (values: FormSchema) => mutate(values);
+
   return (
     <Card className="w-full p-4">
       <FormProvider {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
-        >
+        <form className="flex flex-col gap-4">
           <FormBase />
 
-          <LoadingButton
-            type="submit"
-            className="w-min"
-            disabled={!form.formState.isDirty}
-            pending={isPending}
-          >
+          <FormSubmitButton onClick={form.handleSubmit(onSubmit)}>
             Create
-          </LoadingButton>
+          </FormSubmitButton>
         </form>
       </FormProvider>
     </Card>

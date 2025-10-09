@@ -25,7 +25,7 @@ import { usePathname } from "next/navigation";
 import SignOutForm from "../../features/auth/sign-out/form";
 import { User } from "../../features/auth/user-schema";
 
-export default function SideBarAdmin({}: { user: User }) {
+export default function SideBarAdmin({ user }: { user: User }) {
   const nav = [
     {
       title: "Home",
@@ -103,6 +103,7 @@ export default function SideBarAdmin({}: { user: User }) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <p>{user.profile?.first_name}</p>
         <SignOutForm />
       </SidebarFooter>
     </Sidebar>

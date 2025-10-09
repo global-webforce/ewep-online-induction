@@ -1,6 +1,5 @@
 "use client";
 
-import { TextAreaInput } from "@/components/react-hook-form-reusable/text-area-input";
 import { Card } from "@/components/ui/card";
 import {
   Form,
@@ -43,19 +42,19 @@ export default function FormComponent({
     reset,
     getValues,
   } = form;
-  const data = watch("answer");
+  const answer = watch("answer");
 
   useEffect(() => {
-    if (!isEqual(value, data) && isDirty) {
+    if (!isEqual(value, answer) && isDirty) {
       onChange({
         ...value,
-        answer: data,
+        answer: answer,
       } as QuizFormSchema);
     }
-  }, [data]);
+  }, [answer]);
 
   useEffect(() => {
-    if (!isEqual(value, data)) {
+    if (!isEqual(value, answer)) {
       reset(value);
     }
   }, [value]);
@@ -63,39 +62,40 @@ export default function FormComponent({
   return (
     <Form {...form}>
       <form className="flex flex-col gap-4">
-        <Card className="p-4 gap-4">
-          <div className="flex flex-col gap-4">
-            <TextAreaInput
-              control={control}
-              name={"question"}
-              label="Question"
-              placeholder="Quiz Question"
-              readOnly
-            />
+        <Card className="p-6 gap-4">
+          <div className="flex gap-1">
+            <p className="text-muted-foreground">{`Quiz # ${value.index} :`}</p>
+            {answer == value.correctAnswer && (
+              <p className="text-green-300">Correct!</p>
+            )}
+            {answer != value.correctAnswer && answer != "" && (
+              <p className="text-red-300">Incorrect!</p>
+            )}
           </div>
-
           <FormFieldCustom
             control={form.control}
             name="answer"
             render={({ field }) => (
               <FormItem key={field.value} className="space-y-3">
-                <FormLabel>Choose correct answer</FormLabel>
+                <FormLabel className="text-lg">
+                  {getValues("question")}
+                </FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                     className="flex flex-col"
                   >
-                    {getValues("options").map((e) => {
+                    {getValues("options").map((e, index) => {
                       return (
                         <FormItem
-                          key={e.value}
+                          key={index + e.value}
                           className="flex items-center gap-3"
                         >
                           <FormControl>
                             <RadioGroupItem value={e.value} />
                           </FormControl>
-                          <FormLabel className="font-normal">
+                          <FormLabel className="font-normal text-md">
                             {e.value}
                           </FormLabel>
                         </FormItem>

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ComponentPropsWithoutRef, ReactNode } from "react";
 import { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
 
-type TextAreaInputProps<
+type FormFieldTextAreaProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = Pick<ControllerProps<TFieldValues, TName>, "name" | "control" | "rules"> &
@@ -18,7 +18,7 @@ type TextAreaInputProps<
     label?: string | ReactNode;
   };
 
-export function TextAreaInput<
+export function FormFieldTextArea<
   T extends FieldValues = FieldValues,
   U extends FieldPath<T> = FieldPath<T>
 >({
@@ -29,7 +29,7 @@ export function TextAreaInput<
   onChange,
   onBlur,
   ...rest
-}: TextAreaInputProps<T, U>) {
+}: FormFieldTextAreaProps<T, U>) {
   return (
     <FormField
       control={control}

@@ -1,17 +1,12 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Presentation } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -24,12 +19,7 @@ import FormBase from "./form.base";
 export function FormUpdate() {
   const { id } = useParams<{ id: string }>();
 
-  const {
-    data,
-    error,
-    refetch,
-    isError: isErrorFetch,
-  } = useQuery({
+  const { data, error, refetch, isLoading } = useQuery({
     queryKey: [`inductions`, id],
     queryFn: async () => await fetchById(id),
   });
@@ -68,38 +58,47 @@ export function FormUpdate() {
 
       <Card className="w-full p-4">
         <FormProvider {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
+          <form className="flex flex-col gap-4">
             <FormBase />
 
-            <LoadingButton
-              type="submit"
-              className="w-min"
-              disabled={!form.formState.isDirty || isErrorFetch}
-              pending={isPending}
+            <FormSubmitButton
+              disabled={!form.formState.isDirty}
+              isFormLoading={isLoading}
+              isSubmitting={isPending}
+              onClick={form.handleSubmit(onSubmit)}
             >
               Update
-            </LoadingButton>
+            </FormSubmitButton>
           </form>
         </FormProvider>
       </Card>
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Create Presentation</CardTitle>
-          <CardDescription>
+      <Card className="w-full p-6 flex items-center justify-between flex-row">
+        <div>
+          <h3 className="text-lg font-semibold">Setup Presentation</h3>
+          <p className="text-sm text-muted-foreground">
             Quickly create and customize your presentation slides.
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
 
-        <CardFooter>
-          <Button asChild>
-            <Link href={"/dashboard/inductions/" + id + "/resources"}>
-              <span>Go to Presentation</span>
-            </Link>
-          </Button>
-        </CardFooter>
+        <Button asChild variant={"secondary"}>
+          <Link href={`/dashboard/inductions/${id}/resources`}>
+            Go to Resource Builder <Presentation className="w-4 h-4" />
+          </Link>
+        </Button>
+      </Card>
+      <Card className="w-full p-6 flex items-center justify-between flex-row">
+        <div>
+          <h3 className="text-lg font-semibold">Manage Quiz</h3>
+          <p className="text-sm text-muted-foreground">
+            Quickly create and customize your presentation slides.
+          </p>
+        </div>
+
+        <Button asChild variant={"secondary"}>
+          <Link href={`/dashboard/inductions/${id}/resources`}>
+            Go to Quiz Builder <Presentation className="w-4 h-4" />
+          </Link>
+        </Button>
       </Card>
     </div>
   );

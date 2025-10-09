@@ -1,9 +1,9 @@
 "use client";
 
+import { AlertPanel } from "@/components/custom/alert-panel";
+import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
-import { AlertPanel } from "@/components/custom/alert-panel";
 import { useMutation } from "@tanstack/react-query";
 import { verifyEmailAction } from "./action";
 

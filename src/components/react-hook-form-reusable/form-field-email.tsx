@@ -3,7 +3,7 @@ import { FormControl, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-type FormFieldDateProps<T extends FieldValues> = {
+type FormFieldEmailProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   label?: string;
@@ -12,12 +12,12 @@ type FormFieldDateProps<T extends FieldValues> = {
   "name" | "value" | "onChange" | "ref" | "type"
 >;
 
-export function FormFieldDate<T extends FieldValues>({
+export function FormFieldEmail<T extends FieldValues>({
   control,
   name,
   label,
   ...inputProps
-}: FormFieldDateProps<T>) {
+}: FormFieldEmailProps<T>) {
   return (
     <Controller
       name={name}
@@ -28,13 +28,10 @@ export function FormFieldDate<T extends FieldValues>({
           <FormControl>
             <Input
               id={name}
-              type="date"
+              type="email"
               {...inputProps}
               value={field.value || ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                field.onChange(val.trim() !== "" ? val : null);
-              }}
+              onChange={(e) => field.onChange(e.target.value)}
             />
           </FormControl>
           {fieldState.error && (

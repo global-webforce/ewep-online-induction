@@ -1,6 +1,6 @@
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import { NumberInput } from "@/components/react-hook-form-reusable/number-input";
-import { TextAreaInput } from "@/components/react-hook-form-reusable/text-area-input";
+import { FormFieldNumberNullable } from "@/components/react-hook-form-reusable/form-field-number-nullable";
+import { FormFieldTextArea } from "@/components/react-hook-form-reusable/form-field-textarea";
 import { useFormContext } from "react-hook-form";
 import { FormSchema } from "../types/form";
 
@@ -15,14 +15,14 @@ export default function FormBase() {
         label="Title"
         readOnly
       />
-      <TextAreaInput
+      <FormFieldTextArea
         control={control}
         name="description"
         label="Description"
         readOnly
       />
 
-      <NumberInput
+      <FormFieldNumberNullable
         control={control}
         type="number"
         name="validity_days"

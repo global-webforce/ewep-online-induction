@@ -1,5 +1,5 @@
 import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import { FormFieldDate } from "@/components/react-hook-form-reusable/form-field-date";
+import { FormFieldDateNullable } from "@/components/react-hook-form-reusable/form-field-date-nullable";
 import { useFormContext } from "react-hook-form";
 import { FormSchema } from "../types/form";
 export default function FormBase() {
@@ -14,7 +14,11 @@ export default function FormBase() {
         label="Induction ID"
       />
 
-      <FormFieldDate label="Valid Until" control={control} name="valid_until" />
+      <FormFieldDateNullable
+        label="Valid Until"
+        control={control}
+        name="valid_until"
+      />
     </>
   );
 }

@@ -5,22 +5,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { ComponentPropsWithoutRef, ReactNode } from "react";
 import { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
-import { cn } from "@/utils/utils";
 
-type TextareaInputProps<
+type FormFieldNumberNullableProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = Pick<ControllerProps<TFieldValues, TName>, "name" | "control" | "rules"> &
-  ComponentPropsWithoutRef<"textarea"> & {
+  ComponentPropsWithoutRef<"input"> & {
     label?: string | ReactNode;
     required?: boolean;
-    readOnly?: boolean;
   };
 
-export function TextareaInput<
+export function FormFieldNumberNullable<
   T extends FieldValues = FieldValues,
   U extends FieldPath<T> = FieldPath<T>
 >({
@@ -29,10 +27,8 @@ export function TextareaInput<
   name,
   control,
   rules,
-  placeholder,
-  readOnly = false,
   ...props
-}: TextareaInputProps<T, U>) {
+}: FormFieldNumberNullableProps<T, U>) {
   const displayLabel =
     typeof label === "string"
       ? label.charAt(0).toUpperCase() + label.slice(1)
@@ -52,16 +48,13 @@ export function TextareaInput<
           </FormLabel>
 
           <FormControl>
-            <Textarea
-              {...field}
-              placeholder={placeholder}
-              readOnly={readOnly}
-              className={cn(
-                "min-h-[100px] w-full resize-y",
-                readOnly && "bg-muted cursor-not-allowed opacity-80"
-              )}
+            <Input
+              type="number"
+              value={field.value || ""}
               onChange={(e) => {
-                if (!readOnly) field.onChange(e);
+                field.onChange(
+                  Number(e.target.value) === 0 ? null : Number(e.target.value)
+                );
               }}
               {...props}
             />

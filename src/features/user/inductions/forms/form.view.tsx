@@ -24,7 +24,7 @@ export function FormView() {
   const { id } = useParams<{ id: string }>();
 
   const { data, error, isLoading, refetch } = useQuery({
-    queryKey: [`inductions`, id],
+    queryKey: [`inductions-user`, id],
     queryFn: async () => await fetchById(id),
   });
 
@@ -46,9 +46,7 @@ export function FormView() {
           {error.message}
         </AlertPanelState>
       )}
-      {isLoading && (
-        <AlertPanelState variant="loading">Loading Inductions</AlertPanelState>
-      )}
+
       <Card className="w-full p-4">
         <FormProvider {...form}>
           <form className="flex flex-col gap-4">

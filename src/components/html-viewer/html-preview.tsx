@@ -10,7 +10,7 @@ interface HtmlPreviewProps {
 export default function HtmlPreview({ htmlContent }: HtmlPreviewProps) {
   return (
     <div
-      className="content-sandbox"
+      className="content-sandbox  "
       dangerouslySetInnerHTML={{
         __html: `
    

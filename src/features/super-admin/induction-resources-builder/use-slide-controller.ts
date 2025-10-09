@@ -47,6 +47,12 @@ export const useSlideController = (
     const slidesToUpsert = slides.map((slide, index) => {
       return upsertSchema.parse({
         ...slide,
+        quiz: slide.quiz
+          ? {
+              ...slide.quiz,
+              options: slide.quiz?.options.filter((e) => e.value != null),
+            }
+          : null,
         order: index,
         induction_id: value?.id || "",
       });

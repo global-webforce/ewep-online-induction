@@ -15,7 +15,7 @@ import {
 import { ComponentPropsWithoutRef, ReactNode } from "react";
 import { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
 
-type SelectInputProps<
+type FormFieldSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = Pick<ControllerProps<TFieldValues, TName>, "name" | "control" | "rules"> &
@@ -25,7 +25,7 @@ type SelectInputProps<
     readOnly?: boolean;
   };
 
-export function SelectInput<
+export function FormFieldSelect<
   T extends FieldValues = FieldValues,
   U extends FieldPath<T> = FieldPath<T>
 >({
@@ -36,7 +36,7 @@ export function SelectInput<
   label,
   disabled,
   readOnly = false,
-}: SelectInputProps<T, U>) {
+}: FormFieldSelectProps<T, U>) {
   return (
     <FormField
       control={control}
