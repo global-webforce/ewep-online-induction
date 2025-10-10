@@ -1,6 +1,6 @@
 "use server";
 
-import { createClientAdmin } from "@/utils/supabase/client-server-admin";
+import { createClient } from "@/utils/supabase/client-server";
 import { formSchema, FormSchema } from "../types/form";
 
 export async function createAction(values: FormSchema) {
@@ -8,7 +8,7 @@ export async function createAction(values: FormSchema) {
   if (!parsed.success) {
     throw new Error(parsed.error.message);
   }
-  const supabase = createClientAdmin();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("induction_sessions")
     .upsert(

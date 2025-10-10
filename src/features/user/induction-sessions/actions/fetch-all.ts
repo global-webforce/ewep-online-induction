@@ -6,7 +6,7 @@ import { RowSchema } from "../types/row";
 export async function fetchAll() {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("induction_sessions_super_admin_view")
+    .from("induction_sessions_user_view")
     .select("*")
     .order("created_at", { ascending: false });
 

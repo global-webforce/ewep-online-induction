@@ -1,5 +1,6 @@
 "use client";
 
+import ColumnBadge from "@/components/tanstack-table/column-badge";
 import ColumnDate from "@/components/tanstack-table/column-date";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -74,6 +75,19 @@ export function useColumns(): ColumnDef<RowSchema>[] {
         </Button>
       ),
       cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
+    }),
+
+    columnHelper.accessor("status", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
     }),
 
     // ✅ Created At

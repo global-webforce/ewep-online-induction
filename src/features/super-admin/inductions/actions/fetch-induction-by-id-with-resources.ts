@@ -3,7 +3,7 @@
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 import { inductionWithResourcesSchema } from "../types/induction-with-resources";
 
-export async function fetchInductionResourcesById(id: string) {
+export async function fetchInductionAndResourcesById(id: string) {
   const supabase = createClientAdmin();
   const { data, error } = await supabase
     .from("inductions")
@@ -15,18 +15,16 @@ export async function fetchInductionResourcesById(id: string) {
     validity_days,
     status,
     created_at,
-    induction_resources (
+     induction_resources (
       id,
       induction_id,
-      title,
-      content,
-      "order",
-      quiz,
+      question,
+      options,
+      correct_answer,
       created_at
     )`
     )
     .eq("id", id)
-    .order("order", { referencedTable: "induction_resources", ascending: true })
     .single();
 
   if (error) throw Error(error.message);

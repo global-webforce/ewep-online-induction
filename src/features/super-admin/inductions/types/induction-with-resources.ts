@@ -1,6 +1,6 @@
-import { rowSchema as inductionResourceSchema } from "@/features/super-admin/induction-resources/";
+import { rowSchema as inductionResourceSchema } from "@/features/super-admin/induction-resources";
+import { rowSchema } from "@/features/super-admin/inductions/";
 import z from "zod";
-import { rowSchema } from "./row";
 
 export const inductionWithResourcesSchema = rowSchema.extend({
   induction_resources: z.array(inductionResourceSchema),

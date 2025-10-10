@@ -47,12 +47,6 @@ export const useSlideController = (
     const slidesToUpsert = slides.map((slide, index) => {
       return upsertSchema.parse({
         ...slide,
-        quiz: slide.quiz
-          ? {
-              ...slide.quiz,
-              options: slide.quiz?.options.filter((e) => e.value != null),
-            }
-          : null,
         order: index,
         induction_id: value?.id || "",
       });
@@ -76,8 +70,6 @@ export const useSlideController = (
         ...slide,
         order: index, // db order replaced with local order
         localId: slides[index]?.localId || randomId(), // local id is used instead of db id
-        enableQuiz: slide.quiz !== null,
-        quizCache: null,
       }));
 
       setSelectedId(selectedId || mapped[0].localId);

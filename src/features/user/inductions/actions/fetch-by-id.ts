@@ -1,18 +1,18 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/client-server";
-import { TableSchema } from "../types/table";
+import { RowSchema } from "../types/row";
 
 export async function fetchById(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("inductions")
+    .from("inductions_user_view")
     .select("*")
     .eq("id", id)
-    .maybeSingle();
+    .single();
   if (error) {
     throw Error(error.message);
   }
 
-  return (data || undefined) as TableSchema | undefined;
+  return data as RowSchema;
 }

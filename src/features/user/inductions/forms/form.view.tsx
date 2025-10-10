@@ -82,7 +82,7 @@ export function FormView() {
         {agreed && (
           <CardFooter>
             <Button asChild className="">
-              <Link href={`/dashboard/inductions/${id}/session`}>
+              <Link href={`/dashboard/inductions/${id}/resources`}>
                 <span>Start Induction</span>
               </Link>
             </Button>

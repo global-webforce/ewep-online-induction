@@ -58,7 +58,7 @@ export function FormUpdate() {
 
       <Card className="w-full p-4">
         <FormProvider {...form}>
-          <form className="flex flex-col gap-4">
+          <form className="space-y-4">
             <FormBase />
 
             <FormSubmitButton
@@ -95,7 +95,7 @@ export function FormUpdate() {
         </div>
 
         <Button asChild variant={"secondary"}>
-          <Link href={`/dashboard/inductions/${id}/resources`}>
+          <Link href={`/dashboard/inductions/${id}/quizzes`}>
             Go to Quiz Builder <Presentation className="w-4 h-4" />
           </Link>
         </Button>

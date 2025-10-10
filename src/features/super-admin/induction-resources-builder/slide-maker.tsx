@@ -12,7 +12,6 @@ import ActionBar from "./slide/action-bar";
 import CopyButton from "./slide/copy-button";
 import DeleteButton from "./slide/delete-button";
 import MoveButton from "./slide/move-button";
-import QuizFlag from "./slide/quiz-flag";
 import SlideItem from "./slide/slide-item";
 import Thumbnail from "./slide/thumbnail";
 import { useSlideController } from "./use-slide-controller";
@@ -23,22 +22,20 @@ import {
   upsertAction,
   UpsertSchema,
 } from "@/features/super-admin/induction-resources";
-import {
-  FormSchema,
-  quizStrictSchema,
-} from "@/features/super-admin/induction-resources-builder";
+
+import { fetchInductionAndResourcesById } from "@/features/super-admin/inductions";
 
 import { useParams } from "next/navigation";
 import FormComponent from "./form/form";
 
-import { fetchInductionResourcesById } from "@/features/super-admin/inductions/";
+import { FormSchema } from "./types/form";
 
 export default function SlideMaker() {
   const { id } = useParams<{ id: string }>();
 
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["inductions-with-resources"],
-    queryFn: async () => await fetchInductionResourcesById(id),
+    queryFn: async () => await fetchInductionAndResourcesById(id),
   });
 
   const queryClient = useQueryClient();
@@ -109,23 +106,10 @@ export default function SlideMaker() {
                 {stripHtml(slide.content || "")}
               </p>
             </>
-
-            <>
-              {!slide.title && !slide.content && (
-                <p className="text-sm text-muted-foreground line-clamp-2 ">
-                  {slide.quiz?.question}
-                </p>
-              )}
-            </>
           </Thumbnail>
           <ActionBar isActive={slide.localId === selectedId}>
             <div className="flex items-center  m-2 text-white gap-2">
               <span>{`${index + 1}`}</span>
-              {slide.quiz && (
-                <QuizFlag
-                  error={quizStrictSchema.safeParse(slide.quiz).error || null}
-                />
-              )}
             </div>
 
             <div className="flex justify-end gap-2">

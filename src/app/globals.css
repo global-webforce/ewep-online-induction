@@ -132,5 +132,5 @@
 }
 .tox-tinymce:not(.tox-fullscreen) {
   flex: 1;
-  height: max(calc(100vh - 300px), 400px) !important;
+  height: max(calc(100vh - 240px), 400px) !important;
 }

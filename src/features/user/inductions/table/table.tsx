@@ -4,7 +4,7 @@ import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { DataTable } from "@/components/tanstack-table/datatable";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAll } from "../actions/fetch-all";
-import { TableSchema } from "../types/table";
+import { RowSchema } from "../types/row";
 import { useColumns } from "./columns";
 import { DataTableToolbar } from "./toolbar";
 
@@ -23,7 +23,7 @@ export function Table() {
       )}
 
       <DataTable columns={useColumns()} data={data || []} loading={isLoading}>
-        {(table) => <DataTableToolbar<TableSchema> table={table} />}
+        {(table) => <DataTableToolbar<RowSchema> table={table} />}
       </DataTable>
     </div>
   );

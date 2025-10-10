@@ -1,5 +1,4 @@
 import z from "zod";
-import { quizSchema } from "./quiz";
 
 export const rowSchema = z.object({
   id: z.number(),
@@ -7,7 +6,6 @@ export const rowSchema = z.object({
   order: z.number(),
   title: z.string().nullable(),
   content: z.string().nullable(),
-  quiz: quizSchema.nullable(),
 });
 
 export type RowSchema = z.infer<typeof rowSchema>;

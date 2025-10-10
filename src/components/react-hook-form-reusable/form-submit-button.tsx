@@ -30,7 +30,7 @@ export default function FormSubmitButton({
       disabled={isBusy || props.disabled}
       aria-busy={isBusy}
       variant={isFormLoading ? "outline" : "default"}
-      className={"flex items-center"}
+      className={"flex items-center min-w-[150px]"}
       {...props}
     >
       {isBusy && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}

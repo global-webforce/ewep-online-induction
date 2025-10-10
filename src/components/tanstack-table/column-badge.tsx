@@ -1,5 +1,4 @@
 // StatusBadge.tsx
-import React from "react";
 
 type Props = { value?: string | null };
 
@@ -13,6 +12,9 @@ const statusStyles: Record<string, string> = {
 
   completed:
     "bg-green-200 text-green-800 dark:bg-green-700 dark:text-green-200",
+
+  passed: "bg-green-200 text-green-800 dark:bg-green-700 dark:text-green-200",
+  failed: "bg-red-200 text-red-800 dark:bg-red-700 dark:text-red-200",
 
   super_admin: "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
   archived: "bg-red-200 text-red-800 dark:bg-red-700 dark:text-red-200",

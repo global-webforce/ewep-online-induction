@@ -16,11 +16,11 @@ import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
 import ColumnDate from "@/components/tanstack-table/column-date";
-import { TableSchema } from "../types/table";
+import { RowSchema } from "../types/row";
 
-const columnHelper = createColumnHelper<TableSchema>();
+const columnHelper = createColumnHelper<RowSchema>();
 
-export function useColumns(): ColumnDef<TableSchema>[] {
+export function useColumns(): ColumnDef<RowSchema>[] {
   const router = useRouter();
 
   const columns = [
@@ -62,22 +62,6 @@ export function useColumns(): ColumnDef<TableSchema>[] {
       cell: ({ cell }) => <div>{cell.getValue()}</div>,
     }),
 
-    // ✅ Description
-    columnHelper.accessor("description", {
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Description
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ cell }) => (
-        <div className="truncate max-w-[400px]">{cell.getValue()}</div>
-      ),
-    }),
-
     // ✅ Validity Days
     columnHelper.accessor("validity_days", {
       header: ({ column }) => (
@@ -104,6 +88,45 @@ export function useColumns(): ColumnDef<TableSchema>[] {
         </Button>
       ),
       cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
+    }),
+
+    columnHelper.accessor("session_status", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
+    }),
+    /* 
+    columnHelper.accessor("can_renew", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Can Renew
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ cell }) => <p>{JSON.stringify(cell.getValue())}</p>,
+    }),
+ */
+    columnHelper.accessor("valid_until", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Valid Until
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
     }),
 
     // ✅ Created At
@@ -161,5 +184,5 @@ export function useColumns(): ColumnDef<TableSchema>[] {
     }),
   ];
 
-  return columns as ColumnDef<TableSchema>[];
+  return columns as ColumnDef<RowSchema>[];
 }
