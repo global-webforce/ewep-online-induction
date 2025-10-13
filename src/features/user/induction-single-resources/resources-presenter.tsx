@@ -15,11 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { fetchById } from "@/features/super-admin/inductions/";
+
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { fetchById } from "./actions/fetch-by-id";
 
 export default function ResourcesPresenter() {
   const { id } = useParams<{ id: string }>();
@@ -65,11 +66,11 @@ export default function ResourcesPresenter() {
                   <CheckCircle className="h-16 w-16 text-green-500 drop-shadow-lg" />
 
                   <CardTitle className="text-2xl font-semibold max-w-[500px]">
-                    You've reached the end of learning modules of this
+                    You&apos;ve reached the end of learning modules of this
                     induction.
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Great work! It's time to test what you've learned.
+                    Great work! It&apos;s time to test what you&apos;ve learned.
                   </CardDescription>
                 </CardHeader>
 

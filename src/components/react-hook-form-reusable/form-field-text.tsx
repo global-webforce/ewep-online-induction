@@ -23,7 +23,7 @@ export function FormFieldText<T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <FormItem className="space-y-1.5 w-full">
+        <FormItem className="w-full">
           {label && <Label htmlFor={name}>{label}</Label>}
           <FormControl>
             <Input

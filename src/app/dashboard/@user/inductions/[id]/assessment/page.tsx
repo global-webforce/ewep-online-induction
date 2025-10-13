@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import QuizPresenter from "@/features/user/induction-single-assessment/quiz-presenter";
+import QuizPresenter from "@/features/user/induction-single-quizzes/quiz-presenter";
 
 export default function Page() {
   return (

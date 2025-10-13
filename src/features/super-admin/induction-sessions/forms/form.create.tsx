@@ -1,6 +1,6 @@
 "use client";
 
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -44,14 +44,13 @@ export function FormCreate() {
         >
           <FormBase />
 
-          <LoadingButton
-            type="submit"
-            className="w-min"
+          <FormSubmitButton
+            isSubmitting={isPending}
+            onClick={form.handleSubmit(onSubmit)}
             disabled={!form.formState.isDirty}
-            pending={isPending}
           >
             Create
-          </LoadingButton>
+          </FormSubmitButton>
         </form>
       </FormProvider>
     </Card>

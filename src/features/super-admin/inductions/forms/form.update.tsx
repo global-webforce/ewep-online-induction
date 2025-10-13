@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
+import { FormSubmitButton } from "@/components/react-hook-form-reusable/form-submit-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,8 +11,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { fetchById } from "../actions/fetch-by-id";
-import { updateAction } from "../actions/update-action";
+import { fetchById, updateAction } from "../actions";
 import { formSchema, FormSchema } from "../types/form";
 import FormBase from "./form.base";
 
@@ -90,7 +89,7 @@ export function FormUpdate() {
         <div>
           <h3 className="text-lg font-semibold">Manage Quiz</h3>
           <p className="text-sm text-muted-foreground">
-            Quickly create and customize your presentation slides.
+            Quickly create quiz for induction assessment.
           </p>
         </div>
 

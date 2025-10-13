@@ -14,5 +14,6 @@ export async function resetPasswordAction(values: ResetPasswordInput) {
   const { error } = await supabase.auth.updateUser({
     password: parsed.data.confirm_password,
   });
+  await supabase.auth.signOut();
   if (error) throw mapError(error);
 }

@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
 import ColumnDate from "@/components/tanstack-table/column-date";
-import { RowSchema } from "../types/row";
+import { RowSchema } from "../types";
 
 const columnHelper = createColumnHelper<RowSchema>();
 
@@ -24,7 +24,6 @@ export function useColumns(): ColumnDef<RowSchema>[] {
   const router = useRouter();
 
   const columns = [
-    // ✅ Selection column (non-data)
     columnHelper.display({
       id: "select",
       header: ({ table }) => (
@@ -48,7 +47,6 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       enableHiding: false,
     }),
 
-    // ✅ Title
     columnHelper.accessor("title", {
       header: ({ column }) => (
         <Button
@@ -62,7 +60,6 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       cell: ({ cell }) => <div>{cell.getValue()}</div>,
     }),
 
-    // ✅ Validity Days
     columnHelper.accessor("validity_days", {
       header: ({ column }) => (
         <Button
@@ -76,7 +73,6 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       cell: ({ cell }) => <div>{cell.getValue()} days</div>,
     }),
 
-    // ✅ Status
     columnHelper.accessor("status", {
       header: ({ column }) => (
         <Button
@@ -102,20 +98,7 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       ),
       cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
     }),
-    /* 
-    columnHelper.accessor("can_renew", {
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Can Renew
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ cell }) => <p>{JSON.stringify(cell.getValue())}</p>,
-    }),
- */
+
     columnHelper.accessor("valid_until", {
       header: ({ column }) => (
         <Button
@@ -129,7 +112,6 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
     }),
 
-    // ✅ Created At
     columnHelper.accessor("created_at", {
       header: ({ column }) => (
         <Button
@@ -143,7 +125,6 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
     }),
 
-    // ✅ Actions column (non-data)
     columnHelper.display({
       id: "actions",
       enableHiding: false,

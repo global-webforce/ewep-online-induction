@@ -12,18 +12,18 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useQuery } from "@tanstack/react-query";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { fetchById } from "../actions/fetch-by-id";
-
 import FormBase from "./form.base";
 
 export function FormView() {
   const { id } = useParams<{ id: string }>();
 
-  const { data, error, isLoading, refetch } = useQuery({
+  const { data, error, refetch } = useQuery({
     queryKey: [`inductions-user`, id],
     queryFn: async () => await fetchById(id),
   });
@@ -49,7 +49,7 @@ export function FormView() {
 
       <Card className="w-full p-4">
         <FormProvider {...form}>
-          <form className="flex flex-col gap-4">
+          <form className="space-y-4">
             <FormBase />
           </form>
         </FormProvider>
@@ -81,9 +81,9 @@ export function FormView() {
 
         {agreed && (
           <CardFooter>
-            <Button asChild className="">
+            <Button asChild className="font-semibold">
               <Link href={`/dashboard/inductions/${id}/resources`}>
-                <span>Start Induction</span>
+                <span>Start Induction</span> <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
           </CardFooter>

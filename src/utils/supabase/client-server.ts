@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 /**
  * For server-side (RSC / middleware / API routes):
  * always use a fresh client (your first version)
- * so you don’t leak state between requests.
+ * so you don't leak state between requests.
  */
 
 export async function createClient() {

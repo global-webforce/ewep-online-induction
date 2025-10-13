@@ -2,6 +2,7 @@
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { DataTable } from "@/components/tanstack-table/datatable";
+
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { fetchAll } from "../actions/fetch-all";

@@ -23,7 +23,7 @@ export function FormFieldDateNullable<T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <FormItem className="space-y-1.5 w-full">
+        <FormItem>
           {label && <Label htmlFor={name}>{label}</Label>}
           <FormControl>
             <Input

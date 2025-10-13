@@ -11,17 +11,15 @@ interface FormSubmitButtonProps extends ButtonProps {
   children: React.ReactNode;
 }
 
-export default function FormSubmitButton({
+export function FormSubmitButton({
   isSubmitting = false,
   isFormLoading = false,
   loadingMessage = "Loading data...",
   children,
-  className,
+  className = "",
   ...props
 }: FormSubmitButtonProps) {
-  // Always be a manual trigger button
-  const finalType: "button" = "button";
-
+  const finalType = "button"; // Always manual trigger
   const isBusy = isSubmitting || isFormLoading;
 
   return (
@@ -30,7 +28,7 @@ export default function FormSubmitButton({
       disabled={isBusy || props.disabled}
       aria-busy={isBusy}
       variant={isFormLoading ? "outline" : "default"}
-      className={"flex items-center min-w-[150px]"}
+      className={`flex items-center min-w-[150px] ${className}`}
       {...props}
     >
       {isBusy && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}

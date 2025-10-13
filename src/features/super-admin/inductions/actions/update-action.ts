@@ -2,6 +2,7 @@
 
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 import { formSchema, FormSchema } from "../types/form";
+import { RowSchema } from "../types/row";
 
 export async function updateAction(id: string, values: FormSchema) {
   const parsed = formSchema.safeParse(values);
@@ -14,11 +15,11 @@ export async function updateAction(id: string, values: FormSchema) {
     .update(parsed.data)
     .eq("id", id)
     .select()
-    .maybeSingle();
+    .single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data;
+  return data as RowSchema;
 }

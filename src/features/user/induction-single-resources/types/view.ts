@@ -1,11 +1,9 @@
-import { rowSchema } from "@/features/super-admin/induction-resources";
-import { rowSchema as inductionSchema } from "@/features/user/inductions/";
+import { rowSchema as resourceSchema } from "@/features/super-admin/induction-resources/types";
+import { rowSchema as inductionSchema } from "@/features/user/inductions/types";
 import z from "zod";
 
-export const inductionWithResourcesSchema = inductionSchema.extend({
-  induction_resources: z.array(rowSchema),
+export const viewSchema = inductionSchema.extend({
+  induction_resources: z.array(resourceSchema),
 });
 
-export type InductionWithResourcesSchema = z.infer<
-  typeof inductionWithResourcesSchema
->;
+export type ViewSchema = z.infer<typeof viewSchema>;

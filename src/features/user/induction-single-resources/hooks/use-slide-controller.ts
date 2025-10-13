@@ -1,12 +1,10 @@
 "use client";
 
-import { RowSchema } from "@/features/super-admin/induction-resources";
+import { RowSchema } from "@/features/super-admin/induction-resources/types";
 import { useMemo, useState } from "react";
-import { InductionWithResourcesSchema } from "../types/view";
+import { ViewSchema } from "../types/view";
 
-export const useSlideController = (
-  value: InductionWithResourcesSchema | undefined
-) => {
+export const useSlideController = (value: ViewSchema | undefined) => {
   const [slides, setSlides] = useState<RowSchema[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 

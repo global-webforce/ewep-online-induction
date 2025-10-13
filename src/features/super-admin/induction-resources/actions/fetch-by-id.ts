@@ -1,23 +1,24 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/client-server";
-import z from "zod";
-import { rowSchema } from "../types/row";
+import { createClientAdmin } from "@/utils/supabase/client-server-admin";
+import { viewSchema } from "../types";
 
-export async function fetchById(id: string) {
-  const supabase = await createClient();
+export async function fetchById(induction_id: string) {
+  const supabase = createClientAdmin();
   const { data, error } = await supabase
-    .from("induction_resources")
+    .from("induction_single_resources_super_admin_view")
     .select("*")
-    .eq("induction_id", id)
-    .order("created_at", { ascending: false });
+    .eq("id", induction_id)
+    .single();
 
-  if (error) {
-    throw Error(error.message);
+  if (error) throw Error(error.message);
+
+  if (data) {
   }
-
-  const parsed = z.array(rowSchema).safeParse(data);
-  if (!parsed.success) throw Error(parsed.error.message);
+  const parsed = viewSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(parsed.error.message);
+  }
 
   return parsed.data;
 }

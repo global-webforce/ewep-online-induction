@@ -1,21 +1,19 @@
 "use server";
 
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { inductionWithResourcesSchema } from "../types/view";
+import { viewSchema } from "../types/view";
 
-export async function fetchById(id: string) {
+export async function fetchById(induction_id: string) {
   const supabase = createClientAdmin();
   const { data, error } = await supabase
     .from("induction_single_resources_user_view")
     .select("*")
-    .eq("id", id)
+    .eq("id", induction_id)
     .single();
 
   if (error) throw Error(error.message);
 
-  if (data) {
-  }
-  const parsed = inductionWithResourcesSchema.safeParse(data);
+  const parsed = viewSchema.safeParse(data);
   if (!parsed.success) {
     throw new Error(parsed.error.message);
   }

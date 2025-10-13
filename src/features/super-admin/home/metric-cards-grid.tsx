@@ -2,8 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { FileCheck, User } from "lucide-react";
-import { MetricCard } from "./metric-card";
 import { fetchAll } from "./actions/fetch-all";
+import { MetricCard } from "./components/metric-card";
 
 export function MetricCardsGridAdmin() {
   const { data, isLoading } = useQuery({

@@ -4,7 +4,7 @@ import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { DataTable } from "@/components/tanstack-table/datatable";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAll } from "../actions/fetch-all";
-import { RowSchema } from "../types/row";
+import { RowSchema } from "../types/view";
 import { useColumns } from "./columns";
 import { DataTableToolbar } from "./toolbar";
 

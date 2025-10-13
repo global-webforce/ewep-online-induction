@@ -1,7 +1,7 @@
 "use server";
 
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { UpsertSchema } from "../types/upsert";
+import { UpsertSchema } from "../types";
 export async function upsertAction({
   slidesToUpsert,
   slidesToDelete,

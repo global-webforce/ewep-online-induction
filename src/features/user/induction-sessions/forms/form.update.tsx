@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -16,13 +16,7 @@ import FormBase from "./form.base";
 export function FormUpdate() {
   const { id } = useParams<{ id: string }>();
 
-  const {
-    data,
-    error,
-    isLoading,
-    refetch,
-    isError: isErrorFetch,
-  } = useQuery({
+  const { data, error, isLoading, refetch } = useQuery({
     queryKey: [`induction_sessions_super_admin_view`, id],
     queryFn: async () => await fetchById(id),
   });
@@ -64,20 +58,17 @@ export function FormUpdate() {
       )}
       <Card className="w-full p-4">
         <FormProvider {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
+          <form className="space-y-4">
             <FormBase />
 
-            <LoadingButton
-              type="submit"
-              className="w-min"
-              disabled={!form.formState.isDirty || isErrorFetch}
-              pending={isPending}
+            <FormSubmitButton
+              disabled={!form.formState.isDirty}
+              isFormLoading={isLoading}
+              isSubmitting={isPending}
+              onClick={form.handleSubmit(onSubmit)}
             >
               Update
-            </LoadingButton>
+            </FormSubmitButton>
           </form>
         </FormProvider>
       </Card>

@@ -1,7 +1,8 @@
 "use client";
 
 import { AlertPanel } from "@/components/custom/alert-panel";
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+
+import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
@@ -30,7 +31,7 @@ export default function VerifyEmailForm({ email, onBack }: Props) {
       <h1 className="text-center text-3xl font-bold">Check your Inbox</h1>
 
       <p className="text-center">
-        We’ve sent a link to{" "}
+        We&apos;ve sent a link to
         <span className="font-semibold italic text-green-200">{email}</span>—
         check your inbox to continue.
       </p>
@@ -39,14 +40,13 @@ export default function VerifyEmailForm({ email, onBack }: Props) {
         <span className="text-center text-sm text-muted-foreground">
           Didn&apos;t get the email? Check your Spam/Junk folder, or
         </span>
-        <LoadingButton
-          variant="outline"
+
+        <FormSubmitButton
+          isSubmitting={isPending}
           onClick={() => mutate(email)}
-          className="w-full"
-          pending={isPending}
         >
-          Resend Link
-        </LoadingButton>
+          Send Password Reset Link
+        </FormSubmitButton>
       </div>
 
       <div className="flex flex-col gap-3">

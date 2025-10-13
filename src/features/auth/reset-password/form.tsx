@@ -1,8 +1,10 @@
 "use client";
 
 import { AlertPanel } from "@/components/custom/alert-panel";
-import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import {
+  FormFieldPassword,
+  FormSubmitButton,
+} from "@/components/react-hook-form-reusable";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -19,7 +21,7 @@ import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { logoutAction } from "../sign-out/action";
 import { resetPasswordAction } from "./action";
 import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
@@ -83,34 +85,36 @@ export default function ResetPasswordForm() {
 
       {/* Reset Form: submitting opens confirmation dialog */}
       {
-        <form
-          onSubmit={form.handleSubmit(handleValidSubmit)}
-          className="flex flex-col gap-4"
-        >
-          <FormField
-            control={form.control}
-            type="password"
-            name="password"
-            label="New Password"
-          />
+        <FormProvider {...form}>
+          <form className="space-y-4">
+            <FormFieldPassword
+              toggleVisibility={true}
+              control={form.control}
+              name="password"
+              label="New Password"
+            />
 
-          <FormField
-            control={form.control}
-            type="password"
-            name="confirm_password"
-            label="Confirm New Password"
-          />
+            <FormFieldPassword
+              control={form.control}
+              name="confirm_password"
+              label="Confirm New Password"
+            />
 
-          <LoadingButton type="submit" className="w-full" pending={isPending}>
-            Reset Password
-          </LoadingButton>
+            <FormSubmitButton
+              type="button"
+              onClick={() => handleValidSubmit(form.getValues())}
+              className="w-full"
+            >
+              Reset Password
+            </FormSubmitButton>
 
-          <div className="mt-2 text-center text-sm">
-            <Link href="/dashboard" className="underline underline-offset-4">
-              Go to Dashboard
-            </Link>
-          </div>
-        </form>
+            <div className="mt-2 text-center text-sm">
+              <Link href="/dashboard" className="underline underline-offset-4">
+                Go to Dashboard
+              </Link>
+            </div>
+          </form>
+        </FormProvider>
       }
 
       {/* Confirmation dialog shown before performing the reset */}

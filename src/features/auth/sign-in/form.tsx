@@ -1,15 +1,25 @@
 "use client";
 
 import { AlertPanel } from "@/components/custom/alert-panel";
-import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
-import { Card } from "@/components/ui/card";
+import {
+  FormFieldEmail,
+  FormFieldPassword,
+  FormSubmitButton,
+} from "@/components/react-hook-form-reusable";
+
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import VerifyEmailForm from "@/features/auth/verify-email/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { signInAction } from "./action";
 import { SignInInput, signInInputSchema } from "./schema";
 
@@ -24,6 +34,7 @@ export default function SignInForm() {
     },
   });
 
+  const onSubmit = (values: SignInInput) => mutate(values);
   const { mutate, reset, isPending, error } = useMutation({
     mutationFn: (values: SignInInput) => signInAction(values),
     onSuccess: () => {
@@ -47,52 +58,61 @@ export default function SignInForm() {
 
   return (
     <>
-      <Card className="w-full max-w-md p-6 ">
-        {error && (
-          <AlertPanel variant="error">{(error as Error).message}</AlertPanel>
-        )}
+      <FormProvider {...form}>
+        <form className="w-full max-w-md">
+          <Card>
+            <CardHeader>
+              {error && (
+                <AlertPanel variant="error">
+                  {(error as Error).message}
+                </AlertPanel>
+              )}
 
-        <h1 className="text-center text-3xl font-bold"> Sign in</h1>
+              <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
+            </CardHeader>
 
-        <form
-          onSubmit={form.handleSubmit((values) => mutate(values))}
-          className="flex flex-col gap-4"
-        >
-          <FormField
-            control={form.control}
-            type="email"
-            name="email"
-            label="Email"
-            placeholder="you@example.com"
-          />
+            <CardContent className="space-y-4">
+              <FormFieldEmail
+                control={form.control}
+                name="email"
+                label="Email"
+                placeholder="you@example.com"
+              />
 
-          <div className="flex flex-col gap-2">
-            <FormField
-              control={form.control}
-              type="password"
-              name="password"
-              label="Password"
-            />
-            <Link
-              href="/forgot-password"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot Password?
-            </Link>
-          </div>
+              <div className="flex flex-col gap-2">
+                <FormFieldPassword
+                  control={form.control}
+                  toggleVisibility={true}
+                  name="password"
+                  label="Password"
+                />
+                <Link
+                  href="/forgot-password"
+                  className="ml-auto text-sm underline-offset-4 hover:underline"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-">
+              <FormSubmitButton
+                isSubmitting={isPending}
+                onClick={form.handleSubmit(onSubmit)}
+                className="w-full"
+              >
+                Sign In
+              </FormSubmitButton>
 
-          <LoadingButton type="submit" className="w-full" pending={isPending}>
-            Sign In
-          </LoadingButton>
-
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?&nbsp;
-            <Link href="/sign-up" className="underline underline-offset-4">
-              Sign up
-            </Link>
-          </div>
+              <div className="mt-4 text-center text-sm">
+                Don&apos;t have an account?&nbsp;
+                <Link href="/sign-up" className="underline underline-offset-4">
+                  Sign up
+                </Link>
+              </div>
+            </CardFooter>
+          </Card>
         </form>
-      </Card>
+      </FormProvider>
     </>
   );
 }

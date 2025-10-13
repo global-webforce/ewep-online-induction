@@ -2,7 +2,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import SlideMaker from "@/features/super-admin/induction-resources-builder/slide-maker";
+import SlideBuilder from "@/features/super-admin/induction-resources/slide-builder";
 
 export default function Page() {
   return (
@@ -17,7 +17,7 @@ export default function Page() {
         <h1 className="text-xl font-semibold">Manage Induction Resources</h1>
       </header>
 
-      <SlideMaker />
+      <SlideBuilder />
     </div>
   );
 }

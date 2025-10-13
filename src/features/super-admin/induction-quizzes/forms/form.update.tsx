@@ -1,8 +1,9 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
+import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
@@ -11,7 +12,6 @@ import { toast } from "sonner";
 import { deleteAction } from "../actions/delete-action";
 import { fetchById } from "../actions/fetch-by-id";
 import { updateAction } from "../actions/update-action";
-import { formSchema, FormSchema } from "../types/form";
 import FormBase from "./form.base";
 
 import {
@@ -25,13 +25,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formSchema, FormSchema } from "../types/form";
 
 export function FormUpdate() {
   const { quiz_id } = useParams<{ quiz_id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // 🧠 Fetch data
   const { data, error, refetch, isLoading } = useQuery({
     queryKey: [`induction-quizzes`, quiz_id],
     queryFn: async () => await fetchById(quiz_id),
@@ -52,7 +52,7 @@ export function FormUpdate() {
   // 🗑️ Delete mutation
   const { mutate: deleteMutation, isPending: isDeleting } = useMutation({
     mutationFn: async () => await deleteAction(Number(quiz_id)),
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(error.message || "Something went wrong while deleting.");
     },
     onSuccess: async () => {

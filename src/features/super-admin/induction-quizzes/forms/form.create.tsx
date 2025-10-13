@@ -1,7 +1,8 @@
 "use client";
 
-import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
+import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";

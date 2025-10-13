@@ -1,14 +1,16 @@
 "use client";
 
-import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
+import {
+  FormFieldText,
+  FormSubmitButton,
+} from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "@/features/auth/user-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { profileUpdateAction } from "./action";
 import { ProfileInput, profileInputSchema } from "./schema";
@@ -44,32 +46,28 @@ export default function ProfileForm({ user }: { user?: User }) {
             Update your basic profile information.
           </p>
         </div>
+        <FormProvider {...form}>
+          <form className="space-y-4">
+            <FormFieldText
+              control={form.control}
+              name="first_name"
+              label="First Name"
+            />
+            <FormFieldText
+              control={form.control}
+              name="last_name"
+              label="Last Name"
+            />
 
-        <form
-          // onSubmit={form.handleSubmit((values) => mutate(values))}
-          className="flex flex-col gap-4"
-        >
-          <FormField
-            control={form.control}
-            type="text"
-            name="first_name"
-            label="First Name"
-          />
-          <FormField
-            control={form.control}
-            type="text"
-            name="last_name"
-            label="Last Name"
-          />
-
-          <FormSubmitButton
-            disabled={!form.formState.isDirty}
-            isSubmitting={isPending}
-            onClick={form.handleSubmit(onSubmit)}
-          >
-            Update Profile
-          </FormSubmitButton>
-        </form>
+            <FormSubmitButton
+              isSubmitting={isPending}
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={!form.formState.isDirty}
+            >
+              Update Profile
+            </FormSubmitButton>
+          </form>
+        </FormProvider>
       </Card>
 
       <Card className="w-full  p-4 gap-4">

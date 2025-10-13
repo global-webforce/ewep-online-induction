@@ -15,7 +15,7 @@ import {
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { RowSchema } from "../types/row";
+import { RowSchema } from "../types/view";
 
 const columnHelper = createColumnHelper<RowSchema>();
 

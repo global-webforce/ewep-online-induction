@@ -1,15 +1,14 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import LoadingButton from "@/components/react-hook-form-reusable/form-submit";
+import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { fetchById } from "../actions/fetch-by-id";
-import { updateAction } from "../actions/update-action";
+import { fetchById, updateAction } from "../actions";
 import { formSchema, FormSchema } from "../types/form";
 import FormBase from "./form.base";
 
@@ -19,7 +18,7 @@ export function FormUpdate() {
   const {
     data,
     error,
-    isLoading,
+
     refetch,
     isError: isErrorFetch,
   } = useQuery({
@@ -58,26 +57,20 @@ export function FormUpdate() {
         <AlertPanelState onRetry={async () => await refetch()} variant="error">
           {error.message}
         </AlertPanelState>
-      )}{" "}
-      {isLoading && (
-        <AlertPanelState variant="loading">Loading Inductions</AlertPanelState>
       )}
+
       <Card className="w-full p-4">
         <FormProvider {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
+          <form className="space-y-4">
             <FormBase />
 
-            <LoadingButton
-              type="submit"
-              className="w-min"
+            <FormSubmitButton
+              isSubmitting={isPending}
+              onClick={form.handleSubmit(onSubmit)}
               disabled={!form.formState.isDirty || isErrorFetch}
-              pending={isPending}
             >
               Update
-            </LoadingButton>
+            </FormSubmitButton>
           </form>
         </FormProvider>
       </Card>

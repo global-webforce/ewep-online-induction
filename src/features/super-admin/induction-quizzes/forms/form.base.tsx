@@ -1,10 +1,13 @@
-import { FormField } from "@/components/react-hook-form-reusable/form-field";
-import { FormFieldHidden } from "@/components/react-hook-form-reusable/form-field-hidden";
+import {
+  FormFieldHidden,
+  FormFieldText,
+  FormFieldTextArea,
+} from "@/components/react-hook-form-reusable/";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { Plus, Trash2 } from "lucide-react";
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { FormSchema } from "../types/form";
 
 export default function FormBase() {
@@ -24,9 +27,8 @@ export default function FormBase() {
       <FormFieldHidden control={control} name={"induction_id"} />
 
       <div className="flex flex-col gap-4">
-        <FormField
+        <FormFieldTextArea
           control={control}
-          type="text"
           name={"question"}
           label="Question"
           placeholder="Quiz Question"
@@ -36,11 +38,10 @@ export default function FormBase() {
       <div className="flex flex-col gap-4 w-full">
         <div className="flex flex-col gap-2">
           <Label>Correct Answer</Label>
-          <FormField
+          <FormFieldText
             control={control}
             name="correct_answer"
             placeholder="Select the correct answer from options"
-            type="text"
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -52,23 +53,11 @@ export default function FormBase() {
                 className="flex w-full gap-2 items-start justify-between"
               >
                 <div className="w-full">
-                  <Controller
+                  <FormFieldText
                     name={`options.${optionIndex}.value`}
                     control={control}
-                    render={({ field, fieldState }) => (
-                      <div className="flex flex-col gap-1.5">
-                        <Input
-                          {...field}
-                          value={field.value || ""}
-                          placeholder={`Option ${optionIndex + 1}`}
-                        />
-                        {fieldState.error && (
-                          <p className="text-sm text-red-500">
-                            {fieldState.error.message}
-                          </p>
-                        )}
-                      </div>
-                    )}
+                    className="w-full"
+                    placeholder={`Option ${optionIndex + 1}`}
                   />
                 </div>
                 <Button

@@ -1,6 +1,6 @@
 "use client";
 
-import FormSubmitButton from "@/components/react-hook-form-reusable/form-submit-button";
+import { FormSubmitButton } from "@/components/react-hook-form-reusable/form-submit-button";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -39,10 +39,13 @@ export function FormCreate() {
   return (
     <Card className="w-full p-4">
       <FormProvider {...form}>
-        <form className="flex flex-col gap-4">
+        <form className="space-y-4">
           <FormBase />
 
-          <FormSubmitButton onClick={form.handleSubmit(onSubmit)}>
+          <FormSubmitButton
+            isSubmitting={isPending}
+            onClick={form.handleSubmit(onSubmit)}
+          >
             Create
           </FormSubmitButton>
         </form>

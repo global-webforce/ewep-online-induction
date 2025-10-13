@@ -1,18 +1,17 @@
 import {
   Dialog,
-  DialogTrigger,
+  DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { LogOut } from "lucide-react";
-import React from "react";
 
-import { logoutAction } from "./action";
 import { Button } from "@/components/ui/button";
+import { logoutAction } from "./action";
 
 export default function SignOutForm() {
   return (
@@ -35,6 +34,7 @@ export default function SignOutForm() {
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
+
           <form action={logoutAction}>
             <Button type="submit">Logout</Button>
           </form>
