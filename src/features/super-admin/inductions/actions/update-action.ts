@@ -1,25 +1,31 @@
 "use server";
 
+import { inductionFormSchema, InductionFormSchema } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { formSchema, FormSchema } from "../types/form";
-import { RowSchema } from "../types/row";
 
-export async function updateAction(id: string, values: FormSchema) {
-  const parsed = formSchema.safeParse(values);
-  if (!parsed.success) {
-    throw new Error(parsed.error.message);
+export async function updateAction(id: string, values: InductionFormSchema) {
+  const parsedValue = inductionFormSchema.safeParse(values);
+  if (parsedValue.error) {
+    throw new Error(parsedValue.error.message);
   }
   const supabase = createClientAdmin();
   const { data, error } = await supabase
     .from("inductions")
-    .update(parsed.data)
+    .update(parsedValue.data)
     .eq("id", id)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data as RowSchema;
+  if (!data) return null;
+
+  const parsedResult = inductionFormSchema.safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

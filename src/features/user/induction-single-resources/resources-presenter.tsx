@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import { useQuery } from "@tanstack/react-query";
 import { useSlideController } from "./hooks/use-slide-controller";
 
 import HtmlPreview from "@/components/html-viewer/html-preview";
@@ -20,16 +19,12 @@ import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { fetchById } from "./actions/fetch-by-id";
+import { useFetchById } from "./hooks/fetch-by-id";
 
 export default function ResourcesPresenter() {
   const { id } = useParams<{ id: string }>();
 
-  const { data, error, refetch } = useQuery({
-    queryKey: ["induction_single_resources_user_view"],
-    queryFn: async () => await fetchById(id),
-  });
-
+  const { data, error, refetch } = useFetchById(id);
   const { selectedSlide, slides, selectedIndex, setSelectedIndex } =
     useSlideController(data || undefined);
 

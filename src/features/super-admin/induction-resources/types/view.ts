@@ -1,8 +1,8 @@
-import { rowSchema as inductionSchema } from "@/features/super-admin/inductions/types";
+import { inductionRowSchema } from "@/features/types";
 import z from "zod";
 import { rowSchema as resourceSchema } from "../types";
 
-export const viewSchema = inductionSchema.extend({
+export const viewSchema = inductionRowSchema.extend({
   induction_resources: z.array(resourceSchema),
 });
 

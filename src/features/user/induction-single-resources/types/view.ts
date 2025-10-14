@@ -1,5 +1,5 @@
 import { rowSchema as resourceSchema } from "@/features/super-admin/induction-resources/types";
-import { rowSchema as inductionSchema } from "@/features/user/inductions/types";
+import { rowSchema as inductionSchema } from "@/features/user/inductions";
 import z from "zod";
 
 export const viewSchema = inductionSchema.extend({

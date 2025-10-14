@@ -1,10 +1,10 @@
 "use server";
 
-import { createClientAdmin } from "@/utils/supabase/client-server-admin";
+import { createClient } from "@/utils/supabase/client-server";
 import { viewSchema } from "../types/view";
 
 export async function fetchById(induction_id: string) {
-  const supabase = createClientAdmin();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("induction_single_resources_user_view")
     .select("*")

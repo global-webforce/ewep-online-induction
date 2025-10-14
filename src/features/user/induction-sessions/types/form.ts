@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const formSchema = z.object({
-  user_id: z.uuid(),
-  valid_until: z.string().nullable(),
+  valid_until: z.iso.date().nullable(),
   induction_id: z.uuid(),
+  status: z.enum(["passed", "failed"]),
 });
 
 export type FormSchema = z.infer<typeof formSchema>;

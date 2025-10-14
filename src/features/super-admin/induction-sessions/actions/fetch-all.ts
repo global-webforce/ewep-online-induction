@@ -1,7 +1,7 @@
 "use server";
 
+import { sessionsSuperAdminView } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { RowSchema } from "../types/row";
 
 export async function fetchAll() {
   const supabase = createClientAdmin();
@@ -13,5 +13,13 @@ export async function fetchAll() {
   if (error) {
     throw Error(error.message);
   }
-  return (data ?? []) as RowSchema[];
+
+  if (!data) return null;
+
+  const parsedResult = sessionsSuperAdminView.safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

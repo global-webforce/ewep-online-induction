@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Table } from "@/features/super-admin/induction-sessions/";
+import { TableView } from "@/features/super-admin/induction-sessions/";
 
 export default function Page() {
   return (
@@ -14,7 +14,7 @@ export default function Page() {
         <h1 className="text-xl font-semibold">Induction Sessions</h1>
       </div>
 
-      {<Table />}
+      {<TableView />}
     </>
   );
 }

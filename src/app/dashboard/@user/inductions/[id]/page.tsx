@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { FormView } from "@/features/user/inductions/";
+import { ReadView } from "@/features/user/inductions/";
 
 export default function Page() {
   return (
@@ -16,7 +16,7 @@ export default function Page() {
         <h1 className="text-xl font-semibold">Induction Overview</h1>
       </div>
 
-      <FormView />
+      <ReadView />
     </div>
   );
 }

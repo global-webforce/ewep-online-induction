@@ -48,9 +48,6 @@ export function FormFieldTextArea<
               {...rest}
               {...field}
               autoComplete="off"
-              placeholder={`Enter ${
-                name.charAt(0).toUpperCase() + name.slice(1) || ""
-              }`}
               value={field.value || ""}
               onBlur={(e) => {
                 field.onBlur();

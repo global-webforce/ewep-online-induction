@@ -11,9 +11,20 @@ import {
 import { LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutAction } from "./action";
 
 export default function SignOutForm() {
+  const queryClient = useQueryClient();
+
+  const { mutate: logoutUser } = useMutation({
+    mutationFn: logoutAction,
+    onSuccess: () => {
+      queryClient.clear();
+      // router.push(`/sign-in`);
+    },
+  });
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -35,9 +46,7 @@ export default function SignOutForm() {
             <Button variant="outline">Cancel</Button>
           </DialogClose>
 
-          <form action={logoutAction}>
-            <Button type="submit">Logout</Button>
-          </form>
+          <Button onClick={() => logoutUser()}>Logout</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,7 +1,7 @@
 "use server";
 
+import { sessionRowSchema } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { RowSchema } from "../types/row";
 
 export async function fetchById(id: string) {
   const supabase = createClientAdmin();
@@ -9,10 +9,17 @@ export async function fetchById(id: string) {
     .from("induction_sessions_super_admin_view")
     .select("*")
     .eq("id", id)
-    .single();
+    .maybeSingle();
   if (error) {
     throw Error(error.message);
   }
 
-  return data as RowSchema;
+  if (!data) return null;
+
+  const parsedResult = sessionRowSchema.safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

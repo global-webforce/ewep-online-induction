@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/client-server";
-import { RowSchema } from "../types";
+import { RowSchema } from "../types/row";
 
 export async function fetchAll() {
   const supabase = await createClient();

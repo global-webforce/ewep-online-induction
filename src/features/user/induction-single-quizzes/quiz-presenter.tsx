@@ -11,26 +11,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { FormSchema } from "@/features/user/induction-sessions/types/form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, CheckCircle, Info } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { fetchById } from "./actions/fetch-by-id";
+import { toast } from "sonner";
+import { upsertAction } from "../induction-sessions/actions/upsert-action";
 import {
   ConfirmDialog,
   QuizForm,
   QuizResult,
   UnansweredDialog,
 } from "./components";
-import { useQuizController } from "./hook/use-quiz-controller";
-
+import { useFetchById } from "./hooks/fetch-by-id";
+import { useQuizController } from "./hooks/use-quiz-controller";
 export default function QuizPresenter() {
   const { id } = useParams<{ id: string }>();
 
-  const { data, error, refetch, isLoading } = useQuery({
-    queryKey: ["induction_single_quizzes_user_view"],
-    queryFn: async () => await fetchById(id),
-  });
+  const { data, error, refetch, isLoading } = useFetchById(id);
 
   const {
     quizzes,
@@ -49,6 +48,21 @@ export default function QuizPresenter() {
   const [viewMode, setViewMode] = useState<"quiz" | "result" | undefined>(
     "quiz"
   );
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: (values: FormSchema) => upsertAction(values),
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["induction_sessions_user_view"],
+      });
+      toast.success("Record has been created.");
+      router.replace("/dashboard/induction-sessions/" + data.id);
+    },
+  });
 
   return (
     <>
@@ -127,7 +141,7 @@ export default function QuizPresenter() {
                   </Card>
                 )}
               {data?.induction_quizzes &&
-                data?.induction_quizzes?.length > 0 &&
+                data?.induction_quizzes?.length <= 0 &&
                 data?.can_renew === true && (
                   <Card className="w-full p-4">
                     <div className="flex items-center gap-4 w-full">
@@ -206,7 +220,20 @@ export default function QuizPresenter() {
                             setShowUnansweredQuizDialog(true);
                           } else {
                             // do supabase upsert of induction session here
-                            setViewMode("result");
+
+                            mutate({
+                              induction_id: id,
+                              valid_until: data.validity_days
+                                ? new Date(
+                                    Date.now() +
+                                      data.validity_days * 24 * 60 * 60 * 1000
+                                  )
+                                    .toISOString()
+                                    .split("T")[0] // keep only YYYY-MM-DD
+                                : null,
+                              status: hasPassed === true ? "passed" : "failed",
+                            });
+                            //    setViewMode("result");
                           }
                         }}
                       />
