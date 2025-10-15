@@ -1,8 +1,17 @@
+/*==================================================
+| PROJECT:  Online Induction Zod Schema - source of truth
+| AUTHOR:   Mark Dionnie
+| UPDATED:  Oct 2025
+==================================================*/
+
 import z from "zod";
 
 const id = z.uuid();
 const datetime = z.iso.datetime({ offset: true });
-const non_empty_string = z.string().trim().min(1);
+const non_empty_string = z
+  .string({ error: "Required" })
+  .trim()
+  .min(1, { error: "Required" });
 
 export const profileInputSchema = z.object({
   first_name: non_empty_string,
@@ -22,7 +31,7 @@ export const userRowSchema = z
     last_name: profileInputSchema.shape.last_name.nullable(),
   });
 
-// Inductions
+// >>>>>> Induction <<<<<<
 
 export const inductionRowSchema = z.object({
   id: id,
@@ -44,7 +53,7 @@ export type InductionRowSchema = z.infer<typeof inductionRowSchema>;
 export type InductionTableSchema = z.infer<typeof inductionTableSchema>;
 export type InductionFormSchema = z.infer<typeof inductionFormSchema>;
 
-// Sessions
+// >>>>>> Sessions <<<<<<
 
 export const sessionRowSchema = z.object({
   id: id,
@@ -78,7 +87,77 @@ export type SessionsSuperAdminRowView = z.infer<
 >;
 export type SessionsSuperAdminView = z.infer<typeof sessionsSuperAdminView>;
 
-//Super Admin Metrics
+// >>>>>> Quiz <<<<<<
+
+export const quizRowSchema = z.object({
+  id: z.number(),
+  induction_id: id,
+  question: non_empty_string,
+  options: z
+    .array(z.object({ value: non_empty_string }))
+    .min(1, "At least 1 option required"),
+  correct_answer: non_empty_string,
+  created_at: datetime,
+});
+
+export const quizFormSchema = quizRowSchema
+  .omit({
+    id: true,
+    created_at: true,
+  })
+  .refine(
+    (data) => {
+      const values = data.options.map((opt) => opt.value.trim().toLowerCase());
+      return new Set(values).size === values.length;
+    },
+    {
+      message: "Duplicate option values are not allowed",
+      path: ["options"],
+    }
+  )
+  .refine(
+    (data) => data.options.every((opt) => opt.value !== data.correct_answer),
+    {
+      message: "Don't include correct answer in options",
+      path: ["options"],
+    }
+  );
+
+export const quizTableSchema = z.array(quizRowSchema);
+
+export type QuizRowSchema = z.infer<typeof quizRowSchema>;
+export type QuizFormSchema = z.infer<typeof quizFormSchema>;
+export type QuizTableSchema = z.infer<typeof quizTableSchema>;
+
+// >>>>>> Resources <<<<<<
+
+export const resourceRowSchema = z.object({
+  id: z.number(),
+  induction_id: id,
+  order: z.number(),
+  title: z.string().nullable(),
+  content: z.string().nullable(),
+  created_at: datetime,
+});
+
+export const resourceFormSchema = resourceRowSchema.extend({
+  id: resourceRowSchema.shape.id.nullable().optional(),
+  created_at: resourceRowSchema.shape.created_at.nullable().optional(),
+  local_id: non_empty_string,
+});
+
+//export const resourceTableSchema = z.array(resourceRowSchema);
+
+export type ResourceRowSchema = z.infer<typeof resourceRowSchema>;
+export type ResourceFormSchema = z.infer<typeof resourceFormSchema>;
+//export type ResourceTableSchema = z.infer<typeof resourceTableSchema>;
+
+export interface ResourcesUpsertSchema {
+  slides_to_upsert: ResourceFormSchema[];
+  slides_to_delete: number[];
+}
+
+// >>>>>> Super Admin Metrics <<<<<<
 export const superAdminMetricsSchema = z.object({
   total_inductions: z.number(),
   total_published_inductions: z.number(),
@@ -88,9 +167,7 @@ export const superAdminMetricsSchema = z.object({
 
 export type SuperAdminMetricsSchema = z.infer<typeof superAdminMetricsSchema>;
 
-/*******************/
-
-// Inductions User View
+// >>>>>> Inductions User View <<<<<<
 export const inductionsUserView = z.array(
   inductionRowSchema.extend({
     session_id: sessionRowSchema.shape.id.nullable(),
@@ -101,7 +178,7 @@ export const inductionsUserView = z.array(
 );
 export type InductionsUserView = z.infer<typeof inductionsUserView>;
 
-//Session User View
+// >>>>>> Session User View <<<<<<
 export const sessionsUserView = z.array(
   sessionRowSchema.extend({
     induction_title: inductionRowSchema.shape.title,

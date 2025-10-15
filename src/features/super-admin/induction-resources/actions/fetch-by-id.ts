@@ -1,24 +1,26 @@
 "use server";
 
+import { resourceRowSchema } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { viewSchema } from "../types";
+import z from "zod";
 
-export async function fetchById(induction_id: string) {
+export async function fetchById(id: string) {
   const supabase = createClientAdmin();
   const { data, error } = await supabase
-    .from("induction_single_resources_super_admin_view")
+    .from("induction_resources")
     .select("*")
-    .eq("id", induction_id)
-    .single();
+    .eq("induction_id", id);
 
-  if (error) throw Error(error.message);
-
-  if (data) {
-  }
-  const parsed = viewSchema.safeParse(data);
-  if (!parsed.success) {
-    throw new Error(parsed.error.message);
+  if (error) {
+    throw Error(error.message);
   }
 
-  return parsed.data;
+  if (!data) return null;
+
+  const parsedResult = z.array(resourceRowSchema).safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

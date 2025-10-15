@@ -3,9 +3,11 @@ import {
   FormFieldSelect,
   FormFieldText,
 } from "@/components/react-hook-form-reusable";
-import { useFormDataContext } from "../hooks/crud";
+import { useInductionSessionForm } from "../hooks/crud";
 export default function FormBase() {
-  const { control } = useFormDataContext();
+  const {
+    formContext: { control },
+  } = useInductionSessionForm();
   return (
     <>
       <FormFieldText control={control} name="user_id" label="User ID" />

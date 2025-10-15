@@ -4,23 +4,26 @@ import {
   FormFieldTextArea,
 } from "@/components/react-hook-form-reusable/";
 import { Button } from "@/components/ui/button";
+import { FormMessage } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
+import { QuizFormSchema } from "@/features/types";
 
 import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { FormSchema } from "../types/form";
 
 export default function FormBase() {
-  const { formState, control } = useFormContext<FormSchema>();
+  const { formState, control } = useFormContext<QuizFormSchema>();
 
-  const { fields, append, remove } = useFieldArray<FormSchema, "options", "id">(
-    {
-      name: "options",
-      keyName: "id",
-      control: control,
-      shouldUnregister: false, // keep false for hiding quiz form
-    }
-  );
+  const { fields, append, remove } = useFieldArray<
+    QuizFormSchema,
+    "options",
+    "id"
+  >({
+    name: "options",
+    keyName: "id",
+    control: control,
+    shouldUnregister: true, // keep false for hiding quiz form
+  });
 
   return (
     <>
@@ -83,10 +86,9 @@ export default function FormBase() {
               <Plus className="h-4 w-4 mr-1" /> Add Option
             </Button>
           </div>
-          {formState.errors && (
-            <p className="text-red-500 text-sm">
-              {formState.errors.options?.root?.message}
-            </p>
+
+          {formState.errors.options?.root?.message && (
+            <FormMessage>{formState.errors.options?.root?.message}</FormMessage>
           )}
         </div>
       </div>

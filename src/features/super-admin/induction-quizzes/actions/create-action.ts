@@ -1,17 +1,21 @@
 "use server";
 
+import {
+  QuizFormSchema,
+  quizFormSchema,
+  quizRowSchema,
+} from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { FormSchema, formSchema } from "../types/form";
 
-export async function createAction(values: FormSchema) {
-  const parsed = formSchema.safeParse(values);
-  if (!parsed.success) {
-    throw new Error(parsed.error.message);
+export async function createAction(values: QuizFormSchema) {
+  const parsedValue = quizFormSchema.safeParse(values);
+  if (parsedValue.error) {
+    throw new Error(parsedValue.error.message);
   }
   const supabase = createClientAdmin();
   const { data, error } = await supabase
     .from("induction_quiz")
-    .insert(parsed.data)
+    .insert(parsedValue.data)
     .select()
     .maybeSingle();
 
@@ -19,5 +23,12 @@ export async function createAction(values: FormSchema) {
     throw new Error(error.message);
   }
 
-  return data;
+  if (!data) return null;
+
+  const parsedResult = quizRowSchema.safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

@@ -9,19 +9,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { QuizRowSchema } from "@/features/types";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { RowSchema } from "../types/row";
 
-const columnHelper = createColumnHelper<RowSchema>();
+const columnHelper = createColumnHelper<QuizRowSchema>();
 
-export function useColumns(): ColumnDef<RowSchema>[] {
+export function useColumns(): ColumnDef<QuizRowSchema>[] {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
 
   const proxyColumns = [
-    // ✅ Select checkbox column (non-data)
     columnHelper.display({
       id: "select",
       header: ({ table }) => (
@@ -60,27 +59,6 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       ),
     }),
 
-    /*   columnHelper.accessor("options", {
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Options
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ cell }) => (
-        <div className="truncate max-w-[600px] whitespace-normal">
-          {cell.getValue().map((e, i) => (
-            <p key={`${e}-${i}`} className="text-sm text-muted-foreground">
-              {e.value}
-            </p>
-          ))}
-        </div>
-      ),
-    }), */
-
     columnHelper.accessor("correct_answer", {
       header: ({ column }) => (
         <Button
@@ -94,7 +72,6 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       cell: ({ cell }) => <div>{cell.getValue()}</div>,
     }),
 
-    // ✅ Actions column (non-data)
     columnHelper.display({
       id: "actions",
       enableHiding: false,
@@ -126,5 +103,5 @@ export function useColumns(): ColumnDef<RowSchema>[] {
     }),
   ];
 
-  return proxyColumns as ColumnDef<RowSchema>[];
+  return proxyColumns as ColumnDef<QuizRowSchema>[];
 }

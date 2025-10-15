@@ -5,26 +5,34 @@ import {
 } from "@/features/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
-import { fetchAll, fetchById, upsertAction } from "../actions";
+import { deleteAction, fetchAll, fetchById, upsertAction } from "../actions";
 
 export const useFetchAll = () =>
   useQuery({
-    queryKey: ["induction_sessions_super_admin_view"],
-    queryFn: fetchAll,
+    queryKey: ["induction_sessions"],
+    queryFn: async () => await fetchAll(),
   });
 
 export const useFetchById = (id: string) =>
   useQuery({
-    queryKey: ["induction_sessions_super_admin_view", id],
+    queryKey: ["induction_sessions", id],
     queryFn: async () => await fetchById(id),
   });
 
-export const useFormData = (value?: SessionRowSchema | null) =>
-  useForm<SessionFormSchema>({
+export const useInductionSessionForm = (value?: SessionRowSchema | null) => {
+  const router = useRouter();
+
+  const { id } = useParams<{
+    id: string;
+  }>();
+  const queryClient = useQueryClient();
+
+  const form = useForm<SessionFormSchema>({
     resolver: zodResolver(sessionFormSchema),
+    mode: "onSubmit",
     defaultValues: value || {
       induction_id: "",
       user_id: "",
@@ -33,22 +41,36 @@ export const useFormData = (value?: SessionRowSchema | null) =>
     values: value || undefined,
   });
 
-export const useFormDataContext = () => useFormContext<SessionFormSchema>();
+  const formContext = useFormContext<SessionFormSchema>();
 
-export const useUpsert = () => {
-  const queryClient = useQueryClient();
-  const router = useRouter();
-  return useMutation({
+  const upsertMutation = useMutation({
     mutationFn: (values: SessionFormSchema) => upsertAction(values),
-    onError: (error) => {
-      toast.error(error.message);
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to create session.");
     },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({
-        queryKey: ["induction_sessions_super_admin_view"],
-      });
-      toast.success("Record has been created.");
-      router.replace("/dashboard/induction-sessions/" + data?.id);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["induction_sessions"] });
+      toast.success("Session has been established.");
+      form.reset();
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => await deleteAction(id),
+    onError: (error: any) => {
+      toast.error(error.message || "Something went wrong while deleting.");
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["induction_sessions"] });
+      toast.success("Session has been deleted.");
+      router.push(`/dashboard/induction_sessions/`);
+    },
+  });
+
+  return {
+    form,
+    formContext,
+    upsertMutation,
+    deleteMutation,
+  };
 };

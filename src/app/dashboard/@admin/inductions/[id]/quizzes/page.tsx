@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Table } from "@/features/super-admin/induction-quizzes";
+import { TableView } from "@/features/super-admin/induction-quizzes";
 
 export default function Page() {
   return (
@@ -16,7 +16,7 @@ export default function Page() {
         <h1 className="text-xl font-semibold">Quizzes</h1>
       </div>
 
-      {<Table />}
+      {<TableView />}
     </>
   );
 }

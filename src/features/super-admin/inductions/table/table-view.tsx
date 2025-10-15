@@ -4,6 +4,7 @@ import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { DataTable } from "@/components/tanstack-table/datatable";
 
 import { InductionRowSchema } from "@/features/types";
+
 import { useFetchAll } from "../hooks/crud";
 import { useColumns } from "./table-columns";
 import { DataTableToolbar } from "./table-toolbar";

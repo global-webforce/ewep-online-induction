@@ -4,10 +4,13 @@ import {
   FormFieldText,
   FormFieldTextArea,
 } from "@/components/react-hook-form-reusable";
-import { useFormDataContext } from "../hooks/crud";
+import { useInductionForm } from "../hooks/crud";
 
 export default function FormBase() {
-  const { control } = useFormDataContext();
+  const {
+    formContext: { control },
+  } = useInductionForm();
+
   return (
     <>
       <FormFieldText control={control} name="title" label="Title" />

@@ -9,28 +9,30 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { resourceFormSchema, ResourceFormSchema } from "@/features/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEqual } from "lodash";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { FormSchema, formSchema } from "../types";
+
 export default function FormComponent({
   value,
   onChange,
 }: {
-  value: FormSchema;
-  onChange: (value: FormSchema) => void;
+  value: ResourceFormSchema;
+  onChange: (value: ResourceFormSchema) => void;
 }) {
-  const form = useForm<FormSchema>({
+  const form = useForm<ResourceFormSchema>({
+    resolver: zodResolver(resourceFormSchema),
     mode: "onChange",
-    resolver: zodResolver(formSchema),
+
     defaultValues: value || {
-      question: "",
-      correctAnswer: "",
-      answer: "",
-      options: [{ value: "" }],
+      title: "",
+      content: "",
+      induction_id: "",
+      order: 0,
+      local_id: "d",
     },
-    values: value,
   });
 
   const {
@@ -46,7 +48,7 @@ export default function FormComponent({
       onChange({
         ...value,
         ...data,
-      } as FormSchema);
+      } as ResourceFormSchema);
     }
   }, [data]);
 

@@ -6,11 +6,12 @@ import { DataTable } from "@/components/tanstack-table/datatable";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { fetchAll } from "../actions/fetch-all";
-import { RowSchema } from "../types/row";
-import { useColumns } from "./columns";
-import { DataTableToolbar } from "./toolbar";
 
-export function Table() {
+import { QuizRowSchema } from "@/features/types";
+import { useColumns } from "./table-columns";
+import { DataTableToolbar } from "./table-toolbar";
+
+export function TableView() {
   const { id } = useParams<{ id: string }>();
 
   const { data, error, isLoading, refetch } = useQuery({
@@ -27,7 +28,7 @@ export function Table() {
       )}
 
       <DataTable columns={useColumns()} data={data || []} loading={isLoading}>
-        {(table) => <DataTableToolbar<RowSchema> table={table} />}
+        {(table) => <DataTableToolbar<QuizRowSchema> table={table} />}
       </DataTable>
     </div>
   );

@@ -1,24 +1,34 @@
 "use server";
 
+import {
+  quizFormSchema,
+  QuizFormSchema,
+  quizRowSchema,
+} from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { formSchema, FormSchema } from "../types/form";
 
-export async function updateAction(id: string, values: FormSchema) {
-  const parsed = formSchema.safeParse(values);
-  if (!parsed.success) {
-    throw new Error(parsed.error.message);
+export async function updateAction(id: string, values: QuizFormSchema) {
+  const parsedValue = quizFormSchema.safeParse(values);
+  if (parsedValue.error) {
+    throw new Error(parsedValue.error.message);
   }
   const supabase = createClientAdmin();
   const { data, error } = await supabase
     .from("induction_quiz")
-    .update(parsed.data)
+    .update(parsedValue.data)
     .eq("id", id)
     .select()
     .maybeSingle();
-
   if (error) {
-    throw new Error(error.message);
+    throw Error(error.message);
   }
 
-  return data;
+  if (!data) return null;
+
+  const parsedResult = quizRowSchema.safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

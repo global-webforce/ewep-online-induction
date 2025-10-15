@@ -3,13 +3,15 @@
 import { FormSubmitButton } from "@/components/react-hook-form-reusable/form-submit-button";
 import { Card } from "@/components/ui/card";
 import { FormProvider } from "react-hook-form";
-import { useCreate, useFormData } from "../hooks/crud";
+
+import { useInductionForm } from "../hooks/crud";
 import FormBase from "./form-base";
 
 export function FormCreate() {
-  const { mutate, isPending } = useCreate();
-
-  const form = useFormData();
+  const {
+    form,
+    createMutation: { mutate, isPending },
+  } = useInductionForm();
 
   return (
     <Card className="w-full p-4">

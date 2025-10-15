@@ -4,12 +4,23 @@ import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { FormSubmitButton } from "@/components/react-hook-form-reusable/form-submit-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Presentation } from "lucide-react";
+import { Presentation, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormProvider } from "react-hook-form";
 
-import { useFetchById, useFormData, useUpdate } from "../hooks/crud";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useFetchById, useInductionForm } from "../hooks/crud";
 import FormBase from "./form-base";
 
 export function FormUpdate() {
@@ -17,9 +28,11 @@ export function FormUpdate() {
 
   const { data, error, refetch, isLoading } = useFetchById(id);
 
-  const { mutate, isPending } = useUpdate(id);
-
-  const form = useFormData(data);
+  const {
+    form,
+    updateMutation: { mutate: updateMutation, isPending: isUpdating },
+    deleteMutation: { mutate: deleteMutation, isPending: isDeleting },
+  } = useInductionForm(data);
 
   return (
     <div className="space-y-4">
@@ -34,14 +47,46 @@ export function FormUpdate() {
           <form className="space-y-4">
             <FormBase />
 
-            <FormSubmitButton
-              disabled={!form.formState.isDirty}
-              isFormLoading={isLoading}
-              isSubmitting={isPending}
-              onClick={form.handleSubmit((value) => mutate(value))}
-            >
-              Update
-            </FormSubmitButton>
+            <div className="flex justify-between gap-4">
+              <FormSubmitButton
+                type="submit"
+                disabled={!form.formState.isDirty}
+                isFormLoading={isLoading}
+                isSubmitting={isUpdating}
+                onClick={form.handleSubmit((value) => updateMutation(value))}
+              >
+                Update
+              </FormSubmitButton>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="icon" disabled={!data}>
+                    <Trash2Icon />
+                  </Button>
+                </AlertDialogTrigger>
+
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      this induction record.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => deleteMutation()}
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? "Deleting..." : "Delete"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </form>
         </FormProvider>
       </Card>

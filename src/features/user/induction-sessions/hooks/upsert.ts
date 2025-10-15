@@ -5,7 +5,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { upsertAction } from "../actions/upsert-action";
-import { FormSchema } from "../types/form";
 
 export const useUpsert = (values: FormSchema) => {
   const router = useRouter();

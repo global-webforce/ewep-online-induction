@@ -1,4 +1,3 @@
-export * from "./forms/form.create";
-export * from "./forms/form.update";
-export * from "./table/table";
-export * from "./types/";
+export * from "./forms/form-create";
+export * from "./forms/form-update";
+export * from "./table/table-view";

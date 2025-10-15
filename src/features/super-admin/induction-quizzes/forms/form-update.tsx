@@ -3,8 +3,10 @@
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
+
 import { useParams } from "next/navigation";
 import { FormProvider } from "react-hook-form";
+import FormBase from "./form-base";
 
 import {
   AlertDialog,
@@ -19,19 +21,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
-import { useFetchById, useInductionSessionForm } from "../hooks/crud";
-import FormBase from "./form-base";
+import { useFetchById, useQuizForm } from "../hooks/crud";
 
 export function FormUpdate() {
-  const { id } = useParams<{ id: string }>();
+  const { quiz_id } = useParams<{ quiz_id: string }>();
 
-  const { data, error, isError, refetch, isLoading } = useFetchById(id);
+  const { data, error, refetch, isLoading } = useFetchById(quiz_id);
 
   const {
     form,
-    upsertMutation: { mutate: upsertMutation, isPending: isUpserting },
+    updateMutation: { mutate: updateMutation, isPending: isUpdating },
     deleteMutation: { mutate: deleteMutation, isPending: isDeleting },
-  } = useInductionSessionForm(data);
+  } = useQuizForm(data);
 
   return (
     <div className="space-y-4">
@@ -45,11 +46,14 @@ export function FormUpdate() {
         <FormProvider {...form}>
           <form className="space-y-4">
             <FormBase />
+
             <div className="flex justify-between gap-4">
               <FormSubmitButton
-                isSubmitting={isUpserting}
-                onClick={form.handleSubmit((value) => upsertMutation(value))}
-                disabled={!form.formState.isDirty || isError}
+                type="submit"
+                disabled={!form.formState.isDirty}
+                isFormLoading={isLoading}
+                isSubmitting={isUpdating}
+                onClick={form.handleSubmit((value) => updateMutation(value))}
               >
                 Update
               </FormSubmitButton>
@@ -68,7 +72,7 @@ export function FormUpdate() {
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                       This action cannot be undone. This will permanently delete
-                      this induction record.
+                      this quiz record.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

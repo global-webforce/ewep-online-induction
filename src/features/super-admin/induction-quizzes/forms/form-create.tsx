@@ -2,16 +2,17 @@
 
 import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
-import { FormProvider } from "react-hook-form";
-import { useInductionSessionForm } from "../hooks/crud";
 
+import { FormProvider } from "react-hook-form";
+
+import { useQuizForm } from "../hooks/crud";
 import FormBase from "./form-base";
 
 export function FormCreate() {
   const {
     form,
-    upsertMutation: { mutate, isPending },
-  } = useInductionSessionForm();
+    createMutation: { mutate, isPending },
+  } = useQuizForm();
 
   return (
     <Card className="w-full p-4">
@@ -20,9 +21,9 @@ export function FormCreate() {
           <FormBase />
 
           <FormSubmitButton
+            disabled={!form.formState.isDirty}
             isSubmitting={isPending}
             onClick={form.handleSubmit((value) => mutate(value))}
-            disabled={!form.formState.isDirty}
           >
             Create
           </FormSubmitButton>

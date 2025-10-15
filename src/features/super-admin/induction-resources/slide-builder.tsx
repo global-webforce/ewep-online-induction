@@ -4,12 +4,8 @@ import { AlertPanelState } from "@/components/custom/alert-panel-state";
 
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { UpsertSchema } from "@/features/super-admin/induction-resources";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Redo, Undo } from "lucide-react";
 import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import { fetchById, upsertAction } from "./actions";
 import {
   ActionBar,
   CopyButton,
@@ -20,9 +16,10 @@ import {
 } from "./components/slide";
 
 import { FormSubmitButton } from "@/components/react-hook-form-reusable";
+import { ResourceFormSchema } from "@/features/types";
 import FormComponent from "./form/form";
+import { useFetchById, useUpsertMutation } from "./hooks/crud";
 import { useSlideController } from "./hooks/use-slide-controller";
-import { FormSchema } from "./types/form";
 
 function stripHtml(input: string): string {
   return input
@@ -33,43 +30,18 @@ function stripHtml(input: string): string {
 export default function SlideBuilder() {
   const { id } = useParams<{ id: string }>();
 
-  const { data, error, isLoading, isError, refetch } = useQuery({
-    queryKey: ["inductions-with-resources"],
-    queryFn: async () => await fetchById(id),
-  });
+  const { data, error, isLoading, isError, refetch } = useFetchById(id);
 
-  const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: ({
-      slidesToUpsert,
-      slidesToDelete,
-    }: {
-      slidesToUpsert: UpsertSchema[];
-      slidesToDelete: number[];
-    }) =>
-      upsertAction({
-        slidesToUpsert: slidesToUpsert,
-        slidesToDelete: slidesToDelete,
-      }),
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["inductions-with-resources"],
-      });
-      toast.success("Record has been updated.");
-    },
-  });
+  const { mutate, isPending } = useUpsertMutation();
 
   const {
     slides,
     undoStack,
-    onSave,
     redoStack,
     selectedSlide,
     selectedId,
     slideRefs,
+    onSave,
     setSelectedId,
     updateSlide,
     isDirty,
@@ -79,21 +51,21 @@ export default function SlideBuilder() {
     moveSlide,
     undo,
     redo,
-  } = useSlideController(data);
+  } = useSlideController(id, data || undefined);
 
   const slideItems = () => {
     return (
       slides &&
       slides.length > 0 &&
-      slides.map((slide: FormSchema, index: number) => (
+      slides.map((slide: ResourceFormSchema, index: number) => (
         <SlideItem
-          key={`slide-item-${slide?.localId}`}
+          key={`slide-item-${slide?.local_id}`}
           ref={(el: HTMLDivElement | null) => {
-            slideRefs.current[slide.localId] = el;
+            slideRefs.current[slide.local_id] = el;
           }}
-          isActive={slide.localId === selectedId}
+          isActive={slide.local_id === selectedId}
           onClick={() => {
-            setSelectedId(slide.localId);
+            setSelectedId(slide.local_id);
           }}
         >
           <Thumbnail>
@@ -107,7 +79,7 @@ export default function SlideBuilder() {
               </p>
             </>
           </Thumbnail>
-          <ActionBar isActive={slide.localId === selectedId}>
+          <ActionBar isActive={slide.local_id === selectedId}>
             <div className="flex items-center  m-2 text-white gap-2">
               <span>{`${index + 1}`}</span>
             </div>
@@ -176,10 +148,10 @@ export default function SlideBuilder() {
             isSubmitting={isPending}
             isFormLoading={isLoading}
             onClick={async () => {
-              const { slidesToUpsert, slidesToDelete } = onSave();
-              console.log("Slides to upsert:", slidesToUpsert);
-              console.log("Slides to delete:", slidesToDelete);
-              mutate({ slidesToUpsert, slidesToDelete });
+              const { slides_to_upsert, slides_to_delete } = onSave();
+              console.log("Slides to upsert:", slides_to_upsert);
+              console.log("Slides to delete:", slides_to_delete);
+              mutate({ slides_to_upsert, slides_to_delete });
             }}
             disabled={!isDirty() || isError}
           >
