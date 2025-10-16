@@ -33,6 +33,7 @@ export const userRowSchema = z
 
 // >>>>>> Induction <<<<<<
 
+//>>
 export const inductionRowSchema = z.object({
   id: id,
   title: non_empty_string,
@@ -42,19 +43,19 @@ export const inductionRowSchema = z.object({
   created_at: datetime,
 });
 
-export const inductionTableSchema = z.array(inductionRowSchema);
+export type InductionRowSchema = z.infer<typeof inductionRowSchema>;
 
 export const inductionFormSchema = inductionRowSchema.omit({
   id: true,
   created_at: true,
 });
-
-export type InductionRowSchema = z.infer<typeof inductionRowSchema>;
-export type InductionTableSchema = z.infer<typeof inductionTableSchema>;
 export type InductionFormSchema = z.infer<typeof inductionFormSchema>;
+
+//<<
 
 // >>>>>> Sessions <<<<<<
 
+//>>
 export const sessionRowSchema = z.object({
   id: id,
   user_id: id,
@@ -63,47 +64,89 @@ export const sessionRowSchema = z.object({
   valid_until: z.iso.date().nullable(),
   created_at: datetime,
 });
+export type SessionRowSchema = z.infer<typeof sessionRowSchema>;
+//<<
 
+//>>
 export const sessionFormSchema = sessionRowSchema.omit({
   id: true,
   created_at: true,
 });
+export type SessionFormSchema = z.infer<typeof sessionFormSchema>;
 
-export const sessionTableSchema = z.array(sessionRowSchema);
+//<<
 
+//>>
+export const sessionFormRLSSchema = sessionRowSchema.omit({
+  id: true,
+  created_at: true,
+  user_id: true,
+});
+export type SessionFormRLSSchema = z.infer<typeof sessionFormRLSSchema>;
+
+//<<
+
+//>>
 export const sessionsSuperAdminRowView = sessionRowSchema.extend({
   user_email: userRowSchema.shape.email,
   induction_title: inductionRowSchema.shape.title,
 });
-
 export const sessionsSuperAdminView = z.array(sessionsSuperAdminRowView);
-
-export type SessionRowSchema = z.infer<typeof sessionRowSchema>;
-export type SessionTableSchema = z.infer<typeof sessionTableSchema>;
-export type SessionFormSchema = z.infer<typeof sessionFormSchema>;
-
+export type SessionsSuperAdminView = z.infer<typeof sessionsSuperAdminView>;
 export type SessionsSuperAdminRowView = z.infer<
   typeof sessionsSuperAdminRowView
 >;
-export type SessionsSuperAdminView = z.infer<typeof sessionsSuperAdminView>;
+//<<
+
+//>>
+export const sessionUserViewRowSchema = sessionRowSchema.extend({
+  induction_title: inductionRowSchema.shape.title,
+  email: userRowSchema.shape.email,
+  first_name: profileInputSchema.shape.first_name,
+  last_name: profileInputSchema.shape.last_name,
+  is_expired: z.boolean().nullable(),
+});
+export type SessionUserViewRowSchema = z.infer<typeof sessionUserViewRowSchema>;
+//<<
+
+//>>
+export const inductionsUserViewRowSchema = inductionRowSchema.extend({
+  session_id: sessionRowSchema.shape.id.nullable(),
+  session_status: sessionRowSchema.shape.status.nullable(),
+  session_valid_until: sessionRowSchema.shape.valid_until.nullable(),
+  session_is_expired: z.boolean().nullable(),
+});
+export type InductionsUserViewRowSchema = z.infer<
+  typeof inductionsUserViewRowSchema
+>;
+//<<
 
 // >>>>>> Quiz <<<<<<
 
+//>>
 export const quizRowSchema = z.object({
   id: z.number(),
   induction_id: id,
   question: non_empty_string,
-  options: z
-    .array(z.object({ value: non_empty_string }))
-    .min(1, "At least 1 option required"),
+  options: z.array(z.object({ value: non_empty_string })),
   correct_answer: non_empty_string,
   created_at: datetime,
 });
+export type QuizRowSchema = z.infer<typeof quizRowSchema>;
+//<<
 
+//>>
 export const quizFormSchema = quizRowSchema
   .omit({
     id: true,
     created_at: true,
+    options: true,
+  })
+  .extend({
+    options: z
+      .array(z.object({ value: non_empty_string }))
+      .min(1, "At least 1 option required"),
+    answer: non_empty_string.nullable().optional(),
   })
   .refine(
     (data) => {
@@ -123,11 +166,8 @@ export const quizFormSchema = quizRowSchema
     }
   );
 
-export const quizTableSchema = z.array(quizRowSchema);
-
-export type QuizRowSchema = z.infer<typeof quizRowSchema>;
 export type QuizFormSchema = z.infer<typeof quizFormSchema>;
-export type QuizTableSchema = z.infer<typeof quizTableSchema>;
+//<<
 
 // >>>>>> Resources <<<<<<
 
@@ -146,11 +186,8 @@ export const resourceFormSchema = resourceRowSchema.extend({
   local_id: non_empty_string,
 });
 
-//export const resourceTableSchema = z.array(resourceRowSchema);
-
 export type ResourceRowSchema = z.infer<typeof resourceRowSchema>;
 export type ResourceFormSchema = z.infer<typeof resourceFormSchema>;
-//export type ResourceTableSchema = z.infer<typeof resourceTableSchema>;
 
 export interface ResourcesUpsertSchema {
   slides_to_upsert: ResourceFormSchema[];
@@ -166,23 +203,3 @@ export const superAdminMetricsSchema = z.object({
 });
 
 export type SuperAdminMetricsSchema = z.infer<typeof superAdminMetricsSchema>;
-
-// >>>>>> Inductions User View <<<<<<
-export const inductionsUserView = z.array(
-  inductionRowSchema.extend({
-    session_id: sessionRowSchema.shape.id.nullable(),
-    session_status: sessionRowSchema.shape.status.nullable(),
-    session_valid_until: sessionRowSchema.shape.valid_until.nullable(),
-    session_is_expired: z.boolean().nullable(),
-  })
-);
-export type InductionsUserView = z.infer<typeof inductionsUserView>;
-
-// >>>>>> Session User View <<<<<<
-export const sessionsUserView = z.array(
-  sessionRowSchema.extend({
-    induction_title: inductionRowSchema.shape.title,
-  })
-);
-
-export type SessionsUserView = z.infer<typeof sessionsUserView>;

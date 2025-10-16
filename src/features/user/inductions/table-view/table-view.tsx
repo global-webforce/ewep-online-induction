@@ -3,10 +3,12 @@
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { DataTable } from "@/components/tanstack-table/datatable";
 
-import { useFetchAll } from "../hooks/use-fetch-all";
-import { RowSchema } from "../types/row";
+import { InductionsUserViewRowSchema } from "@/features/types";
+import { useFetchAll } from "../hooks/crud";
 import { useColumns } from "./table-columns";
 import { DataTableToolbar } from "./table-toolbar";
+
+type T = InductionsUserViewRowSchema;
 
 export function TableView() {
   const { data, error, isLoading, refetch } = useFetchAll();
@@ -20,7 +22,7 @@ export function TableView() {
       )}
 
       <DataTable columns={useColumns()} data={data || []} loading={isLoading}>
-        {(table) => <DataTableToolbar<RowSchema> table={table} />}
+        {(table) => <DataTableToolbar<T> table={table} />}
       </DataTable>
     </div>
   );

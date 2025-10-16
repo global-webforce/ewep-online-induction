@@ -1,18 +1,26 @@
 "use server";
 
+import { inductionsUserViewRowSchema } from "@/features/types";
 import { createClient } from "@/utils/supabase/client-server";
-import { RowSchema } from "../types/row";
 
 export async function fetchById(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("inductions_user_view")
     .select("*")
+    .eq("status", "published")
     .eq("id", id)
-    .single();
+    .maybeSingle();
   if (error) {
     throw Error(error.message);
   }
 
-  return data as RowSchema;
+  if (!data) return null;
+
+  const parsedResult = inductionsUserViewRowSchema.safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

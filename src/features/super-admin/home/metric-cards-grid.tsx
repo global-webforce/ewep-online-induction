@@ -38,8 +38,8 @@ export function MetricCardsGridAdmin() {
 
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      <MetricCard key={data?.total_inductions} {...total_inductions} />
-      <MetricCard key={data?.total_default_users} {...total_users} />
+      <MetricCard key={1} {...total_inductions} />
+      <MetricCard key={2} {...total_users} />
     </div>
   );
 }

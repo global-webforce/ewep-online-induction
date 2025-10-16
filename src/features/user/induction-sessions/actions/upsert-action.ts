@@ -1,10 +1,14 @@
 "use server";
 
+import {
+  sessionFormRLSSchema,
+  SessionFormRLSSchema,
+  sessionRowSchema,
+} from "@/features/types";
 import { createClient } from "@/utils/supabase/client-server";
-import { formSchema, FormSchema } from "../types/form";
 
-export async function upsertAction(values: FormSchema) {
-  const parsed = formSchema.safeParse(values);
+export async function upsertAction(values: SessionFormRLSSchema) {
+  const parsed = sessionFormRLSSchema.safeParse(values);
   if (!parsed.success) {
     throw new Error(parsed.error.message);
   }
@@ -16,8 +20,15 @@ export async function upsertAction(values: FormSchema) {
     .maybeSingle();
 
   if (error) {
-    throw new Error(error.message);
+    throw Error(error.message);
   }
 
-  return data;
+  if (!data) return null;
+
+  const parsedResult = sessionRowSchema.safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

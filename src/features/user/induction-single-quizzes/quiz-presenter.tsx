@@ -11,58 +11,56 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { FormSchema } from "@/features/user/induction-sessions/types/form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AlertCircle, CheckCircle, Info } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
-import { upsertAction } from "../induction-sessions/actions/upsert-action";
-import {
-  ConfirmDialog,
-  QuizForm,
-  QuizResult,
-  UnansweredDialog,
-} from "./components";
-import { useFetchById } from "./hooks/fetch-by-id";
+import { ConfirmDialog, QuizFormCard, QuizResultDialog } from "./components";
+
+import { useUpsert } from "@/features/user/induction-sessions";
+import { useFetchById as useFetchInductionById } from "@/features/user/inductions";
+import { formatReadableDate } from "@/utils/date-helpers";
+import { NotificationCompleted } from "./components/notification-completed";
+import { NotificationFailed } from "./components/notification-failed";
+import { NotificationNoAssessment } from "./components/notification-no-assessment";
+import { useFetchById } from "./hooks/crud";
 import { useQuizController } from "./hooks/use-quiz-controller";
+
 export default function QuizPresenter() {
   const { id } = useParams<{ id: string }>();
-
-  const { data, error, refetch, isLoading } = useFetchById(id);
+  const { data: inductionData } = useFetchInductionById(id);
+  const { data, error, refetch } = useFetchById(id);
+  const { mutate } = useUpsert();
 
   const {
     quizzes,
     showConfirmQuizDialog,
-    showUnansweredQuizDialog,
-    hasPassed,
-    score,
-    correct,
-    total,
-    passingRate,
+    showQuizResult,
+    showCorrectAnswer,
+    setShowCorrectAnswer,
+    setShowQuizResult,
+    setQuizzes,
+    getResult,
     setShowConfirmQuizDialog,
-    allAnswered,
-    setShowUnansweredQuizDialog,
+    isAllAnswered,
   } = useQuizController(data || undefined);
-
   const [viewMode, setViewMode] = useState<"quiz" | "result" | undefined>(
     "quiz"
   );
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: (values: FormSchema) => upsertAction(values),
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({
-        queryKey: ["induction_sessions_user_view"],
-      });
-      toast.success("Record has been created.");
-      router.replace("/dashboard/induction-sessions/" + data.id);
-    },
-  });
+
+  const I_HAVE_SUCCESSFUL_INDUCTION_STILL_VALID =
+    inductionData?.session_status == "passed" &&
+    inductionData?.session_is_expired === false;
+
+  const I_HAVE_SUCCESSFUL_INDUCTION_BUT_EXPIRED =
+    inductionData?.session_status == "passed" &&
+    inductionData?.session_is_expired === true;
+
+  const I_HAVE_INDUCTION_BUT_FAILED = inductionData?.session_status == "failed";
+
+  const I_NEED_INDUCTION_BUT_NO_ASSESSMENT_AVAILABLE =
+    (I_HAVE_INDUCTION_BUT_FAILED === true ||
+      I_HAVE_SUCCESSFUL_INDUCTION_BUT_EXPIRED === true) &&
+    data &&
+    data?.length <= 0;
 
   return (
     <>
@@ -74,188 +72,114 @@ export default function QuizPresenter() {
 
       <PresentationLayout>
         <PresentationLayout.Body>
-          {data && !isLoading && (
+          {data && (
             <>
-              {data?.session_status === "passed" && (
-                <Card className="w-full p-4">
-                  <div className="flex items-center gap-4 w-full">
-                    <div className="flex-shrink-0">
-                      <CheckCircle className="h-12 w-12 text-green-500" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg">
-                        You already completed this induction
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        You can renew this induction starting on:{" "}
-                        <strong>
-                          {new Date(data.valid_until || "").toLocaleDateString(
-                            "en-US",
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                            }
-                          )}
-                        </strong>
-                      </p>
-                    </div>
-                    <Button variant={"outline"}>Download Certificate</Button>
-                  </div>
-                </Card>
+              {I_HAVE_SUCCESSFUL_INDUCTION_STILL_VALID === true && (
+                <NotificationCompleted
+                  validUntil={formatReadableDate(
+                    inductionData.session_valid_until
+                  )}
+                />
               )}
-              {data?.session_status === "failed" && (
-                <Card className="w-full p-4">
-                  <div className="flex items-center gap-4 w-full">
-                    <div className="flex-shrink-0">
-                      <AlertCircle className="h-12 w-12 text-red-500" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg">
-                        You failed the induction last time.
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        Please retake and pass the assessment to generate your
-                        certificate.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
+              {I_HAVE_INDUCTION_BUT_FAILED === true && <NotificationFailed />}
+
+              {I_NEED_INDUCTION_BUT_NO_ASSESSMENT_AVAILABLE === true && (
+                <NotificationNoAssessment onClick={() => {}} />
               )}
 
-              {data?.induction_quizzes &&
-                data?.induction_quizzes?.length <= 0 &&
-                data?.can_renew === true && (
-                  <Card className="w-full p-4">
-                    <div className="flex items-center gap-4 w-full">
-                      <div className="flex-shrink-0">
-                        <Info className="h-12 w-12 text-blue-500" />
+              {viewMode === "quiz" && quizzes.length > 0 && (
+                <Card className="  w-full ">
+                  <CardHeader>
+                    <CardTitle>
+                      <h1 className="text-2xl font-semibold">
+                        {inductionData?.title} Assessment
+                      </h1>
+                    </CardTitle>
+                    <CardDescription>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <p>
+                          Please review each question carefully before
+                          submitting. Once submitted, your answers will be
+                          final.
+                        </p>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg">No assessment required</h3>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant={"outline"}>Finish Induction</Button>
-                      </div>
-                    </div>
-                  </Card>
-                )}
-              {data?.induction_quizzes &&
-                data?.induction_quizzes?.length <= 0 &&
-                data?.can_renew === true && (
-                  <Card className="w-full p-4">
-                    <div className="flex items-center gap-4 w-full">
-                      <div className="flex-shrink-0">
-                        <Info className="h-12 w-12 text-blue-500" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg">No assessment required</h3>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant={"outline"}>
-                          Download Certificate
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                )}
-              {viewMode === "quiz" &&
-                quizzes.length > 0 &&
-                data?.can_renew == true && (
-                  <Card className="  w-full ">
-                    <CardHeader>
-                      <CardTitle>
-                        <h1 className="text-2xl font-semibold">
-                          {data?.title} Assessment
-                        </h1>
-                      </CardTitle>
-                      <CardDescription>
-                        <div className="text-sm text-muted-foreground space-y-1">
-                          <p>
-                            Please review each question carefully before
-                            submitting. Once submitted, your answers will be
-                            final.
-                          </p>
-                        </div>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-2">
-                      {quizzes.map((quiz, index) => {
-                        return (
-                          <QuizForm
-                            key={quiz.id}
-                            index={index}
-                            question={quiz.question}
-                            options={quiz.options}
-                            correct_answer={quiz.correct_answer}
-                            reveal={false}
-                            onChange={(value) => {
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-2">
+                    {quizzes.map((quiz, index) => {
+                      return (
+                        <QuizFormCard
+                          key={index}
+                          value={quiz}
+                          index={index}
+                          reveal={showCorrectAnswer}
+                          onChange={(value) => {
+                            setQuizzes((prev) => {
+                              const quizzes = [...prev];
                               quizzes[index] = {
                                 ...quizzes[index],
                                 answer: value,
                               };
-                            }}
-                          />
-                        );
-                      })}
-                    </CardContent>
+                              return quizzes;
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                  </CardContent>
 
-                    <CardFooter>
+                  <CardFooter>
+                    <div className="flex gap-4">
                       <Button
+                        disabled={
+                          isAllAnswered() === false ||
+                          showCorrectAnswer === true
+                        }
                         className="min-w-[150px]"
                         onClick={() => setShowConfirmQuizDialog(true)}
                       >
                         Submit
                       </Button>
 
-                      <ConfirmDialog
-                        open={showConfirmQuizDialog}
-                        setOpen={setShowConfirmQuizDialog}
-                        title="Submit Quiz"
-                        description="Take a moment to review your answers. Once you submit, your responses will be final."
-                        confirmText="Yes, I'm Ready"
-                        cancelText="Review Again"
-                        onConfirm={() => {
-                          if (!allAnswered()) {
-                            setShowUnansweredQuizDialog(true);
-                          } else {
-                            // do supabase upsert of induction session here
+                      {showQuizResult !== undefined && (
+                        <Button
+                          variant={"outline"}
+                          className="min-w-[150px]"
+                          onClick={() => setShowQuizResult(true)}
+                        >
+                          Show Result
+                        </Button>
+                      )}
+                    </div>
 
-                            mutate({
-                              induction_id: id,
-                              valid_until: data.validity_days
-                                ? new Date(
-                                    Date.now() +
-                                      data.validity_days * 24 * 60 * 60 * 1000
-                                  )
-                                    .toISOString()
-                                    .split("T")[0] // keep only YYYY-MM-DD
-                                : null,
-                              status: hasPassed === true ? "passed" : "failed",
-                            });
-                            //    setViewMode("result");
-                          }
-                        }}
-                      />
-                    </CardFooter>
-
-                    <UnansweredDialog
-                      open={showUnansweredQuizDialog}
-                      setOpen={setShowUnansweredQuizDialog}
+                    <ConfirmDialog
+                      open={showConfirmQuizDialog}
+                      setOpen={setShowConfirmQuizDialog}
+                      onConfirm={() => {
+                        setShowCorrectAnswer(true);
+                        setShowQuizResult(true);
+                        /*    mutate({
+                          induction_id: id,
+                          valid_until: inductionData?.validity_days
+                            ? getFutureDateISO(inductionData.validity_days)
+                            : null,
+                          status:
+                            getResult().hasPassed === true
+                              ? "passed"
+                              : "failed",
+                        }); */
+                        //   setViewMode("result");
+                      }}
                     />
-                  </Card>
-                )}
-              {viewMode === "result" && (
-                <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-                  <QuizResult
-                    score={score}
-                    correct={correct}
-                    total={total}
-                    hasPassed={hasPassed}
-                    passingRate={passingRate}
-                    onRetry={() => {}}
-                  />
-                </div>
+
+                    <QuizResultDialog
+                      open={showQuizResult === true}
+                      setOpen={() => setShowQuizResult(false)}
+                      result={getResult()}
+                      onRetry={() => {}}
+                    />
+                  </CardFooter>
+                </Card>
               )}
             </>
           )}

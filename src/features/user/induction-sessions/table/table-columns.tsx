@@ -14,11 +14,14 @@ import {
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { RowSchema } from "../types/view";
 
-const columnHelper = createColumnHelper<RowSchema>();
+import { SessionUserViewRowSchema } from "@/features/types";
 
-export function useColumns(): ColumnDef<RowSchema>[] {
+type T = SessionUserViewRowSchema;
+
+const columnHelper = createColumnHelper<T>();
+
+export function useColumns(): ColumnDef<T>[] {
   const router = useRouter();
 
   const columns = [
@@ -136,5 +139,5 @@ export function useColumns(): ColumnDef<RowSchema>[] {
     }),
   ];
 
-  return columns as ColumnDef<RowSchema>[];
+  return columns as ColumnDef<T>[];
 }

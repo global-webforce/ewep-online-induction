@@ -34,8 +34,8 @@ export function MetricCardsGridUser() {
 
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      <MetricCard {...total_inductions} />
-      <MetricCard {...total_users} />
+      <MetricCard key={1} {...total_inductions} />
+      <MetricCard key={2} {...total_users} />
     </div>
   );
 }

@@ -2,9 +2,8 @@
 
 import { ResourceRowSchema } from "@/features/types";
 import { useMemo, useState } from "react";
-import { ViewSchema } from "../types/view";
 
-export const useSlideController = (value: ViewSchema | undefined) => {
+export const useSlideController = (value: ResourceRowSchema[] | undefined) => {
   const [slides, setSlides] = useState<ResourceRowSchema[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
@@ -13,8 +12,8 @@ export const useSlideController = (value: ViewSchema | undefined) => {
   }, [slides, selectedIndex]);
 
   useMemo(() => {
-    if (value?.induction_resources && value.induction_resources.length > 0) {
-      setSlides(value?.induction_resources);
+    if (value && value.length > 0) {
+      setSlides(value);
       setSelectedIndex(0);
     }
   }, [value]);

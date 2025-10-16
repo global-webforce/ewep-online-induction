@@ -15,11 +15,13 @@ import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
 import ColumnDate from "@/components/tanstack-table/column-date";
-import { RowSchema } from "../types/row";
+import { InductionsUserViewRowSchema } from "@/features/types";
 
-const columnHelper = createColumnHelper<RowSchema>();
+type T = InductionsUserViewRowSchema;
 
-export function useColumns(): ColumnDef<RowSchema>[] {
+const columnHelper = createColumnHelper<T>();
+
+export function useColumns(): ColumnDef<T>[] {
   const router = useRouter();
 
   const columns = [
@@ -85,7 +87,7 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
     }),
 
-    columnHelper.accessor("valid_until", {
+    columnHelper.accessor("session_valid_until", {
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -128,5 +130,5 @@ export function useColumns(): ColumnDef<RowSchema>[] {
     }),
   ];
 
-  return columns as ColumnDef<RowSchema>[];
+  return columns as ColumnDef<T>[];
 }

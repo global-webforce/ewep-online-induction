@@ -1,7 +1,9 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/client-server";
-import { RowSchema } from "../types/view";
+
+import { sessionUserViewRowSchema } from "@/features/types";
+import z from "zod";
 
 export async function fetchAll() {
   const supabase = await createClient();
@@ -13,5 +15,13 @@ export async function fetchAll() {
   if (error) {
     throw Error(error.message);
   }
-  return data as RowSchema[];
+
+  if (!data) return null;
+
+  const parsedResult = z.array(sessionUserViewRowSchema).safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

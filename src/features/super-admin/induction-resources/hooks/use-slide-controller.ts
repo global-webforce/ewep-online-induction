@@ -43,7 +43,7 @@ export const useSlideController = (
   }, [slides, selectedId]);
 
   const onSave = (): ResourcesUpsertSchema => {
-    const slidesToUpsert = slides.map((slide, index) => {
+    const collectSlidesToUpsert = slides.map((slide, index) => {
       return resourceFormSchema.parse({
         ...slide,
         order: index,
@@ -52,7 +52,7 @@ export const useSlideController = (
     });
 
     return {
-      slides_to_upsert: slidesToUpsert,
+      slides_to_upsert: collectSlidesToUpsert,
       slides_to_delete: deletedSlidesWithId.current,
     };
   };
@@ -94,6 +94,7 @@ export const useSlideController = (
     setSlides((prevSlides) => {
       return selectedIndex !== undefined && selectedIndex >= 0
         ? [
+            // insert to index
             ...prevSlides.slice(0, selectedIndex + 1),
             {
               title: "",
@@ -105,6 +106,7 @@ export const useSlideController = (
             ...prevSlides.slice(selectedIndex + 1),
           ]
         : [
+            // insert to last
             ...prevSlides,
             {
               title: "",
@@ -196,7 +198,7 @@ export const useSlideController = (
   const handleChange = () => {
     undoStack.current.push({ selectedId: selectedId, slides: slides });
   };
-  //   undoStack.current.push({ selectedId: selectedId, slides: slides });
+
   const undo = () => {
     const lastCommit = undoStack.current[undoStack.current.length - 1];
     setSlides(lastCommit.slides);
@@ -235,14 +237,14 @@ export const useSlideController = (
   return {
     undoStack: undoStack.current,
     redoStack: redoStack.current,
-    onSave,
     selectedSlide,
     selectedIndex,
-    setSelectedId,
     selectedId,
     slides,
     slideRefs,
     pristineValue: pristineValue.current,
+    onSave,
+    setSelectedId,
     setSlides,
     isDirty,
     undo,

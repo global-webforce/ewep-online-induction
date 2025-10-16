@@ -8,36 +8,31 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type ConfirmDialogProps = {
+interface ConfirmDialogProps {
   open: boolean;
   setOpen: (value: boolean) => void;
-  title?: string;
-  description?: string;
-  confirmText?: string;
-  cancelText?: string;
   onConfirm: () => void;
-};
+}
 
 export function ConfirmDialog({
   open,
   setOpen,
-  title = "Confirm Action",
-  description = "Are you sure you want to continue?",
-  confirmText = "Confirm",
-  cancelText = "Cancel",
   onConfirm,
 }: ConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle>Ready to Submit?</DialogTitle>
+          <DialogDescription>
+            Take a moment to review your answers. Once you submit, your
+            responses will be final.
+          </DialogDescription>
         </DialogHeader>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            {cancelText}
+            Review Again
           </Button>
           <Button
             onClick={() => {
@@ -45,7 +40,7 @@ export function ConfirmDialog({
               onConfirm();
             }}
           >
-            {confirmText}
+            Yes, I'm Ready
           </Button>
         </DialogFooter>
       </DialogContent>

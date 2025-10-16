@@ -1,11 +1,7 @@
 "use client";
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
-import {
-  FormFieldNumberNullable,
-  FormFieldText,
-  FormFieldTextArea,
-} from "@/components/react-hook-form-reusable";
+import { FormFieldText } from "@/components/react-hook-form-reusable";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { InductionsUserViewRowSchema } from "@/features/types";
+import { SessionUserViewRowSchema } from "@/features/types";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -27,7 +23,7 @@ import { useFetchById } from "../hooks/crud";
 export function ReadView() {
   const { id } = useParams<{ id: string }>();
   const { data, error, refetch } = useFetchById(id);
-  const form = useForm<InductionsUserViewRowSchema>({
+  const form = useForm<SessionUserViewRowSchema>({
     values: data || undefined,
   });
 
@@ -45,22 +41,20 @@ export function ReadView() {
           <form className="space-y-4">
             <FormFieldText
               control={form.control}
-              name="title"
-              label="Title"
+              name="induction_title"
+              label="Induction Title"
               readOnly
             />
-            <FormFieldTextArea
+            <FormFieldText
               control={form.control}
-              name="description"
-              label="Description"
+              name="valid_until"
+              label="Valid Until"
               readOnly
             />
-
-            <FormFieldNumberNullable
+            <FormFieldText
               control={form.control}
-              type="number"
-              name="validity_days"
-              label="Days of Validity (if applicable)"
+              name="status"
+              label="Status"
               readOnly
             />
           </form>

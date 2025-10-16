@@ -3,47 +3,25 @@
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/utils/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useEffect, useState } from "react";
+import { QuizFormCardProps } from "../types/quiz-schemas";
 
-const quizSchema = z.object({
-  answer: z.string().min(1, "Please select an answer."),
-});
-
-type QuizFormValues = z.infer<typeof quizSchema>;
-
-interface QuizFormProps {
-  index?: number;
-  question: string;
-  options: { value: string }[];
-  correct_answer: string;
-  reveal?: boolean;
-  onChange?: (value: string, isCorrect: boolean) => void;
-}
-
-export function QuizForm({
+export function QuizFormCard({
+  value,
   index,
-  question,
-  options,
-  correct_answer,
   reveal = false,
   onChange,
-}: QuizFormProps) {
-  const form = useForm<QuizFormValues>({
-    resolver: zodResolver(quizSchema),
-    defaultValues: { answer: "" },
-  });
+}: QuizFormCardProps) {
+  const { question, options, correct_answer, answer } = value;
 
-  const selected = form.watch("answer");
+  const [selected, setSelected] = useState<string | null | undefined>(answer);
 
   useEffect(() => {
-    if (selected) {
+    if (selected && selected !== answer) {
       const isCorrect = selected === correct_answer;
       onChange?.(selected, isCorrect);
     }
-  }, [selected, correct_answer, onChange]);
+  }, [selected, answer, correct_answer, onChange]);
 
   return (
     <div
@@ -52,7 +30,7 @@ export function QuizForm({
         "bg-background text-foreground border-border"
       )}
     >
-      <h3 className="font-medium leading-snug text-left text-2lg py-2 ">
+      <h3 className="font-medium leading-snug text-left text-2lg py-2">
         {index !== undefined && (
           <span className="text-muted-foreground mr-2">{index + 1}.</span>
         )}
@@ -61,17 +39,15 @@ export function QuizForm({
 
       <RadioGroup
         value={selected}
-        onValueChange={(val) =>
-          !reveal && form.setValue("answer", val, { shouldValidate: true })
-        }
+        onValueChange={(val) => !reveal && setSelected(val)}
       >
-        {options.map((opt, index) => {
+        {options.map((opt, i) => {
           const isSelected = selected === opt.value;
           const isCorrect = opt.value === correct_answer;
 
           return (
             <Label
-              key={opt.value + index}
+              key={opt.value + i}
               className={cn(
                 "flex items-center gap-2 p-2 rounded-md cursor-pointer border transition-colors select-none",
                 "hover:bg-muted/40",
@@ -89,7 +65,7 @@ export function QuizForm({
               <RadioGroupItem
                 value={opt.value}
                 className="h-4 w-4"
-                disabled={reveal} // disable selection when reveal=true
+                disabled={reveal}
               />
               {opt.value}
             </Label>

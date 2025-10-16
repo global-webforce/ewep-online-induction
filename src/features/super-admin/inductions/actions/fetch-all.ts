@@ -1,7 +1,8 @@
 "use server";
 
-import { inductionTableSchema } from "@/features/types";
+import { inductionRowSchema } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
+import z from "zod";
 
 export async function fetchAll() {
   const supabase = createClientAdmin();
@@ -16,7 +17,7 @@ export async function fetchAll() {
 
   if (!data) return null;
 
-  const parsedResult = inductionTableSchema.safeParse(data);
+  const parsedResult = z.array(inductionRowSchema).safeParse(data);
   if (parsedResult.error) {
     throw new Error(parsedResult.error.message);
   }

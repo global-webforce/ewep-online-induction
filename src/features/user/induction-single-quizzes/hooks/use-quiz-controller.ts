@@ -1,37 +1,41 @@
 "use client";
 
-import { RowSchema as QuizRowSchema } from "@/features/super-admin/induction-quizzes";
+import { QuizFormSchema, QuizRowSchema } from "@/features/types";
 import { shuffle } from "lodash";
 import { useMemo, useState } from "react";
-import { ViewSchema } from "../types/view";
-export const useQuizController = (value: ViewSchema | undefined) => {
-  const [quizMode, setQuizMode] = useState<boolean>(false);
-  const [quizzes, setQuizzes] = useState<QuizRowSchema[]>([]);
-  const [showConfirmQuizDialog, setShowConfirmQuizDialog] = useState(false);
-  const [showUnansweredQuizDialog, setShowUnansweredQuizDialog] =
-    useState(false);
-  const [showQuizResult, setShowQuizResult] = useState(false);
+import { QuizStatSchema } from "../types/quiz-schemas";
 
-  const allAnswered = () => {
+export const useQuizController = (value: QuizRowSchema[] | undefined) => {
+  const [passingRate] = useState(0.7);
+  const [quizMode, setQuizMode] = useState<boolean>(false);
+  const [quizzes, setQuizzes] = useState<QuizFormSchema[]>([]);
+  const [showConfirmQuizDialog, setShowConfirmQuizDialog] = useState(false);
+
+  const [showQuizResult, setShowQuizResult] = useState<boolean | undefined>(
+    undefined
+  );
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+
+  const isAllAnswered = () => {
     if (!quizzes.length) return false;
     return quizzes.every((q) => q.answer && q.answer.trim() !== "");
   };
 
   useMemo(() => {
-    if (value?.induction_quizzes && value.induction_quizzes.length > 0) {
-      const formatQuiz = value?.induction_quizzes.map((quiz) => ({
+    if (value && value.length > 0) {
+      const formatQuiz = value?.map((quiz) => ({
         ...quiz,
         options: shuffle([...quiz?.options, { value: quiz?.correct_answer }]),
+        answer: null,
       }));
-      setQuizzes(formatQuiz);
+      setQuizzes(shuffle(formatQuiz));
     }
   }, [value]);
 
-  const [passingRate] = useState(0.7);
-  const getQuizStats = () => {
+  const getResult = (): QuizStatSchema => {
     const total = quizzes.length;
     if (total === 0) {
-      return { hasPassed: false, score: 0, total, correct: 0 };
+      return { hasPassed: false, score: 0, total, correct: 0, passingRate };
     }
 
     const correct = quizzes.filter(
@@ -41,27 +45,23 @@ export const useQuizController = (value: ViewSchema | undefined) => {
     const score = correct / total;
     const hasPassed = score >= passingRate;
 
-    return { hasPassed, score, total, correct };
+    return { hasPassed, score, total, correct, passingRate };
   };
-
-  const { hasPassed, score, total, correct } = getQuizStats();
 
   return {
     quizzes,
     quizMode,
+    showConfirmQuizDialog,
+    showQuizResult,
+    passingRate,
+    showCorrectAnswer,
+    setShowCorrectAnswer,
+    getResult,
+    isAllAnswered,
     setQuizMode,
     setQuizzes,
-    hasPassed,
-    score,
-    total,
-    correct,
-    allAnswered,
-    showConfirmQuizDialog,
     setShowConfirmQuizDialog,
-    showUnansweredQuizDialog,
-    setShowUnansweredQuizDialog,
-    showQuizResult,
+
     setShowQuizResult,
-    passingRate,
   };
 };

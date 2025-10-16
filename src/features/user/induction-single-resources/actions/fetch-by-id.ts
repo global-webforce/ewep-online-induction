@@ -1,22 +1,26 @@
 "use server";
 
+import { resourceRowSchema } from "@/features/types";
 import { createClient } from "@/utils/supabase/client-server";
-import { viewSchema } from "../types/view";
+import z from "zod";
 
 export async function fetchById(induction_id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("induction_single_resources_user_view")
+    .from("induction_resources")
     .select("*")
-    .eq("id", induction_id)
-    .single();
+    .eq("induction_id", induction_id);
 
-  if (error) throw Error(error.message);
-
-  const parsed = viewSchema.safeParse(data);
-  if (!parsed.success) {
-    throw new Error(parsed.error.message);
+  if (error) {
+    throw Error(error.message);
   }
 
-  return parsed.data;
+  if (!data) return null;
+
+  const parsedResult = z.array(resourceRowSchema).safeParse(data);
+  if (parsedResult.error) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 }

@@ -1,7 +1,8 @@
 "use server";
 
-import { quizTableSchema } from "@/features/types";
+import { quizRowSchema } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
+import z from "zod";
 
 export async function fetchAll(id: string) {
   const supabase = createClientAdmin();
@@ -17,7 +18,7 @@ export async function fetchAll(id: string) {
 
   if (!data) return null;
 
-  const parsedResult = quizTableSchema.safeParse(data);
+  const parsedResult = z.array(quizRowSchema).safeParse(data);
   if (parsedResult.error) {
     throw new Error(parsedResult.error.message);
   }
