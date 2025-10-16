@@ -57,7 +57,13 @@ export const useSlideController = (
     };
   };
 
-  useMemo(() => {
+  const slidesRef = useRef(slides);
+
+  useEffect(() => {
+    slidesRef.current = slides; // always keep it updated
+  }, [slides]);
+
+  useEffect(() => {
     if (value && value.length > 0) {
       const sorted = [...value].sort((a, b) => {
         if (a.order === undefined && b.order === undefined) return 0;
@@ -65,17 +71,18 @@ export const useSlideController = (
         if (b.order === undefined) return -1;
         return a.order - b.order;
       });
-      const mapped = [...sorted].map((slide, index) => ({
+
+      const mapped = sorted.map((slide, index) => ({
         ...slide,
-        order: index, // db order replaced with local order
-        local_id: slides[index]?.local_id || randomId(), // local id is used instead of db id
+        order: index,
+        local_id: slidesRef.current[index]?.local_id || randomId(),
       }));
 
-      setSelectedId(selectedId || mapped[0].local_id);
+      setSelectedId((prev) => prev || mapped[0].local_id);
       pristineValue.current = mapped;
       setSlides(mapped);
     }
-  }, [value]);
+  }, [value]); // ✅ only run when prop 'value' changes
 
   useEffect(() => {
     if (selectedId && slideRefs.current[selectedId]) {

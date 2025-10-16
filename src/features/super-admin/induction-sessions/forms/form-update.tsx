@@ -25,7 +25,7 @@ import FormBase from "./form-base";
 export function FormUpdate() {
   const { id } = useParams<{ id: string }>();
 
-  const { data, error, isError, refetch, isLoading } = useFetchById(id);
+  const { data, error, isError, refetch } = useFetchById(id);
 
   const {
     form,

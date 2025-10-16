@@ -15,9 +15,9 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { ConfirmDialog, QuizFormCard, QuizResultDialog } from "./components";
 
-import { useUpsert } from "@/features/user/induction-sessions";
 import { useFetchById as useFetchInductionById } from "@/features/user/inductions";
 import { formatReadableDate } from "@/utils/date-helpers";
+import { isEqual } from "lodash";
 import { NotificationCompleted } from "./components/notification-completed";
 import { NotificationFailed } from "./components/notification-failed";
 import { NotificationNoAssessment } from "./components/notification-no-assessment";
@@ -28,7 +28,6 @@ export default function QuizPresenter() {
   const { id } = useParams<{ id: string }>();
   const { data: inductionData } = useFetchInductionById(id);
   const { data, error, refetch } = useFetchById(id);
-  const { mutate } = useUpsert();
 
   const {
     quizzes,
@@ -42,9 +41,7 @@ export default function QuizPresenter() {
     setShowConfirmQuizDialog,
     isAllAnswered,
   } = useQuizController(data || undefined);
-  const [viewMode, setViewMode] = useState<"quiz" | "result" | undefined>(
-    "quiz"
-  );
+  const [viewMode] = useState<"quiz" | "result" | undefined>("quiz");
 
   const I_HAVE_SUCCESSFUL_INDUCTION_STILL_VALID =
     inductionData?.session_status == "passed" &&
@@ -115,12 +112,15 @@ export default function QuizPresenter() {
                           reveal={showCorrectAnswer}
                           onChange={(value) => {
                             setQuizzes((prev) => {
-                              const quizzes = [...prev];
-                              quizzes[index] = {
-                                ...quizzes[index],
-                                answer: value,
-                              };
-                              return quizzes;
+                              if (!isEqual(prev[index].answer, value)) {
+                                const quizzes = [...prev];
+                                quizzes[index] = {
+                                  ...quizzes[index],
+                                  answer: value,
+                                };
+                                return quizzes;
+                              }
+                              return prev;
                             });
                           }}
                         />

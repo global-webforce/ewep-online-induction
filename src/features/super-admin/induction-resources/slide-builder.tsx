@@ -17,6 +17,7 @@ import {
 
 import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { ResourceFormSchema } from "@/features/types";
+import { isEqual } from "lodash";
 import FormComponent from "./form/form";
 import { useFetchById, useUpsertMutation } from "./hooks/crud";
 import { useSlideController } from "./hooks/use-slide-controller";
@@ -41,9 +42,10 @@ export default function SlideBuilder() {
     selectedSlide,
     selectedId,
     slideRefs,
+    setSlides,
     onSave,
     setSelectedId,
-    updateSlide,
+
     isDirty,
     addSlide,
     deleteSlide,
@@ -196,7 +198,33 @@ export default function SlideBuilder() {
                 <FormComponent
                   key={selectedId}
                   value={selectedSlide}
-                  onChange={(value) => updateSlide(value)}
+                  // onChange={(value) => updateSlide(value)}
+                  onChange={(value) => {
+                    setSlides((prev) => {
+                      const slide = prev.find(
+                        (e) => e.local_id === value.local_id
+                      );
+                      const a = {
+                        title: slide?.title,
+                        content: slide?.content,
+                      };
+
+                      const b = {
+                        title: value?.title,
+                        content: value?.content,
+                      };
+
+                      if (!isEqual(a, b)) {
+                        return prev.map((slide) =>
+                          slide.local_id === value.local_id
+                            ? { ...slide, ...value }
+                            : slide
+                        );
+                      }
+
+                      return prev;
+                    });
+                  }}
                 />
               </div>
             ) : (

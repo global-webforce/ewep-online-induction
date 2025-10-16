@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/form";
 import { resourceFormSchema, ResourceFormSchema } from "@/features/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isEqual } from "lodash";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -35,15 +34,21 @@ export default function FormComponent({
     },
   });
 
-  const {
-    formState: { isDirty },
-    control,
-    watch,
-    reset,
-  } = form;
+  const { control, watch, reset } = form;
   const data = watch();
 
   useEffect(() => {
+    onChange({
+      ...value,
+      ...data,
+    } as ResourceFormSchema);
+  }, [data, value, onChange]);
+
+  useEffect(() => {
+    reset(value);
+  }, [value, reset]);
+
+  /*   useEffect(() => {
     if (!isEqual(value, data) && isDirty) {
       onChange({
         ...value,
@@ -56,7 +61,7 @@ export default function FormComponent({
     if (!isEqual(value, data)) {
       reset(value);
     }
-  }, [value]);
+  }, [value]); */
 
   return (
     <Form {...form}>

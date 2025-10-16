@@ -40,7 +40,7 @@ export function ConfirmDialog({
               onConfirm();
             }}
           >
-            Yes, I'm Ready
+            Yes, I&apos;m Ready
           </Button>
         </DialogFooter>
       </DialogContent>

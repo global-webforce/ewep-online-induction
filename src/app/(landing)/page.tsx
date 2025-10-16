@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -7,7 +8,7 @@ export default function Home() {
     <Card className="w-full max-w-sm md:max-w-4xl mx-auto overflow-hidden p-0 ">
       <CardContent className="grid p-0 md:grid-cols-2 min-h-[400px]">
         <div className="bg-muted relative hidden md:block">
-          <img
+          <Image
             src="/bg.webp"
             alt="Image"
             className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.7]"

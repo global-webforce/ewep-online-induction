@@ -17,11 +17,10 @@ export function QuizFormCard({
   const [selected, setSelected] = useState<string | null | undefined>(answer);
 
   useEffect(() => {
-    if (selected && selected !== answer) {
-      const isCorrect = selected === correct_answer;
-      onChange?.(selected, isCorrect);
+    if (selected) {
+      onChange?.(selected);
     }
-  }, [selected, answer, correct_answer, onChange]);
+  }, [selected, onChange]);
 
   return (
     <div

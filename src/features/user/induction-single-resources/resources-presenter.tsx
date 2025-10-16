@@ -27,7 +27,7 @@ export default function ResourcesPresenter() {
 
   const { data: inductionData } = useFetchInductionById(id);
 
-  const { data, error, refetch, isLoading } = useFetchById(id);
+  const { data, error, refetch } = useFetchById(id);
   const { selectedSlide, slides, selectedIndex, setSelectedIndex } =
     useSlideController(data || undefined);
 

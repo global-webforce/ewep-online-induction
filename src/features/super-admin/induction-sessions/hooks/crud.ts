@@ -45,7 +45,7 @@ export const useInductionSessionForm = (value?: SessionRowSchema | null) => {
 
   const upsertMutation = useMutation({
     mutationFn: (values: SessionFormSchema) => upsertAction(values),
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to create session.");
     },
     onSuccess: async () => {
@@ -57,7 +57,7 @@ export const useInductionSessionForm = (value?: SessionRowSchema | null) => {
 
   const deleteMutation = useMutation({
     mutationFn: async () => await deleteAction(id),
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Something went wrong while deleting.");
     },
     onSuccess: async () => {

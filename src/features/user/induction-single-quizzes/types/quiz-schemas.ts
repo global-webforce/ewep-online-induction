@@ -12,7 +12,7 @@ export type QuizFormCardProps = {
   value: Omit<QuizFormSchema, "induction_id">;
   index: number;
   reveal?: boolean;
-  onChange?: (value: string, isCorrect: boolean) => void;
+  onChange?: (value: string) => void;
 };
 
 export type QuizResultCardProps = {

@@ -50,7 +50,7 @@ export const useQuizForm = (value?: QuizRowSchema | null) => {
 
   const createMutation = useMutation({
     mutationFn: (values: QuizFormSchema) => createAction(values),
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to create quiz.");
     },
     onSuccess: async () => {
@@ -62,7 +62,7 @@ export const useQuizForm = (value?: QuizRowSchema | null) => {
 
   const updateMutation = useMutation({
     mutationFn: (values: QuizFormSchema) => updateAction(quiz_id, values),
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to update quiz.");
     },
     onSuccess: async () => {
@@ -73,7 +73,7 @@ export const useQuizForm = (value?: QuizRowSchema | null) => {
 
   const deleteMutation = useMutation({
     mutationFn: async () => await deleteAction(quiz_id),
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Something went wrong while deleting.");
     },
     onSuccess: async () => {
