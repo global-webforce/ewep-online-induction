@@ -70,6 +70,17 @@ export function DataTable<TData>({
     },
   });
 
+  const [isVisibleLoading, setIsVisibleLoading] = React.useState(loading);
+
+  React.useEffect(() => {
+    if (loading) {
+      setIsVisibleLoading(true);
+    } else {
+      const timeout = setTimeout(() => setIsVisibleLoading(false), 300); // min 400ms
+      return () => clearTimeout(timeout);
+    }
+  }, [loading]);
+
   return (
     <div className="w-full space-y-1">
       {/* ✅ toolbar slot (search, filters, etc.) */}
@@ -95,7 +106,7 @@ export function DataTable<TData>({
             ))}
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {isVisibleLoading ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}

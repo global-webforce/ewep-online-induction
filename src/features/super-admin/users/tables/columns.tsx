@@ -13,7 +13,7 @@ import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-import ColumnDate from "@/components/tanstack-table/column-date";
+import ColumnDateTime from "@/components/tanstack-table/column-datetime";
 import { RowSchema } from "../types/row";
 
 const columnHelper = createColumnHelper<RowSchema>();
@@ -94,7 +94,7 @@ export function useColumns(): ColumnDef<RowSchema>[] {
       header: "Confirmed At",
       cell: ({ cell }) =>
         cell.getValue() ? (
-          <ColumnDate value={cell.getValue()} />
+          <ColumnDateTime value={cell.getValue()} />
         ) : (
           "Not confirmed"
         ),
@@ -111,7 +111,7 @@ export function useColumns(): ColumnDef<RowSchema>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
+      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
     }),
 
     // ✅ Actions column (non-data)

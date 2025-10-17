@@ -1,7 +1,7 @@
 "use client";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-import ColumnDate from "@/components/tanstack-table/column-date";
+import ColumnDateTime from "@/components/tanstack-table/column-datetime";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -65,20 +65,6 @@ export function useColumns(): ColumnDef<T>[] {
       ),
     }),
 
-    // ✅ Valid Until
-    columnHelper.accessor("valid_until", {
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Valid Until
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
-    }),
-
     columnHelper.accessor("status", {
       header: ({ column }) => (
         <Button
@@ -92,6 +78,20 @@ export function useColumns(): ColumnDef<T>[] {
       cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
     }),
 
+    // ✅ Valid Until
+    columnHelper.accessor("valid_until", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Valid Until
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
+    }),
+
     // ✅ Created At
     columnHelper.accessor("created_at", {
       header: ({ column }) => (
@@ -99,11 +99,11 @@ export function useColumns(): ColumnDef<T>[] {
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Created At
+          Taken At
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
+      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
     }),
 
     // ✅ Actions column

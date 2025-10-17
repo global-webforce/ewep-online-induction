@@ -6,9 +6,9 @@ import { ReactNode } from "react";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      /*  refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
-      retry: 0, */
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: 0,
     },
   },
 });

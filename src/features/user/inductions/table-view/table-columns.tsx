@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
 import ColumnDate from "@/components/tanstack-table/column-date";
+import ColumnDateTime from "@/components/tanstack-table/column-datetime";
 import { InductionsUserViewRowSchema } from "@/features/types";
 
 type T = InductionsUserViewRowSchema;
@@ -97,7 +98,27 @@ export function useColumns(): ColumnDef<T>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
+      cell: ({ cell, row }) => (
+        <div className="flex flex-row items-center gap-3">
+          <ColumnDate value={cell.getValue()} />
+          <ColumnBadge
+            value={`${row.original.session_is_expired ? "Expired" : ""}`}
+          />
+        </div>
+      ),
+    }),
+
+    columnHelper.accessor("session_created_at", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Taken At
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
     }),
 
     columnHelper.display({

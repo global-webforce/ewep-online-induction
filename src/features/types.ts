@@ -4,6 +4,8 @@
 | UPDATED:  Oct 2025
 ==================================================*/
 
+import { formatValue } from "@/utils/string-helpers";
+import { format } from "date-fns";
 import z from "zod";
 
 const id = z.uuid();
@@ -79,7 +81,7 @@ export type SessionFormSchema = z.infer<typeof sessionFormSchema>;
 //>>
 export const sessionFormRLSSchema = sessionRowSchema.omit({
   id: true,
-  created_at: true,
+  //created_at: true,
   user_id: true,
 });
 export type SessionFormRLSSchema = z.infer<typeof sessionFormRLSSchema>;
@@ -110,11 +112,27 @@ export type SessionUserViewRowSchema = z.infer<typeof sessionUserViewRowSchema>;
 //<<
 
 //>>
+export const sessionUserViewRowPresenterSchema =
+  sessionUserViewRowSchema.transform((s) => ({
+    ...s,
+    full_name: s.first_name + " " + s.last_name,
+    status: formatValue(s.status),
+    valid_until: s.valid_until ? format(new Date(s.valid_until), "PP") : null,
+    created_at: format(new Date(s.created_at), "PP"),
+  }));
+
+export type SessionUserViewRowPresenterSchema = z.output<
+  typeof sessionUserViewRowPresenterSchema
+>;
+//<<
+
+//>>
 export const inductionsUserViewRowSchema = inductionRowSchema.extend({
   session_id: sessionRowSchema.shape.id.nullable(),
   session_status: sessionRowSchema.shape.status.nullable(),
   session_valid_until: sessionRowSchema.shape.valid_until.nullable(),
   session_is_expired: z.boolean().nullable(),
+  session_created_at: datetime.nullable(),
 });
 export type InductionsUserViewRowSchema = z.infer<
   typeof inductionsUserViewRowSchema

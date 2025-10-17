@@ -27,7 +27,7 @@ export default function ResourcesPresenter() {
 
   const { data: inductionData } = useFetchInductionById(id);
 
-  const { data, error, refetch } = useFetchById(id);
+  const { data, error, refetch, isLoading } = useFetchById(id);
   const { selectedSlide, slides, selectedIndex, setSelectedIndex } =
     useSlideController(data || undefined);
 
@@ -45,7 +45,6 @@ export default function ResourcesPresenter() {
 
       <PresentationLayout>
         <PresentationLayout.Body>
-          <p>{JSON.stringify(inductionData)}</p>
           {viewMode === "resources" && (
             <>
               {!!selectedSlide?.title && (
@@ -75,7 +74,9 @@ export default function ResourcesPresenter() {
 
                 <CardFooter className="justify-center mt-4">
                   <Button asChild size="lg" className="gap-2">
-                    <Link href={`/dashboard/inductions/${id}/assessment`}>
+                    <Link
+                      href={`/dashboard/inductions/${id}/resources/assessment`}
+                    >
                       Start Assessment
                     </Link>
                   </Button>
@@ -107,7 +108,9 @@ export default function ResourcesPresenter() {
                 });
               }}
             >
-              Page {selectedIndex! + 1} of {slides.length + 1}
+              <p>
+                Page {selectedIndex! + 1} of {slides.length + 1}
+              </p>
             </PresentationNavigator>
           )}
         </PresentationLayout.Footer>

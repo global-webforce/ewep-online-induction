@@ -1,7 +1,7 @@
 import AlreadySignedIn from "@/features/auth/components/already-signed-in";
 import { AuthGroupButtons } from "@/features/auth/components/auth-group-buttons-client";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 export default function AuthLayout({
   children,
 }: Readonly<{
@@ -11,6 +11,7 @@ export default function AuthLayout({
     <div className="min-h-screen flex flex-col relative">
       <Image
         src="/bg.webp?height=1080&width=1920"
+        fill={true}
         alt="Background"
         layout="fill"
         objectFit="cover"

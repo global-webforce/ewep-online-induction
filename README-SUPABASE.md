@@ -21,3 +21,5 @@ Link: `https://nocodegarden.io/blog/creating-user-profiles-on-sign-up-in-supabas
 ## We convert auth table to a view!!!
 
 https://github.com/supabase/auth-js/issues/359
+
+# only run revoke all on public.users from anon; for allow the access only to auth users

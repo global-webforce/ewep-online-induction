@@ -13,7 +13,7 @@ export default function Page() {
           </Button>
           <BackButton />
         </div>
-        <h1 className="text-xl font-semibold">Session Detail</h1>
+        <h1 className="text-xl font-semibold">Session Overview</h1>
       </div>
 
       <ReadView />

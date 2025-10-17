@@ -9,7 +9,8 @@ export async function fetchById(induction_id: string) {
   const { data, error } = await supabase
     .from("induction_resources")
     .select("*")
-    .eq("induction_id", induction_id);
+    .eq("induction_id", induction_id)
+    .order("order", { ascending: true });
 
   if (error) {
     throw Error(error.message);

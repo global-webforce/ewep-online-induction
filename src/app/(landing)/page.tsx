@@ -10,6 +10,7 @@ export default function Home() {
         <div className="bg-muted relative hidden md:block">
           <Image
             src="/bg.webp"
+            fill={true}
             alt="Image"
             className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.7]"
           />

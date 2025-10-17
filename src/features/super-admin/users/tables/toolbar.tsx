@@ -1,6 +1,5 @@
 "use client";
 
-import { formatLabel } from "@/components/tanstack-table/column-badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { formatValue } from "@/utils/string-helpers";
 import { Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
 import { RowSchema } from "../types/row";
@@ -63,7 +63,7 @@ export function DataTableToolbar<TData>({
                     }
                   }}
                 >
-                  {formatLabel(role)}
+                  {formatValue(role)}
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuContent>

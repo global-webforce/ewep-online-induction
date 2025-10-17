@@ -14,7 +14,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-import ColumnDate from "@/components/tanstack-table/column-date";
+import ColumnDateTime from "@/components/tanstack-table/column-datetime";
 import { InductionRowSchema } from "@/features/types";
 
 const columnHelper = createColumnHelper<InductionRowSchema>();
@@ -112,7 +112,7 @@ export function useColumns(): ColumnDef<InductionRowSchema>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDate value={cell.getValue()} />,
+      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
     }),
 
     columnHelper.display({

@@ -9,8 +9,7 @@ export async function fetchAll(id: string) {
   const { data, error } = await supabase
     .from("induction_quiz")
     .select("*")
-    .eq("induction_id", id)
-    .order("created_at", { ascending: false });
+    .eq("induction_id", id);
 
   if (error) {
     throw Error(error.message);

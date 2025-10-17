@@ -11,14 +11,26 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { ConfirmDialog, QuizFormCard, QuizResultDialog } from "./components";
+import {
+  ConfirmDialog,
+  ExitDialog,
+  QuizFormCard,
+  QuizResultDialog,
+} from "./components";
 
 import { useFetchById as useFetchInductionById } from "@/features/user/inductions";
-import { formatReadableDate } from "@/utils/date-helpers";
+import { formatReadableDate, getFutureDateISO } from "@/utils/string-helpers";
 import { isEqual } from "lodash";
+
+import { SessionFormRLSSchema } from "@/features/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { toast } from "sonner";
+import { upsertAction } from "../induction-sessions/actions";
 import { NotificationCompleted } from "./components/notification-completed";
+import { NotificationExpired } from "./components/notification-expired";
 import { NotificationFailed } from "./components/notification-failed";
 import { NotificationNoAssessment } from "./components/notification-no-assessment";
 import { useFetchById } from "./hooks/crud";
@@ -28,7 +40,7 @@ export default function QuizPresenter() {
   const { id } = useParams<{ id: string }>();
   const { data: inductionData } = useFetchInductionById(id);
   const { data, error, refetch } = useFetchById(id);
-
+  const router = useRouter();
   const {
     quizzes,
     showConfirmQuizDialog,
@@ -43,6 +55,33 @@ export default function QuizPresenter() {
   } = useQuizController(data || undefined);
   const [viewMode] = useState<"quiz" | "result" | undefined>("quiz");
 
+  const [certificateLink, setCertificateLink] = useState<string | undefined>(
+    undefined
+  );
+
+  const queryClient = useQueryClient();
+  const { mutate: upsertMutation } = useMutation({
+    mutationFn: (values: SessionFormRLSSchema) => upsertAction(values),
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: async (data) => {
+      setCertificateLink(data?.id);
+      if (I_NEED_INDUCTION_BUT_NO_ASSESSMENT_AVAILABLE == true) {
+        window.location.reload();
+      } else {
+        setShowQuizResult(true);
+        setShowCorrectAnswer(true);
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["induction_sessions_user_view"],
+      });
+    },
+  });
+
+  const I_HAVE_NO_INDUCTION = inductionData?.session_id == null;
+
   const I_HAVE_SUCCESSFUL_INDUCTION_STILL_VALID =
     inductionData?.session_status == "passed" &&
     inductionData?.session_is_expired === false;
@@ -55,12 +94,25 @@ export default function QuizPresenter() {
 
   const I_NEED_INDUCTION_BUT_NO_ASSESSMENT_AVAILABLE =
     (I_HAVE_INDUCTION_BUT_FAILED === true ||
+      I_HAVE_SUCCESSFUL_INDUCTION_BUT_EXPIRED === true ||
+      I_HAVE_NO_INDUCTION) &&
+    quizzes.length > 0;
+
+  const I_NEED_INDUCTION_AND_ASSESSMENT_IS_AVAILABLE =
+    (I_HAVE_INDUCTION_BUT_FAILED === true ||
       I_HAVE_SUCCESSFUL_INDUCTION_BUT_EXPIRED === true) &&
     data &&
-    data?.length <= 0;
+    quizzes?.length > 0;
 
   return (
     <>
+      <ExitDialog
+        isDirty={
+          showCorrectAnswer !== true &&
+          I_HAVE_SUCCESSFUL_INDUCTION_STILL_VALID !== true &&
+          certificateLink != null
+        }
+      />
       {error && (
         <AlertPanelState onRetry={async () => await refetch()} variant="error">
           {error.message}
@@ -69,121 +121,145 @@ export default function QuizPresenter() {
 
       <PresentationLayout>
         <PresentationLayout.Body>
-          {data && (
-            <>
-              {I_HAVE_SUCCESSFUL_INDUCTION_STILL_VALID === true && (
-                <NotificationCompleted
-                  validUntil={formatReadableDate(
-                    inductionData.session_valid_until
-                  )}
-                />
-              )}
-              {I_HAVE_INDUCTION_BUT_FAILED === true && <NotificationFailed />}
+          <>
+            {I_HAVE_SUCCESSFUL_INDUCTION_STILL_VALID === true && (
+              <NotificationCompleted
+                validUntil={formatReadableDate(
+                  inductionData.session_valid_until
+                )}
+              />
+            )}
+            {I_HAVE_INDUCTION_BUT_FAILED === true && <NotificationFailed />}
+            {I_HAVE_SUCCESSFUL_INDUCTION_BUT_EXPIRED === true && (
+              <NotificationExpired />
+            )}
 
-              {I_NEED_INDUCTION_BUT_NO_ASSESSMENT_AVAILABLE === true && (
-                <NotificationNoAssessment onClick={() => {}} />
-              )}
+            {I_NEED_INDUCTION_BUT_NO_ASSESSMENT_AVAILABLE === true && (
+              <NotificationNoAssessment
+                onClick={() => {
+                  upsertMutation({
+                    induction_id: id,
+                    created_at: new Date().toISOString(),
+                    valid_until: getFutureDateISO(
+                      inductionData?.validity_days!
+                    ),
+                    status: "passed",
+                  });
+                }}
+              />
+            )}
 
-              {viewMode === "quiz" && quizzes.length > 0 && (
-                <Card className="  w-full ">
-                  <CardHeader>
-                    <CardTitle>
-                      <h1 className="text-2xl font-semibold">
-                        {inductionData?.title} Assessment
-                      </h1>
-                    </CardTitle>
-                    <CardDescription>
-                      <div className="text-sm text-muted-foreground space-y-1">
-                        <p>
-                          Please review each question carefully before
-                          submitting. Once submitted, your answers will be
-                          final.
-                        </p>
-                      </div>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-2">
-                    {quizzes.map((quiz, index) => {
-                      return (
-                        <QuizFormCard
-                          key={index}
-                          value={quiz}
-                          index={index}
-                          reveal={showCorrectAnswer}
-                          onChange={(value) => {
-                            setQuizzes((prev) => {
-                              if (!isEqual(prev[index].answer, value)) {
-                                const quizzes = [...prev];
-                                quizzes[index] = {
-                                  ...quizzes[index],
-                                  answer: value,
-                                };
-                                return quizzes;
-                              }
-                              return prev;
-                            });
-                          }}
-                        />
-                      );
-                    })}
-                  </CardContent>
-
-                  <CardFooter>
-                    <div className="flex gap-4">
-                      <Button
-                        disabled={
-                          isAllAnswered() === false ||
-                          showCorrectAnswer === true
-                        }
-                        className="min-w-[150px]"
-                        onClick={() => setShowConfirmQuizDialog(true)}
-                      >
-                        Submit
-                      </Button>
-
-                      {showQuizResult !== undefined && (
-                        <Button
-                          variant={"outline"}
-                          className="min-w-[150px]"
-                          onClick={() => setShowQuizResult(true)}
-                        >
-                          Show Result
-                        </Button>
-                      )}
+            {I_NEED_INDUCTION_AND_ASSESSMENT_IS_AVAILABLE && (
+              <Card className="  w-full ">
+                <CardHeader>
+                  <CardTitle>
+                    <h1 className="text-2xl font-semibold">
+                      {inductionData?.title} Assessment
+                    </h1>
+                  </CardTitle>
+                  <CardDescription>
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <p>
+                        Please review each question carefully before submitting.
+                        Once submitted, your answers will be final.
+                      </p>
                     </div>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-2">
+                  {quizzes.map((quiz, index) => {
+                    return (
+                      <QuizFormCard
+                        key={index}
+                        value={quiz}
+                        index={index}
+                        reveal={showCorrectAnswer}
+                        onChange={(value) => {
+                          setQuizzes((prev) => {
+                            if (!isEqual(prev[index].answer, value)) {
+                              const quizzes = [...prev];
+                              quizzes[index] = {
+                                ...quizzes[index],
+                                answer: value,
+                              };
+                              return quizzes;
+                            }
+                            return prev;
+                          });
+                        }}
+                      />
+                    );
+                  })}
+                </CardContent>
 
-                    <ConfirmDialog
-                      open={showConfirmQuizDialog}
-                      setOpen={setShowConfirmQuizDialog}
-                      onConfirm={() => {
-                        setShowCorrectAnswer(true);
-                        setShowQuizResult(true);
-                        /*    mutate({
-                          induction_id: id,
-                          valid_until: inductionData?.validity_days
+                <CardFooter>
+                  <ConfirmDialog
+                    open={showConfirmQuizDialog}
+                    setOpen={setShowConfirmQuizDialog}
+                    onConfirm={() => {
+                      upsertMutation({
+                        induction_id: id,
+                        created_at: new Date().toISOString(),
+                        valid_until:
+                          getResult().hasPassed && inductionData?.validity_days
                             ? getFutureDateISO(inductionData.validity_days)
                             : null,
-                          status:
-                            getResult().hasPassed === true
-                              ? "passed"
-                              : "failed",
-                        }); */
-                        //   setViewMode("result");
-                      }}
-                    />
+                        status:
+                          getResult().hasPassed === true ? "passed" : "failed",
+                      });
+                      //   setViewMode("result");
+                    }}
+                  />
 
-                    <QuizResultDialog
-                      open={showQuizResult === true}
-                      setOpen={() => setShowQuizResult(false)}
-                      result={getResult()}
-                      onRetry={() => {}}
-                    />
-                  </CardFooter>
-                </Card>
-              )}
-            </>
-          )}
+                  <QuizResultDialog
+                    certificateLink={certificateLink}
+                    open={showQuizResult === true}
+                    setOpen={() => setShowQuizResult(false)}
+                    result={getResult()}
+                    onRetry={() => {}}
+                  />
+                </CardFooter>
+              </Card>
+            )}
+          </>
         </PresentationLayout.Body>
+        <PresentationLayout.Footer>
+          <div className="p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 overflow-x-auto">
+            <div></div>
+
+            {I_NEED_INDUCTION_AND_ASSESSMENT_IS_AVAILABLE && (
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <Button
+                  disabled={
+                    isAllAnswered() === false || showCorrectAnswer === true
+                  }
+                  className="w-full sm:w-[150px]"
+                  onClick={() => setShowConfirmQuizDialog(true)}
+                >
+                  Submit Answers
+                </Button>
+
+                {showQuizResult !== undefined && (
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-[150px]"
+                    onClick={() => setShowQuizResult(true)}
+                  >
+                    Show Result
+                  </Button>
+                )}
+              </div>
+            )}
+
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={() => router.replace("/dashboard/")}
+            >
+              Exit Induction
+            </Button>
+          </div>
+        </PresentationLayout.Footer>
       </PresentationLayout>
     </>
   );

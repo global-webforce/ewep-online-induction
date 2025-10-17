@@ -16,20 +16,26 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CheckCircle2, XCircle } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { QuizResultCardProps } from "../types/quiz-schemas";
 
 type QuizResultDialogProps = QuizResultCardProps & {
+  certificateLink: string | undefined;
   open: boolean;
   setOpen: (value: boolean) => void;
 };
 
 export function QuizResultDialog({
+  certificateLink,
   open,
   setOpen,
   result: { score, correct, total, hasPassed, passingRate },
   onRetry,
 }: QuizResultDialogProps) {
   const percentage = Math.round(score * 100);
+
+  const router = useRouter();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -90,12 +96,19 @@ export function QuizResultDialog({
           </CardContent>
 
           <CardFooter className="flex justify-center gap-3 mt-4">
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              Close
-            </Button>
-            <Button onClick={onRetry}>
-              {hasPassed ? "Retake for Practice" : "Try Again"}
-            </Button>
+            {!hasPassed && (
+              <Button onClick={() => window.location.reload()}>
+                Try Again
+              </Button>
+            )}
+
+            {hasPassed && (
+              <Button asChild>
+                <Link target="_blank" href={`/certificate/${certificateLink}`}>
+                  Download Certificate
+                </Link>
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </DialogContent>

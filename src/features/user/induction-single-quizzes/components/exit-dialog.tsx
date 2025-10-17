@@ -20,10 +20,10 @@ export function ExitDialog({ isDirty = false }: { isDirty: boolean }) {
     <Dialog open={confirmExit.active}>
       <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>You have unsaved changes</DialogTitle>
+          <DialogTitle>Exit Induction?</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          You have unsaved changes that will be lost.
+          Your induction progress will be lost.
         </DialogDescription>
         <DialogFooter>
           <DialogClose asChild>
@@ -32,7 +32,7 @@ export function ExitDialog({ isDirty = false }: { isDirty: boolean }) {
             </Button>
           </DialogClose>
 
-          <Button onClick={confirmExit.accept}>Discard</Button>
+          <Button onClick={confirmExit.accept}>Confirm</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

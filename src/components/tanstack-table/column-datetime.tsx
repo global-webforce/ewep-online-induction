@@ -4,7 +4,7 @@ interface Props {
   value?: string | Date | null;
 }
 
-export default function ColumnDate({ value }: Props) {
+export default function ColumnDateTime({ value }: Props) {
   const [formatted, setFormatted] = useState<string | null>(null);
 
   useEffect(() => {
@@ -19,15 +19,20 @@ export default function ColumnDate({ value }: Props) {
       return;
     }
 
+    // Example output: "Oct 17, 2025, 4:32 PM"
     setFormatted(
-      date.toLocaleDateString(undefined, {
+      date.toLocaleString(undefined, {
         year: "numeric",
         month: "short",
         day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
       })
     );
   }, [value]);
 
   if (!formatted) return null;
+
   return <span>{formatted}</span>;
 }
