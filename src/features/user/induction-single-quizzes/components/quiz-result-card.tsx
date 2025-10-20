@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { CheckCircle2, XCircle } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { QuizResultCardProps } from "../types/quiz-schemas";
 
 type QuizResultDialogProps = QuizResultCardProps & {
@@ -31,11 +30,8 @@ export function QuizResultDialog({
   open,
   setOpen,
   result: { score, correct, total, hasPassed, passingRate },
-  onRetry,
 }: QuizResultDialogProps) {
   const percentage = Math.round(score * 100);
-
-  const router = useRouter();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

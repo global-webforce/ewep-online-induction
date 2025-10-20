@@ -2,11 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import { sessionUserViewRowPresenterSchema } from "@/features/types";
-import { useFetchById } from "@/features/user/induction-sessions/hooks/crud"; // @ts-ignore
+
+import { useFetchById } from "@/features/user/induction-sessions/hooks/crud";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import domtoimage from "@intactile/dom-to-image-next";
 import { useQRCode } from "next-qrcode";
 import { useParams } from "next/navigation";
 import { useRef } from "react";
+
+import Image from "next/image";
 
 export function CertificateView() {
   const { id } = useParams<{ id: string }>();
@@ -99,7 +104,7 @@ export function CertificateView() {
                 <div className="relative flex flex-col sm:flex-row justify-between">
                   {/* Header (logo) */}
 
-                  <img
+                  <Image
                     src="/ewep-logo.webp"
                     alt="Company logo"
                     width={140}

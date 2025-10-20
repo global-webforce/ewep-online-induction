@@ -53,7 +53,6 @@ export default function QuizPresenter() {
     setShowConfirmQuizDialog,
     isAllAnswered,
   } = useQuizController(data || undefined);
-  const [viewMode] = useState<"quiz" | "result" | undefined>("quiz");
 
   const [certificateLink, setCertificateLink] = useState<string | undefined>(
     undefined
@@ -140,9 +139,10 @@ export default function QuizPresenter() {
                   upsertMutation({
                     induction_id: id,
                     created_at: new Date().toISOString(),
-                    valid_until: getFutureDateISO(
-                      inductionData?.validity_days!
-                    ),
+                    valid_until:
+                      inductionData && inductionData?.validity_days
+                        ? getFutureDateISO(inductionData?.validity_days)
+                        : null,
                     status: "passed",
                   });
                 }}

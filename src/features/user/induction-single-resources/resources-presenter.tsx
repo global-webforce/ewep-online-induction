@@ -15,7 +15,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useFetchById as useFetchInductionById } from "@/features/user/inductions";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -25,9 +24,7 @@ import { useFetchById } from "./hooks/crud";
 export default function ResourcesPresenter() {
   const { id } = useParams<{ id: string }>();
 
-  const { data: inductionData } = useFetchInductionById(id);
-
-  const { data, error, refetch, isLoading } = useFetchById(id);
+  const { data, error, refetch } = useFetchById(id);
   const { selectedSlide, slides, selectedIndex, setSelectedIndex } =
     useSlideController(data || undefined);
 
