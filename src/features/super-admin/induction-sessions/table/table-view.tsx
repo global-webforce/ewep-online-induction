@@ -4,9 +4,11 @@ import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { DataTable } from "@/components/tanstack-table/datatable";
 import { useFetchAll } from "../hooks/crud";
 
-import { SessionsSuperAdminRowView } from "@/features/types";
+import { SessionsRowViewSchema } from "@/features/types";
 import { useColumns } from "./table-columns";
 import { DataTableToolbar } from "./table-toolbar";
+
+type T = SessionsRowViewSchema;
 
 export function TableView() {
   const { data, error, isLoading, refetch } = useFetchAll();
@@ -20,9 +22,7 @@ export function TableView() {
       )}
 
       <DataTable columns={useColumns()} data={data || []} loading={isLoading}>
-        {(table) => (
-          <DataTableToolbar<SessionsSuperAdminRowView> table={table} />
-        )}
+        {(table) => <DataTableToolbar<T> table={table} />}
       </DataTable>
     </div>
   );

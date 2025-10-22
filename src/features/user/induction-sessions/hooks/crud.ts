@@ -9,13 +9,13 @@ import { fetchAll, fetchById, upsertAction } from "../actions";
 
 export const useFetchAll = () =>
   useQuery({
-    queryKey: ["induction_sessions_user_view"],
+    queryKey: ["induction_sessions_view"],
     queryFn: async () => await fetchAll(),
   });
 
 export const useFetchById = (id: string) =>
   useQuery({
-    queryKey: ["induction_sessions_user_view", id],
+    queryKey: ["induction_sessions_view", id],
     queryFn: () => fetchById(id),
   });
 
@@ -29,7 +29,7 @@ export const useUpsert = () => {
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
-        queryKey: ["induction_sessions_user_view"],
+        queryKey: ["induction_sessions_view"],
       });
       toast.success("Record has been created.");
       router.replace("/dashboard/induction-sessions/" + data?.id);

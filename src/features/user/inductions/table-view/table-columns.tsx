@@ -14,11 +14,10 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-import ColumnDate from "@/components/tanstack-table/column-date";
-import ColumnDateTime from "@/components/tanstack-table/column-datetime";
-import { InductionsUserViewRowSchema } from "@/features/types";
+import { InductionUserViewRowSchema } from "@/features/types";
+import Link from "next/link";
 
-type T = InductionsUserViewRowSchema;
+type T = InductionUserViewRowSchema;
 
 const columnHelper = createColumnHelper<T>();
 
@@ -75,17 +74,19 @@ export function useColumns(): ColumnDef<T>[] {
       cell: ({ cell }) => <div>{cell.getValue()} days</div>,
     }),
 
-    columnHelper.accessor("session_status", {
+    columnHelper.accessor("session_has_passed", {
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          Has Passed?
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
+      cell: ({ row }) => (
+        <ColumnBadge value={row.original.session_has_passed_formatted} />
+      ),
     }),
 
     columnHelper.accessor("session_valid_until", {
@@ -98,12 +99,10 @@ export function useColumns(): ColumnDef<T>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell, row }) => (
+      cell: ({ row }) => (
         <div className="flex flex-row items-center gap-3">
-          <ColumnDate value={cell.getValue()} />
-          <ColumnBadge
-            value={`${row.original.session_is_expired ? "Expired" : ""}`}
-          />
+          {row.original.session_valid_until_formatted}
+          <ColumnBadge value={row.original.session_is_expired_formatted} />
         </div>
       ),
     }),
@@ -118,7 +117,7 @@ export function useColumns(): ColumnDef<T>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
+      cell: ({ row }) => row.original.session_created_at_formatted,
     }),
 
     columnHelper.display({
@@ -142,8 +141,21 @@ export function useColumns(): ColumnDef<T>[] {
                   router.push(`/dashboard/inductions/${rowData.id}`);
                 }}
               >
-                Take Induction
+                {rowData.session_has_passed
+                  ? "Review Induction"
+                  : "Take Induction"}
               </DropdownMenuItem>
+
+              {rowData.has_valid_induction && (
+                <DropdownMenuItem asChild>
+                  <Link
+                    target="_blank"
+                    href={`/certificate/${rowData.session_id}`}
+                  >
+                    Download Certificate
+                  </Link>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         );

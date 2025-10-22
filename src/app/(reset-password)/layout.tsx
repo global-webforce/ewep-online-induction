@@ -17,7 +17,7 @@ export default async function AuthLayout({
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <Link href="/" className="text-xl font-bold text-foreground">
-                  SFS Online Induction
+                  {process.env.NEXT_PUBLIC_APP_NAME}
                 </Link>
               </div>
             </div>
@@ -33,7 +33,7 @@ export default async function AuthLayout({
       <footer className="relative bg-background bg-opacity-90 shadow-md mt-8 z-10">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
           <p className="text-sm">
-            &copy; 2025 Stark Food Systems. Internal use only.
+            &copy; 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Internal use only.
           </p>
         </div>
       </footer>

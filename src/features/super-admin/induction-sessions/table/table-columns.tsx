@@ -1,7 +1,6 @@
 "use client";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-import ColumnDateTime from "@/components/tanstack-table/column-datetime";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -11,14 +10,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SessionsSuperAdminRowView } from "@/features/types";
+import { SessionsRowViewSchema } from "@/features/types";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const columnHelper = createColumnHelper<SessionsSuperAdminRowView>();
+type T = SessionsRowViewSchema;
 
-export function useColumns(): ColumnDef<SessionsSuperAdminRowView>[] {
+const columnHelper = createColumnHelper<T>();
+
+export function useColumns(): ColumnDef<T>[] {
   const router = useRouter();
 
   const proxyColumns = [
@@ -45,7 +47,7 @@ export function useColumns(): ColumnDef<SessionsSuperAdminRowView>[] {
       enableHiding: false,
     }),
 
-    columnHelper.accessor("user_email", {
+    columnHelper.accessor("email", {
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -75,17 +77,19 @@ export function useColumns(): ColumnDef<SessionsSuperAdminRowView>[] {
       ),
     }),
 
-    columnHelper.accessor("status", {
+    columnHelper.accessor("has_passed", {
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          Has Passed?
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
+      cell: ({ row }) => (
+        <ColumnBadge value={row.original.session_has_passed_formatted} />
+      ),
     }),
 
     columnHelper.accessor("valid_until", {
@@ -98,7 +102,7 @@ export function useColumns(): ColumnDef<SessionsSuperAdminRowView>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
+      cell: ({ row }) => row.original.session_valid_until_formatted,
     }),
 
     columnHelper.accessor("created_at", {
@@ -111,7 +115,7 @@ export function useColumns(): ColumnDef<SessionsSuperAdminRowView>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
+      cell: ({ row }) => row.original.session_created_at_formatted,
     }),
 
     // ✅ Actions column (non-data)
@@ -137,22 +141,19 @@ export function useColumns(): ColumnDef<SessionsSuperAdminRowView>[] {
               >
                 Manage
               </DropdownMenuItem>
+
+              {rowData.has_valid_induction && (
+                <DropdownMenuItem asChild>
+                  <Link target="_blank" href={`/certificate/${rowData.id}`}>
+                    Download Certificate
+                  </Link>
+                </DropdownMenuItem>
+              )}
+
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(rowData.id)}
               >
                 Copy ID
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(rowData.user_id)}
-              >
-                Copy User ID
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(rowData.induction_id)
-                }
-              >
-                Copy Induction ID
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -162,5 +163,5 @@ export function useColumns(): ColumnDef<SessionsSuperAdminRowView>[] {
   ];
 
   // ✅ Return strictly typed columns
-  return proxyColumns as ColumnDef<SessionsSuperAdminRowView>[];
+  return proxyColumns as ColumnDef<T>[];
 }

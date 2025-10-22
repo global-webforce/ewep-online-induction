@@ -15,16 +15,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { useFetchById as useFetchInductionById } from "@/features/user/inductions";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useFetchById } from "./hooks/crud";
-
 export default function ResourcesPresenter() {
   const { id } = useParams<{ id: string }>();
 
-  const { data, error, refetch } = useFetchById(id);
+  const { data: inductionData, isLoading: isLoadingInduction } =
+    useFetchInductionById(id);
+
+  const {
+    data,
+    error,
+    refetch,
+    isLoading: isLoadingResources,
+  } = useFetchById(id);
   const { selectedSlide, slides, selectedIndex, setSelectedIndex } =
     useSlideController(data || undefined);
 
@@ -42,44 +50,55 @@ export default function ResourcesPresenter() {
 
       <PresentationLayout>
         <PresentationLayout.Body>
-          {viewMode === "resources" && (
+          {!isLoadingInduction && !isLoadingResources && (
             <>
-              {!!selectedSlide?.title && (
-                <h1 className="text-3xl font-bold">{selectedSlide?.title}</h1>
+              {viewMode === "resources" && (
+                <>
+                  {!!selectedSlide?.title && (
+                    <h1 className="text-3xl font-bold">
+                      {selectedSlide?.title}
+                    </h1>
+                  )}
+
+                  {!!selectedSlide?.content && (
+                    <HtmlPreview htmlContent={selectedSlide?.content} />
+                  )}
+                </>
               )}
 
-              {!!selectedSlide?.content && (
-                <HtmlPreview htmlContent={selectedSlide?.content} />
+              {viewMode === "resources-end" && (
+                <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
+                  <Card className="w-full max-w-xl py-12 text-center">
+                    <CardHeader className="flex flex-col items-center space-y-4">
+                      <CheckCircle className="h-16 w-16 text-green-500 drop-shadow-lg" />
+
+                      <CardTitle className="text-2xl font-semibold max-w-[500px]">
+                        You&apos;ve reached the end of learning modules of this
+                        induction.
+                      </CardTitle>
+                      {inductionData?.has_valid_induction === false && (
+                        <CardDescription className="text-muted-foreground">
+                          Great work! It&apos;s time to test what you&apos;ve
+                          learned.
+                        </CardDescription>
+                      )}
+                    </CardHeader>
+
+                    {inductionData?.has_valid_induction === false && (
+                      <CardFooter className="justify-center mt-4">
+                        <Button asChild size="lg" className="gap-2">
+                          <Link
+                            href={`/dashboard/inductions/${id}/resources/assessment`}
+                          >
+                            Start Assessment
+                          </Link>
+                        </Button>
+                      </CardFooter>
+                    )}
+                  </Card>
+                </div>
               )}
             </>
-          )}
-
-          {viewMode === "resources-end" && (
-            <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-              <Card className="w-full max-w-xl py-12 text-center">
-                <CardHeader className="flex flex-col items-center space-y-4">
-                  <CheckCircle className="h-16 w-16 text-green-500 drop-shadow-lg" />
-
-                  <CardTitle className="text-2xl font-semibold max-w-[500px]">
-                    You&apos;ve reached the end of learning modules of this
-                    induction.
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    Great work! It&apos;s time to test what you&apos;ve learned.
-                  </CardDescription>
-                </CardHeader>
-
-                <CardFooter className="justify-center mt-4">
-                  <Button asChild size="lg" className="gap-2">
-                    <Link
-                      href={`/dashboard/inductions/${id}/resources/assessment`}
-                    >
-                      Start Assessment
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
           )}
         </PresentationLayout.Body>
         <PresentationLayout.Footer>
@@ -105,7 +124,7 @@ export default function ResourcesPresenter() {
                 });
               }}
             >
-              <p>
+              <p className="min-w-[90px]">
                 Page {selectedIndex! + 1} of {slides.length + 1}
               </p>
             </PresentationNavigator>

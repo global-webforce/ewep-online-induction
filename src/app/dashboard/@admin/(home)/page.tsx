@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { MetricCardsGridAdmin } from "@/features/super-admin/home/metric-cards-grid";
 import { requireUser } from "@/features/auth/require-user";
+import { MetricCardsGridSuperAdmin } from "@/features/super-admin/home/metric-cards-grid-super-admin";
 
 export default async function Page() {
   const user = await requireUser();
@@ -19,7 +19,7 @@ export default async function Page() {
       <h1 className="text-xl font-semibold">
         Welcome! {user.profile?.first_name || "Admin"}
       </h1>
-      <MetricCardsGridAdmin />
+      <MetricCardsGridSuperAdmin />
     </div>
   );
 }

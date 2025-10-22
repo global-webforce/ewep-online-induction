@@ -1,12 +1,12 @@
 "use server";
 
-import { sessionUserViewRowSchema } from "@/features/types";
+import { sessionRowViewSchema } from "@/features/types";
 import { createClient } from "@/utils/supabase/client-server";
 
 export async function fetchById(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("induction_sessions_user_view")
+    .from("induction_sessions_view")
     .select("*")
     .eq("id", id)
     .maybeSingle();
@@ -16,7 +16,7 @@ export async function fetchById(id: string) {
 
   if (!data) return null;
 
-  const parsedResult = sessionUserViewRowSchema.safeParse(data);
+  const parsedResult = sessionRowViewSchema.safeParse(data);
   if (parsedResult.error) {
     throw new Error(parsedResult.error.message);
   }

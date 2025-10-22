@@ -134,3 +134,9 @@
   flex: 1;
   height: max(calc(100vh - 240px), 400px) !important;
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

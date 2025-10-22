@@ -19,10 +19,10 @@ export default function FormBase() {
 
       <FormFieldSelect
         control={control}
-        name="status"
+        name="has_passed"
         options={[
-          { value: "passed", label: "Passed" },
-          { value: "failed", label: "Failed" },
+          { value: "true", label: "Passed" },
+          { value: "false", label: "Failed" },
         ]}
       ></FormFieldSelect>
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { inductionsUserViewRowSchema } from "@/features/types";
+import { inductionUserViewRowSchema } from "@/features/types";
 import { createClient } from "@/utils/supabase/client-server";
 import z from "zod";
 
@@ -18,7 +18,7 @@ export async function fetchAll() {
 
   if (!data) return null;
 
-  const parsedResult = z.array(inductionsUserViewRowSchema).safeParse(data);
+  const parsedResult = z.array(inductionUserViewRowSchema).safeParse(data);
   if (parsedResult.error) {
     throw new Error(parsedResult.error.message);
   }

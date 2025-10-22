@@ -1,7 +1,7 @@
 "use server";
 
+import { UserMetricsSchema } from "@/features/types";
 import { createClient } from "@/utils/supabase/client-server";
-import { ViewSchema } from "./view";
 
 export async function fetchAll() {
   const supabase = await createClient();
@@ -13,5 +13,5 @@ export async function fetchAll() {
   if (error) {
     throw Error(error.message);
   }
-  return data as ViewSchema;
+  return data as UserMetricsSchema;
 }

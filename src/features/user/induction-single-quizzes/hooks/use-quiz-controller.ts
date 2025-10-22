@@ -1,35 +1,49 @@
 "use client";
 
 import { QuizFormSchema, QuizRowSchema } from "@/features/types";
-import { shuffle } from "lodash";
-import { useMemo, useState } from "react";
+import { isEqual, shuffle } from "lodash";
+import { useEffect, useState } from "react";
 import { QuizStatSchema } from "../types/quiz-schemas";
 
 export const useQuizController = (value: QuizRowSchema[] | undefined) => {
   const [passingRate] = useState(0.7);
   const [quizMode, setQuizMode] = useState<boolean>(false);
+
+  const [quizzesPristine, setQuizzesPristine] = useState<QuizFormSchema[]>([]);
   const [quizzes, setQuizzes] = useState<QuizFormSchema[]>([]);
   const [showConfirmQuizDialog, setShowConfirmQuizDialog] = useState(false);
 
-  const [showQuizResult, setShowQuizResult] = useState<boolean | undefined>(
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showQuizResult, setShowQuizResult] = useState(false);
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+
+  const [certificateLink, setCertificateLink] = useState<string | undefined>(
     undefined
   );
-  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
 
   const isAllAnswered = () => {
     if (!quizzes.length) return false;
     return quizzes.every((q) => q.answer && q.answer.trim() !== "");
   };
 
-  useMemo(() => {
-    if (value && value.length > 0) {
-      const formatQuiz = value?.map((quiz) => ({
-        ...quiz,
-        options: shuffle([...quiz?.options, { value: quiz?.correct_answer }]),
-        answer: null,
-      }));
-      setQuizzes(shuffle(formatQuiz));
-    }
+  const initQuizzes = () => {
+    if (!value || value.length === 0) return;
+
+    const formatted = value.map((quiz) => ({
+      ...quiz,
+      options: shuffle([...quiz.options, { value: quiz.correct_answer }]),
+      answer: null,
+    }));
+
+    const randomized = shuffle(formatted);
+    setQuizzes(randomized);
+    setQuizzesPristine(randomized);
+    setShowCorrectAnswer(false);
+    setShowQuizResult(false);
+  };
+
+  useEffect(() => {
+    initQuizzes();
   }, [value]);
 
   const getResult = (): QuizStatSchema => {
@@ -48,20 +62,33 @@ export const useQuizController = (value: QuizRowSchema[] | undefined) => {
     return { hasPassed, score, total, correct, passingRate };
   };
 
+  const isDirty = () => {
+    return !isEqual(quizzes, quizzesPristine);
+  };
+
+  const resetQuiz = () => {
+    initQuizzes();
+  };
+
   return {
+    isDirty,
+    resetQuiz,
+    showSuccessDialog,
+    setShowSuccessDialog,
     quizzes,
     quizMode,
     showConfirmQuizDialog,
     showQuizResult,
     passingRate,
     showCorrectAnswer,
+    certificateLink,
+    setCertificateLink,
     setShowCorrectAnswer,
     getResult,
     isAllAnswered,
     setQuizMode,
     setQuizzes,
     setShowConfirmQuizDialog,
-
     setShowQuizResult,
   };
 };

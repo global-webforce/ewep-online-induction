@@ -1,7 +1,6 @@
 "use client";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
-import ColumnDateTime from "@/components/tanstack-table/column-datetime";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -15,9 +14,9 @@ import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { SessionUserViewRowSchema } from "@/features/types";
+import { SessionsRowViewSchema } from "@/features/types";
 
-type T = SessionUserViewRowSchema;
+type T = SessionsRowViewSchema;
 
 const columnHelper = createColumnHelper<T>();
 
@@ -65,17 +64,19 @@ export function useColumns(): ColumnDef<T>[] {
       ),
     }),
 
-    columnHelper.accessor("status", {
+    columnHelper.accessor("has_passed", {
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          Has Passed?
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnBadge value={cell.getValue()} />,
+      cell: ({ row }) => (
+        <ColumnBadge value={row.original.session_has_passed_formatted} />
+      ),
     }),
 
     // ✅ Valid Until
@@ -89,7 +90,7 @@ export function useColumns(): ColumnDef<T>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
+      cell: ({ row }) => row.original.session_valid_until_formatted,
     }),
 
     // ✅ Created At
@@ -99,11 +100,11 @@ export function useColumns(): ColumnDef<T>[] {
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Taken At
+          Created At
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <ColumnDateTime value={cell.getValue()} />,
+      cell: ({ row }) => row.original.session_created_at_formatted,
     }),
 
     // ✅ Actions column
@@ -130,8 +131,6 @@ export function useColumns(): ColumnDef<T>[] {
               >
                 Manage
               </DropdownMenuItem>
-
-              <DropdownMenuItem>View History</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );

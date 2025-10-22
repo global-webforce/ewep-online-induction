@@ -2,13 +2,13 @@
 
 import { createClient } from "@/utils/supabase/client-server";
 
-import { sessionUserViewRowSchema } from "@/features/types";
+import { sessionRowViewSchema } from "@/features/types";
 import z from "zod";
 
 export async function fetchAll() {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("induction_sessions_user_view")
+    .from("induction_sessions_view")
     .select("*")
     .order("created_at", { ascending: false });
 
@@ -18,7 +18,7 @@ export async function fetchAll() {
 
   if (!data) return null;
 
-  const parsedResult = z.array(sessionUserViewRowSchema).safeParse(data);
+  const parsedResult = z.array(sessionRowViewSchema).safeParse(data);
   if (parsedResult.error) {
     throw new Error(parsedResult.error.message);
   }

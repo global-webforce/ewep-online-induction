@@ -6,7 +6,7 @@ import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 export async function fetchById(id: string) {
   const supabase = createClientAdmin();
   const { data, error } = await supabase
-    .from("induction_sessions_super_admin_view")
+    .from("induction_sessions_view")
     .select("*")
     .eq("id", id)
     .maybeSingle();

@@ -28,6 +28,7 @@ type QuizResultDialogProps = QuizResultCardProps & {
 export function QuizResultDialog({
   certificateLink,
   open,
+  onRetry,
   setOpen,
   result: { score, correct, total, hasPassed, passingRate },
 }: QuizResultDialogProps) {
@@ -92,11 +93,7 @@ export function QuizResultDialog({
           </CardContent>
 
           <CardFooter className="flex justify-center gap-3 mt-4">
-            {!hasPassed && (
-              <Button onClick={() => window.location.reload()}>
-                Try Again
-              </Button>
-            )}
+            {!hasPassed && <Button onClick={onRetry}>Try Again</Button>}
 
             {hasPassed && (
               <Button asChild>

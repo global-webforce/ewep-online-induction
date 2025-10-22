@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { InductionsUserViewRowSchema } from "@/features/types";
+import { InductionUserViewRowSchema } from "@/features/types";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -27,7 +27,7 @@ import { useFetchById } from "../hooks/crud";
 export function ReadView() {
   const { id } = useParams<{ id: string }>();
   const { data, error, refetch } = useFetchById(id);
-  const form = useForm<InductionsUserViewRowSchema>({
+  const form = useForm<InductionUserViewRowSchema>({
     values: data || undefined,
   });
 

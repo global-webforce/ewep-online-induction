@@ -4,7 +4,6 @@
 | UPDATED:  Oct 2025
 ==================================================*/
 
-import { formatValue } from "@/utils/string-helpers";
 import { format } from "date-fns";
 import z from "zod";
 
@@ -62,7 +61,7 @@ export const sessionRowSchema = z.object({
   id: id,
   user_id: id,
   induction_id: id,
-  status: z.enum(["passed", "failed"]),
+  has_passed: z.boolean(),
   valid_until: z.iso.date().nullable(),
   created_at: datetime,
 });
@@ -89,53 +88,65 @@ export type SessionFormRLSSchema = z.infer<typeof sessionFormRLSSchema>;
 //<<
 
 //>>
-export const sessionsSuperAdminRowView = sessionRowSchema.extend({
-  user_email: userRowSchema.shape.email,
-  induction_title: inductionRowSchema.shape.title,
-});
-export const sessionsSuperAdminView = z.array(sessionsSuperAdminRowView);
-export type SessionsSuperAdminView = z.infer<typeof sessionsSuperAdminView>;
-export type SessionsSuperAdminRowView = z.infer<
-  typeof sessionsSuperAdminRowView
->;
-//<<
-
-//>>
-export const sessionUserViewRowSchema = sessionRowSchema.extend({
-  induction_title: inductionRowSchema.shape.title,
-  email: userRowSchema.shape.email,
-  first_name: profileInputSchema.shape.first_name,
-  last_name: profileInputSchema.shape.last_name,
-  is_expired: z.boolean().nullable(),
-});
-export type SessionUserViewRowSchema = z.infer<typeof sessionUserViewRowSchema>;
-//<<
-
-//>>
-export const sessionUserViewRowPresenterSchema =
-  sessionUserViewRowSchema.transform((s) => ({
+export const sessionRowViewSchema = sessionRowSchema
+  .extend({
+    email: userRowSchema.shape.email,
+    first_name: profileInputSchema.shape.first_name,
+    last_name: profileInputSchema.shape.last_name,
+    induction_title: inductionRowSchema.shape.title,
+    is_expired: z.boolean().nullable(),
+  })
+  .transform((s) => ({
     ...s,
-    full_name: s.first_name + " " + s.last_name,
-    status: formatValue(s.status),
-    valid_until: s.valid_until ? format(new Date(s.valid_until), "PP") : null,
-    created_at: format(new Date(s.created_at), "PP"),
+
+    has_valid_induction: s.has_passed === true && s.is_expired === false,
+
+    session_is_expired_formatted: s.is_expired === true ? "Expired" : "",
+    session_has_passed_formatted:
+      s.has_passed === true ? "Passed" : s.has_passed === false ? "Failed" : "",
+    session_valid_until_formatted: s.valid_until
+      ? format(new Date(s.valid_until), "PP")
+      : null,
+    session_created_at_formatted: s.created_at
+      ? format(new Date(s.created_at), "PPp")
+      : null,
   }));
 
-export type SessionUserViewRowPresenterSchema = z.output<
-  typeof sessionUserViewRowPresenterSchema
->;
+export type SessionsRowViewSchema = z.infer<typeof sessionRowViewSchema>;
 //<<
 
 //>>
-export const inductionsUserViewRowSchema = inductionRowSchema.extend({
-  session_id: sessionRowSchema.shape.id.nullable(),
-  session_status: sessionRowSchema.shape.status.nullable(),
-  session_valid_until: sessionRowSchema.shape.valid_until.nullable(),
-  session_is_expired: z.boolean().nullable(),
-  session_created_at: datetime.nullable(),
-});
-export type InductionsUserViewRowSchema = z.infer<
-  typeof inductionsUserViewRowSchema
+export const inductionUserViewRowSchema = inductionRowSchema
+  .extend({
+    session_id: sessionRowSchema.shape.id.nullable(),
+    session_has_passed: sessionRowSchema.shape.has_passed.nullable(),
+    session_valid_until: sessionRowSchema.shape.valid_until.nullable(),
+    session_is_expired: z.boolean().nullable(),
+    session_created_at: datetime.nullable(),
+  })
+  .transform((s) => ({
+    ...s,
+
+    has_valid_induction:
+      s.session_has_passed === true && s.session_is_expired === false,
+
+    session_is_expired_formatted:
+      s.session_is_expired === true ? "Expired" : "",
+    session_has_passed_formatted:
+      s.session_has_passed === true
+        ? "Passed"
+        : s.session_has_passed === false
+        ? "Failed"
+        : "",
+    session_valid_until_formatted: s.session_valid_until
+      ? format(new Date(s.session_valid_until), "PP")
+      : null,
+    session_created_at_formatted: s.session_created_at
+      ? format(new Date(s.session_created_at), "PPp")
+      : null,
+  }));
+export type InductionUserViewRowSchema = z.infer<
+  typeof inductionUserViewRowSchema
 >;
 //<<
 
@@ -214,10 +225,33 @@ export interface ResourcesUpsertSchema {
 
 // >>>>>> Super Admin Metrics <<<<<<
 export const superAdminMetricsSchema = z.object({
+  // from metric_inductions_view
   total_inductions: z.number(),
   total_published_inductions: z.number(),
   total_draft_inductions: z.number(),
-  total_default_users: z.number(),
+
+  // from metric_sessions_view
+  total_induction_sessions: z.number(),
+  total_valid_induction_sessions: z.number(),
+  total_expired_induction_sessions: z.number(),
+  total_failed_induction_sessions: z.number(),
+  total_unique_inductees: z.number(),
+
+  // from metric_users_view
+  total_users: z.number(),
+  total_confirmed_users: z.number(),
+  total_unconfirmed_users: z.number(),
 });
 
 export type SuperAdminMetricsSchema = z.infer<typeof superAdminMetricsSchema>;
+
+export const userMetricsSchema = z.object({
+  // from metric_sessions_view
+  total_induction_sessions: z.number(),
+  total_valid_induction_sessions: z.number(),
+  total_expired_induction_sessions: z.number(),
+  total_failed_induction_sessions: z.number(),
+  total_unique_inductees: z.number(),
+});
+
+export type UserMetricsSchema = z.infer<typeof userMetricsSchema>;
