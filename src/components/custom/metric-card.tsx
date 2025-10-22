@@ -8,14 +8,14 @@ import {
 
 interface MetricRow {
   label: string;
-  value: string | number;
+  value: string | number | null | undefined;
 }
 
 interface MetricCardProps {
   title: string;
   description?: string;
-  metricValue: string | number;
-  metricLabel?: string;
+  metricValue: string | number | null | undefined;
+
   breakdown: MetricRow[];
 }
 
@@ -23,7 +23,7 @@ export function MetricCard({
   title,
   description,
   metricValue,
-  metricLabel,
+
   breakdown,
 }: MetricCardProps) {
   return (

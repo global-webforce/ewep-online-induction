@@ -18,11 +18,11 @@ export function MetricCardsGridUser() {
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <MetricCard
         title="Total Induction Sessions"
-        metricValue={data?.total_induction_sessions!}
+        metricValue={data?.total_induction_sessions}
         breakdown={[
-          { label: "Valid", value: data?.total_valid_induction_sessions! },
-          { label: "Expired", value: data?.total_expired_induction_sessions! },
-          { label: "Failed", value: data?.total_failed_induction_sessions! },
+          { label: "Valid", value: data?.total_valid_induction_sessions },
+          { label: "Expired", value: data?.total_expired_induction_sessions },
+          { label: "Failed", value: data?.total_failed_induction_sessions },
         ]}
       />
     </div>
