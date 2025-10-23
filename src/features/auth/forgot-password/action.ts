@@ -2,6 +2,7 @@
 
 import { mapError } from "@/adapters/errors-schema-adapter";
 import { EmailInput, emailInputSchema } from "@/features/auth-types";
+import { getURL } from "@/utils/get-url";
 import { createClient } from "@/utils/supabase/client-server";
 
 export async function forgotPasswordAction(values: EmailInput) {
@@ -23,7 +24,10 @@ ON Supabase > Authentication > Configuration > Emails > Recovery, update the con
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(
-    parsed.data.email
+    parsed.data.email,
+    {
+      redirectTo: getURL(),
+    }
   );
   if (error) throw mapError(error);
 }
