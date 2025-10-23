@@ -4,7 +4,7 @@ import { MetricCard } from "@/components/custom/metric-card";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAll } from "./actions/fetch-all";
 
-export function MetricCardsGridSuperAdmin() {
+export function MetricCardsGridSuperAdmin__() {
   const { data, isLoading } = useQuery({
     queryKey: ["metric_cards_super_admin_view"],
     queryFn: fetchAll,

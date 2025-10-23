@@ -6,6 +6,7 @@
 
 import { format } from "date-fns";
 import z from "zod";
+import { baseUserSchema, user__ProfileSchema } from "./auth-types";
 
 const id = z.uuid();
 const datetime = z.iso.datetime({ offset: true });
@@ -13,24 +14,6 @@ const non_empty_string = z
   .string({ error: "Required" })
   .trim()
   .min(1, { error: "Required" });
-
-export const profileInputSchema = z.object({
-  first_name: non_empty_string,
-  last_name: non_empty_string,
-});
-
-export const userRowSchema = z
-  .object({
-    id: z.uuid(),
-    email: z.email(),
-    app_role: z.enum(["super_admin", "admin", "user"]),
-    confirmed_at: datetime,
-    created_at: datetime,
-  })
-  .extend({
-    first_name: profileInputSchema.shape.first_name.nullable(),
-    last_name: profileInputSchema.shape.last_name.nullable(),
-  });
 
 // >>>>>> Induction <<<<<<
 
@@ -90,9 +73,9 @@ export type SessionFormRLSSchema = z.infer<typeof sessionFormRLSSchema>;
 //>>
 export const sessionRowViewSchema = sessionRowSchema
   .extend({
-    email: userRowSchema.shape.email,
-    first_name: profileInputSchema.shape.first_name,
-    last_name: profileInputSchema.shape.last_name,
+    email: baseUserSchema.email,
+    first_name: user__ProfileSchema.shape.first_name,
+    last_name: user__ProfileSchema.shape.last_name,
     induction_title: inductionRowSchema.shape.title,
     is_expired: z.boolean().nullable(),
   })
@@ -224,7 +207,7 @@ export interface ResourcesUpsertSchema {
 }
 
 // >>>>>> Super Admin Metrics <<<<<<
-export const superAdminMetricsSchema = z.object({
+export const SuperAdmin__MetricsSchema = z.object({
   // from metric_inductions_view
   total_inductions: z.number(),
   total_published_inductions: z.number(),
@@ -243,7 +226,9 @@ export const superAdminMetricsSchema = z.object({
   total_unconfirmed_users: z.number(),
 });
 
-export type SuperAdminMetricsSchema = z.infer<typeof superAdminMetricsSchema>;
+export type SuperAdmin__MetricsSchema = z.infer<
+  typeof SuperAdmin__MetricsSchema
+>;
 
 export const userMetricsSchema = z.object({
   // from metric_sessions_view

@@ -1,8 +1,8 @@
 "use server";
 
 import { mapError } from "@/adapters/errors-schema-adapter";
+import { EmailInput, emailInputSchema } from "@/features/auth-types";
 import { createClient } from "@/utils/supabase/client-server";
-import { EmailInput, emailInputSchema } from "./schema";
 
 export async function forgotPasswordAction(values: EmailInput) {
   const parsed = emailInputSchema.safeParse(values);

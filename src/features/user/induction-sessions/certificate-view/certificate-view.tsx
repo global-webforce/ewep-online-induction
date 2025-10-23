@@ -118,7 +118,7 @@ export function CertificateView() {
                   <p className="text-sm leading-relaxed">
                     This certifies that{" "}
                     <span className="font-semibold">
-                      ${session.first_name} ${session.last_name}
+                      {session.first_name} {session.last_name}{" "}
                     </span>
                     has successfully completed the{" "}
                     <span className="font-semibold">
@@ -130,7 +130,7 @@ export function CertificateView() {
                     <p className="text-sm">
                       Due for renewal on:{" "}
                       <span className="font-semibold">
-                        {session.valid_until}
+                        {session.session_valid_until_formatted}
                       </span>
                     </p>
                   )}
@@ -152,7 +152,7 @@ export function CertificateView() {
                   <div className="flex justify-between text-sm font-medium">
                     <span className="font-semibold">Signature:</span>
                     <span className="font-semibold">
-                      Date: {session.created_at}
+                      Date: {session.session_created_at_formatted}
                     </span>
                   </div>
                   <div className="border-b border-black w-full mt-6"></div>

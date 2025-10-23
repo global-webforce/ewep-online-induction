@@ -54,10 +54,10 @@ export const useInductionForm = (value?: InductionRowSchema | null) => {
     onError: (error: Error) => {
       toast.error(error.message || "Failed to create induction.");
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ["inductions"] });
       toast.success("Induction has been created.");
-      form.reset();
+      router.push("/dashboard/inductions/" + data?.id);
     },
   });
 

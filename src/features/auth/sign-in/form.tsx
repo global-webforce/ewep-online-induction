@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SignInInput, signInInputSchema } from "@/features/auth-types";
 import VerifyEmailForm from "@/features/auth/verify-email/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -21,7 +22,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { signInAction } from "./action";
-import { SignInInput, signInInputSchema } from "./schema";
 
 export default function SignInForm() {
   const router = useRouter();

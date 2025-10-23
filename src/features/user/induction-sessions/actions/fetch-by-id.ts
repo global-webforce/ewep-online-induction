@@ -1,10 +1,10 @@
 "use server";
 
 import { sessionRowViewSchema } from "@/features/types";
-import { createClient } from "@/utils/supabase/client-server";
+import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 
 export async function fetchById(id: string) {
-  const supabase = await createClient();
+  const supabase = await createClientAdmin();
   const { data, error } = await supabase
     .from("induction_sessions_view")
     .select("*")

@@ -1,8 +1,11 @@
 "use server";
 
 import { mapError } from "@/adapters/errors-schema-adapter";
+import {
+  ResetPasswordInput,
+  resetPasswordInputSchema,
+} from "@/features/auth-types";
 import { createClient } from "@/utils/supabase/client-server";
-import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
 
 export async function resetPasswordAction(values: ResetPasswordInput) {
   const parsed = resetPasswordInputSchema.safeParse(values);

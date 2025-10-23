@@ -7,12 +7,12 @@ import {
   FormSubmitButton,
 } from "@/components/react-hook-form-reusable";
 import { Card } from "@/components/ui/card";
+import { EmailInput, emailInputSchema } from "@/features/auth-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
 import { forgotPasswordAction } from "./action";
-import { EmailInput, emailInputSchema } from "./schema";
 
 export default function ForgotPasswordForm() {
   const form = useForm<EmailInput>({

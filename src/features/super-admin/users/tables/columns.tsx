@@ -14,11 +14,27 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import ColumnBadge from "@/components/tanstack-table/column-badge";
 import ColumnDateTime from "@/components/tanstack-table/column-datetime";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { updateAction } from "../actions/update-action";
 import { RowSchema } from "../types/row";
 
 const columnHelper = createColumnHelper<RowSchema>();
 
 export function useColumns(): ColumnDef<RowSchema>[] {
+  const queryClient = useQueryClient();
+  const updateMutation = useMutation({
+    mutationFn: (value: { id: string; confirm: boolean }) =>
+      updateAction(value.id, value.confirm),
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to confirm User.");
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["users_view"] });
+      toast.success("User has been confirmed.");
+    },
+  });
+
   const proxyColumns = [
     // ✅ Select column (non-data)
     columnHelper.display({
@@ -135,6 +151,19 @@ export function useColumns(): ColumnDef<RowSchema>[] {
               >
                 Copy User ID
               </DropdownMenuItem>
+
+              {!row.original.confirmed_at && (
+                <DropdownMenuItem
+                  onClick={() =>
+                    updateMutation.mutateAsync({
+                      id: row.original.id,
+                      confirm: true,
+                    })
+                  }
+                >
+                  Confirm Email as Verified
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         );

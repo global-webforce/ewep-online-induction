@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import ProfileForm from "@/features/auth/profile/form";
-import { requireUser } from "@/features/auth/require-user";
+import { fetchUser } from "@/features/auth/fetch-user";
+import __UserProfileForm from "@/features/user/profile/form";
 
-export default async function Profile() {
-  const user = await requireUser();
+export default async function Page() {
+  const user = await fetchUser();
   return (
     <>
       <div className="flex gap-4 items-center mb-4">
@@ -16,7 +16,7 @@ export default async function Profile() {
         <h1 className="text-xl font-semibold">Profile</h1>
       </div>
 
-      {user && <ProfileForm user={user} />}
+      {user && <__UserProfileForm user={user} />}
     </>
   );
 }

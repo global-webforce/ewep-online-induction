@@ -12,13 +12,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import SignOutForm from "@/features/auth/sign-out/form";
 import { BookText, Calendar, Home, UserCheck, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import SignOutForm from "../../features/auth/sign-out/form";
-import { User } from "../../features/auth/user-schema";
 
-export default function SideBarUser({}: { user: User }) {
+export default function SideBarUser() {
   const nav = [
     {
       title: "Home",

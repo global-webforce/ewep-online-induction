@@ -7,20 +7,26 @@ import {
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "@/features/auth/user-schema";
+import {
+  user__ProfileSchema,
+  User__ProfileSchema,
+  UserSchema,
+} from "@/features/auth-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { profileUpdateAction } from "./action";
-import { ProfileInput, profileInputSchema } from "./schema";
 
-export default function ProfileForm({ user }: { user?: User }) {
+export default function UserProfileForm({ user }: { user?: UserSchema }) {
+  const profile = user?.app_role === "user" ? user?.profile : undefined;
+
   const { mutate, isPending } = useMutation({
-    mutationFn: (values: ProfileInput) => profileUpdateAction(values),
+    mutationFn: (values: User__ProfileSchema) => profileUpdateAction(values),
     onError: (error) => {
       toast.error(error.message);
-      form.reset(user?.profile);
+
+      form.reset(profile);
     },
     onSuccess: (_, data) => {
       toast.success("Profile has been updated.");
@@ -28,18 +34,18 @@ export default function ProfileForm({ user }: { user?: User }) {
     },
   });
 
-  const form = useForm<ProfileInput>({
-    resolver: zodResolver(profileInputSchema),
+  const form = useForm<User__ProfileSchema>({
+    resolver: zodResolver(user__ProfileSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
     },
-    values: user?.profile,
+    values: profile,
   });
-  const onSubmit = (values: ProfileInput) => mutate(values);
+
   return (
     <div className="space-y-4">
-      <Card className="w-full p-4">
+      <Card className="w-full max-w-2xl p-4">
         <div>
           <b>Basic Information</b>
           <p className="text-sm text-muted-foreground">
@@ -60,17 +66,17 @@ export default function ProfileForm({ user }: { user?: User }) {
             />
 
             <FormSubmitButton
-              isSubmitting={isPending}
-              onClick={form.handleSubmit(onSubmit)}
               disabled={!form.formState.isDirty}
+              isSubmitting={isPending}
+              onClick={form.handleSubmit((value) => mutate(value))}
             >
-              Update Profile
+              Update
             </FormSubmitButton>
           </form>
         </FormProvider>
       </Card>
 
-      <Card className="w-full  p-4 gap-4">
+      <Card className="w-full max-w-2xl  p-4 gap-4">
         <div>
           <b>Account Information</b>
         </div>

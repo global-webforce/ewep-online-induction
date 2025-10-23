@@ -1,8 +1,8 @@
 "use server";
 
 import { mapError } from "@/adapters/errors-schema-adapter";
+import { SignInInput, signInInputSchema } from "@/features/auth-types";
 import { createClient } from "@/utils/supabase/client-server";
-import { SignInInput, signInInputSchema } from "./schema";
 
 export async function signInAction(params: SignInInput) {
   const parsed = signInInputSchema.safeParse(params);

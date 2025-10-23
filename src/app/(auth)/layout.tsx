@@ -1,12 +1,15 @@
 import AlreadySignedIn from "@/features/auth/components/already-signed-in";
-import { AuthGroupButtons } from "@/features/auth/components/auth-group-buttons-client";
+import { AuthGroupButtons } from "@/features/auth/components/auth-group-buttons";
+
+import { fetchUser } from "@/features/auth/fetch-user";
 import Image from "next/image";
 import Link from "next/link";
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await fetchUser();
   return (
     <div className="min-h-screen flex flex-col relative">
       <Image
@@ -31,19 +34,19 @@ export default function AuthLayout({
                 </Link>
               </div>
             </div>
-            <AuthGroupButtons />
+            <AuthGroupButtons user={user} />
           </div>
         </div>
       </nav>
 
       <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
-        <AlreadySignedIn>{children}</AlreadySignedIn>
+        <AlreadySignedIn user={user}>{children}</AlreadySignedIn>
       </main>
 
       <footer className="relative bg-background bg-opacity-90 shadow-md mt-8 z-10">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
           <p className="text-sm">
-            &copy; 2025 {process.env.NEXT_PUBLIC_APP_NAME}. Internal use only.
+            &copy; 2025 {process.env.NEXT_PUBLIC_APP_NAME}.
           </p>
         </div>
       </footer>

@@ -31,8 +31,8 @@ export default function VerifyEmailForm({ email, onBack }: Props) {
       <h1 className="text-center text-3xl font-bold">Check your Inbox</h1>
 
       <p className="text-center">
-        We&apos;ve sent a link to
-        <span className="font-semibold italic text-green-200">{email}</span>—
+        We&apos;ve sent a link to{" "}
+        <span className="font-semibold italic text-green-200">{email}</span> —
         check your inbox to continue.
       </p>
 

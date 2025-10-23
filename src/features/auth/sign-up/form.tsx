@@ -14,13 +14,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SignUpInput, signUpInputSchema } from "@/features/auth-types";
 import VerifyEmailForm from "@/features/auth/verify-email/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
 import { signUpAction } from "./action";
-import { SignUpInput, signUpInputSchema } from "./schema";
 
 export default function SignUpForm() {
   const { mutate, isPending, error, reset } = useMutation({
@@ -68,7 +68,7 @@ export default function SignUpForm() {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <div className="flex gap-4 w-full items-stretch flex-row">
+            <div className="flex gap-3 w-full items-stretch flex-row">
               <FormFieldText
                 control={form.control}
                 name="first_name"

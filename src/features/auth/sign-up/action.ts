@@ -1,9 +1,9 @@
 "use server";
 
 import { mapError } from "@/adapters/errors-schema-adapter";
+import { SignUpInput, signUpInputSchema } from "@/features/auth-types";
 import { createClient } from "@/utils/supabase/client-server";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
-import { SignUpInput, signUpInputSchema } from "./schema";
 
 export async function signUpAction(values: SignUpInput) {
   const parsed = signUpInputSchema.safeParse(values);

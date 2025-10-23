@@ -16,6 +16,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  ResetPasswordInput,
+  resetPasswordInputSchema,
+} from "@/features/auth-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
@@ -24,7 +28,6 @@ import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { logoutAction } from "../sign-out/action";
 import { resetPasswordAction } from "./action";
-import { ResetPasswordInput, resetPasswordInputSchema } from "./schema";
 
 // This component changes the flow so that when the user clicks "Reset Password",
 // we first show a confirmation dialog. If the user confirms, we perform the

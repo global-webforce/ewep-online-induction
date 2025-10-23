@@ -40,43 +40,45 @@ export function ReadView() {
         </AlertPanelState>
       )}
 
-      <Card className="w-full p-4">
-        <FormProvider {...form}>
-          <form className="space-y-4">
-            <FormFieldText
-              control={form.control}
-              name="title"
-              label="Title"
-              readOnly
-            />
-            <FormFieldTextArea
-              control={form.control}
-              name="description"
-              label="Description"
-              readOnly
-            />
+      <Card className="w-full max-w-2xl">
+        <CardContent>
+          <FormProvider {...form}>
+            <form className="space-y-4">
+              <FormFieldText
+                control={form.control}
+                name="title"
+                label="Title"
+                readOnly
+              />
+              <FormFieldTextArea
+                control={form.control}
+                name="description"
+                label="Description"
+                readOnly
+              />
 
-            <FormFieldNumberNullable
-              control={form.control}
-              type="number"
-              name="validity_days"
-              label="Days of Validity (if applicable)"
-              readOnly
-            />
-          </form>
-        </FormProvider>
+              <FormFieldNumberNullable
+                control={form.control}
+                type="number"
+                name="validity_days"
+                label="Days of Validity (if applicable)"
+                readOnly
+              />
+            </form>
+          </FormProvider>
+        </CardContent>
       </Card>
       {data && (
-        <Card className="w-full">
+        <Card className="w-full max-w-2xl">
           <CardHeader>
-            <CardTitle>Start Induction</CardTitle>
+            <CardTitle>Before We Start</CardTitle>
             <CardDescription>
               Please confirm you agree to the terms before starting your
               induction presentation.
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="flex items-start space-x-3">
+          <CardContent className="flex items-start space-x-3 ">
             <Checkbox
               id="agreement"
               checked={agreed}
@@ -94,9 +96,9 @@ export function ReadView() {
 
           {agreed && (
             <CardFooter>
-              <Button asChild>
+              <Button asChild className="w-full max-w-xs ">
                 <Link href={`/dashboard/inductions/${id}/resources`}>
-                  <span>Start Induction</span>{" "}
+                  <span className="font-semibold">PROCEED TO INDUCTION</span>{" "}
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>

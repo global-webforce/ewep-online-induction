@@ -1,22 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { UserSchema } from "@/features/auth-types";
 import Link from "next/link";
-import { fetchUser } from "../fetch-user";
-import { useEffect, useState } from "react";
-import { User } from "../user-schema";
 
-export function AuthGroupButtons() {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const fetchUserFn = async () => {
-      const u = await fetchUser();
-      setUser(u);
-    };
-    fetchUserFn();
-  }, []);
-
+export function AuthGroupButtons({
+  user,
+}: Readonly<{
+  user: UserSchema | null;
+}>) {
   return (
     <div className="flex items-center">
       {!user && ( // show signIn/register if NOT logged in

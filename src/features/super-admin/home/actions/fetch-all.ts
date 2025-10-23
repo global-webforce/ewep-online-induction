@@ -1,6 +1,6 @@
 "use server";
 
-import { superAdminMetricsSchema } from "@/features/types";
+import { SuperAdmin__MetricsSchema } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 
 export async function fetchAll() {
@@ -14,7 +14,7 @@ export async function fetchAll() {
     throw Error(error.message);
   }
 
-  const parsed = superAdminMetricsSchema.safeParse(data);
+  const parsed = SuperAdmin__MetricsSchema.safeParse(data);
   if (parsed.error) throw Error(parsed.error.message);
 
   return parsed.data;

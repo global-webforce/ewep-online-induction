@@ -15,6 +15,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { SessionsRowViewSchema } from "@/features/types";
+import Link from "next/link";
 
 type T = SessionsRowViewSchema;
 
@@ -131,6 +132,14 @@ export function useColumns(): ColumnDef<T>[] {
               >
                 Manage
               </DropdownMenuItem>
+
+              {rowData.has_valid_induction && (
+                <DropdownMenuItem asChild>
+                  <Link target="_blank" href={`/certificate/${rowData.id}`}>
+                    Download Certificate
+                  </Link>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         );

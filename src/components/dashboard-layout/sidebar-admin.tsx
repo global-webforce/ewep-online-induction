@@ -12,6 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import SignOutForm from "@/features/auth/sign-out/form";
 import {
   BookText,
   Calendar,
@@ -22,10 +23,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import SignOutForm from "../../features/auth/sign-out/form";
-import { User } from "../../features/auth/user-schema";
 
-export default function SideBarAdmin({ user }: { user: User }) {
+export default function SideBarAdmin() {
   const nav = [
     {
       title: "Home",
@@ -103,7 +102,6 @@ export default function SideBarAdmin({ user }: { user: User }) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <p>{user.profile?.first_name}</p>
         <SignOutForm />
       </SidebarFooter>
     </Sidebar>

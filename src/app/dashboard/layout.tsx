@@ -1,5 +1,5 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { requireUser } from "@/features/auth/require-user";
+import { fetchUser } from "@/features/auth/fetch-user";
 import { redirect, RedirectType } from "next/navigation";
 import { ReactNode } from "react";
 import SideBarAdmin from "../../components/dashboard-layout/sidebar-admin";
@@ -12,7 +12,7 @@ export default async function DashboardLayout({
   admin: ReactNode;
   user: ReactNode;
 }) {
-  const currentUser = await requireUser();
+  const currentUser = await fetchUser();
 
   if (!currentUser) {
     console.log("No user, redirecting to sign-in");
@@ -20,14 +20,13 @@ export default async function DashboardLayout({
   }
   return (
     <SidebarProvider>
-      {currentUser.app_role == "super_admin" ? (
-        <SideBarAdmin user={currentUser} />
-      ) : (
-        <SideBarDefault user={currentUser} />
-      )}
+      {currentUser.app_role == "super_admin" && <SideBarAdmin />}
+
+      {currentUser.app_role == "user" && <SideBarDefault />}
 
       <div className="bg-background w-full min-h-screen">
-        {currentUser.app_role == "super_admin" ? admin : user}
+        {currentUser.app_role == "super_admin" && admin}
+        {currentUser.app_role == "user" && user}
       </div>
     </SidebarProvider>
   );
