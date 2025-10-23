@@ -2,6 +2,7 @@
 
 import { mapError } from "@/adapters/errors-schema-adapter";
 import { SignUpInput, signUpInputSchema } from "@/features/auth-types";
+import { getURL } from "@/utils/get-url";
 import { createClient } from "@/utils/supabase/client-server";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 
@@ -31,6 +32,7 @@ export async function signUpAction(values: SignUpInput) {
     email: values.email,
     password: values.password,
     options: {
+      emailRedirectTo: getURL(),
       data: {
         first_name: values.first_name,
         last_name: values.last_name,

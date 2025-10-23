@@ -1,6 +1,7 @@
 "use server";
 
 import { mapError } from "@/adapters/errors-schema-adapter";
+import { getURL } from "@/utils/get-url";
 import { createClient } from "@/utils/supabase/client-server";
 import z from "zod";
 
@@ -24,6 +25,9 @@ export async function verifyEmailAction(values: string) {
   const { error } = await supabase.auth.resend({
     email: values,
     type: "signup",
+    options: {
+      emailRedirectTo: getURL(),
+    },
   });
   if (error) throw mapError(error);
 }
