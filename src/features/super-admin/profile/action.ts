@@ -1,6 +1,6 @@
 "use server";
 
-import { mapError } from "@/adapters/errors-schema-adapter";
+import { prettifyError } from "@/adapters/errors-schema-adapter";
 import {
   superAdmin__ProfileSchema,
   SuperAdmin__ProfileSchema,
@@ -15,7 +15,7 @@ export async function profileUpdateAction(values: SuperAdmin__ProfileSchema) {
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.updateUser({ data: parsed.data });
-  if (error) throw mapError(error);
+  if (error) throw prettifyError(error);
 
   if (!data) return null;
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { mapError } from "@/adapters/errors-schema-adapter";
+import { prettifyError } from "@/adapters/errors-schema-adapter";
 import {
   ResetPasswordInput,
   resetPasswordInputSchema,
@@ -18,5 +18,5 @@ export async function resetPasswordAction(values: ResetPasswordInput) {
     password: parsed.data.confirm_password,
   });
   await supabase.auth.signOut();
-  if (error) throw mapError(error);
+  if (error) throw prettifyError(error);
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { mapError } from "@/adapters/errors-schema-adapter";
+import { prettifyError } from "@/adapters/errors-schema-adapter";
 import { EmailInput, emailInputSchema } from "@/features/auth-types";
 import { getURL } from "@/utils/get-url";
 import { createClient } from "@/utils/supabase/client-server";
@@ -29,5 +29,5 @@ ON Supabase > Authentication > Configuration > Emails > Recovery, update the con
       redirectTo: getURL(),
     }
   );
-  if (error) throw mapError(error);
+  if (error) throw prettifyError(error);
 }

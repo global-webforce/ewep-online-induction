@@ -1,6 +1,6 @@
 "use server";
 
-import { mapError } from "@/adapters/errors-schema-adapter";
+import { prettifyError } from "@/adapters/errors-schema-adapter";
 import { getURL } from "@/utils/get-url";
 import { createClient } from "@/utils/supabase/client-server";
 import z from "zod";
@@ -29,5 +29,5 @@ export async function verifyEmailAction(values: string) {
       emailRedirectTo: getURL(),
     },
   });
-  if (error) throw mapError(error);
+  if (error) throw prettifyError(error);
 }

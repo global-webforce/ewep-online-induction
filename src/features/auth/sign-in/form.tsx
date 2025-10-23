@@ -36,8 +36,15 @@ export default function SignInForm() {
 
   const onSubmit = (values: SignInInput) => mutate(values);
   const { mutate, reset, isPending, error } = useMutation({
-    mutationFn: (values: SignInInput) => signInAction(values),
-    onSuccess: () => {
+    mutationFn: async (values: SignInInput) => {
+      const res = await signInAction(values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
+    onSuccess: (data) => {
+      if (data?.error) {
+        return;
+      }
       router.push(`/dashboard`);
     },
   });

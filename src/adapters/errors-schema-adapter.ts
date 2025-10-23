@@ -1,4 +1,4 @@
-export function mapError(error: Error): Error {
+export function prettifyError(error: Error): Error {
   const message = (error?.message || "").toLowerCase();
 
   if (

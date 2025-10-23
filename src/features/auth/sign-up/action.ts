@@ -1,6 +1,6 @@
 "use server";
 
-import { mapError } from "@/adapters/errors-schema-adapter";
+import { prettifyError } from "@/adapters/errors-schema-adapter";
 import { SignUpInput, signUpInputSchema } from "@/features/auth-types";
 import { getURL } from "@/utils/get-url";
 import { createClient } from "@/utils/supabase/client-server";
@@ -23,7 +23,7 @@ export async function signUpAction(values: SignUpInput) {
 
   if (email) {
     /* if (!email?.email_confirmed_at) {
-        throw mapError(Error("email confirmation required"));
+        throw prettifyError(Error("email confirmation required"));
       } */
     throw new Error("A user with this email already exists.");
   }
@@ -40,11 +40,11 @@ export async function signUpAction(values: SignUpInput) {
     },
   });
 
-  if (error) throw mapError(error);
+  if (error) throw prettifyError(error);
 
   // If confirmation is required, data will have user value and session will be null
   if (!data.user?.email_confirmed_at) {
-    throw mapError(Error("email confirmation required"));
+    throw prettifyError(Error("email confirmation required"));
   }
 
   // If confirmation not required, user and session will exist
