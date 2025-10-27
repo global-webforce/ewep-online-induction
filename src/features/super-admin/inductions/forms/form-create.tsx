@@ -1,7 +1,7 @@
 "use client";
 
 import { FormSubmitButton } from "@/components/react-hook-form-reusable/form-submit-button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { FormProvider } from "react-hook-form";
 
 import { useInductionForm } from "../hooks/crud";
@@ -14,19 +14,21 @@ export function FormCreate() {
   } = useInductionForm();
 
   return (
-    <Card className="w-full p-4">
-      <FormProvider {...form}>
-        <form className="space-y-4">
-          <FormBase />
-          <FormSubmitButton
-            disabled={!form.formState.isDirty}
-            isSubmitting={isPending}
-            onClick={form.handleSubmit((value) => mutate(value))}
-          >
-            Create
-          </FormSubmitButton>
-        </form>
-      </FormProvider>
+    <Card className="w-full max-w-2xl">
+      <CardContent>
+        <FormProvider {...form}>
+          <form className="space-y-4">
+            <FormBase />
+            <FormSubmitButton
+              disabled={!form.formState.isDirty}
+              isSubmitting={isPending}
+              onClick={form.handleSubmit((value) => mutate(value))}
+            >
+              Create
+            </FormSubmitButton>
+          </form>
+        </FormProvider>
+      </CardContent>
     </Card>
   );
 }

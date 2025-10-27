@@ -24,7 +24,7 @@ export function DataTableToolbar<TData>({
         />
       </div>
       <Button asChild>
-        <Link href="/dashboard/inductions/create">Add New</Link>
+        <Link href="/dashboard/inductions/create">Create New</Link>
       </Button>
     </div>
   );

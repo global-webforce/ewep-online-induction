@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { FormUpdate } from "@/features/super-admin/users-final/";
+import { FormUpdate } from "@/features/super-admin/users";
 
 export default function Page() {
   return (

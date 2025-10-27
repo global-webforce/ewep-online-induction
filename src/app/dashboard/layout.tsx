@@ -19,15 +19,18 @@ export default async function DashboardLayout({
     redirect("/sign-in", RedirectType.replace);
   }
   return (
-    <SidebarProvider>
-      {currentUser.app_role == "super_admin" && <SideBarAdmin />}
+    currentUser && (
+      <SidebarProvider>
+        {currentUser.app_role === "super_admin" ? (
+          <SideBarAdmin />
+        ) : (
+          <SideBarDefault />
+        )}
 
-      {currentUser.app_role == "user" && <SideBarDefault />}
-
-      <div className="bg-background w-full min-h-screen">
-        {currentUser.app_role == "super_admin" && admin}
-        {currentUser.app_role == "user" && user}
-      </div>
-    </SidebarProvider>
+        <div className="bg-background w-full min-h-screen">
+          {currentUser.app_role === "super_admin" ? admin : user}
+        </div>
+      </SidebarProvider>
+    )
   );
 }

@@ -27,7 +27,11 @@ export function TableView() {
         </AlertPanelState>
       )}
 
-      <DataTable columns={useColumns()} data={data || []} loading={isLoading}>
+      <DataTable
+        columns={useColumns()}
+        data={data?.data || []}
+        loading={isLoading}
+      >
         {(table) => <DataTableToolbar<QuizRowSchema> table={table} />}
       </DataTable>
     </div>

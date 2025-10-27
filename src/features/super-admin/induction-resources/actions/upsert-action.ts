@@ -1,5 +1,6 @@
 "use server";
 
+import { formatError } from "@/adapters/errors-schema-adapter";
 import { ResourcesUpsertSchema } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 
@@ -11,9 +12,7 @@ export async function upsertAction(value: ResourcesUpsertSchema) {
     p_resources_to_delete: value.slides_to_delete,
   });
 
-  if (error) {
-    throw new Error(error.message);
-  }
+  if (error) throw formatError(error);
 
   return data;
 }

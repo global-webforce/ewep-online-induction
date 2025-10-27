@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/custom/back-button";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { FormCreate } from "@/features/super-admin/users-final/";
+import { FormCreate } from "@/features/super-admin/users";
 
 export default async function Page() {
   return (

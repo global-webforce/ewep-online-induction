@@ -2,7 +2,8 @@ import "server-only";
 
 import { createClient } from "@/utils/supabase/client-server";
 import { cache } from "react";
-import { mapUser, userSchema } from "../auth-types";
+import z from "zod";
+import { mapUser, userRowViewSchema } from "../auth-types";
 
 export const fetchUser = cache(async () => {
   const supabase = await createClient();
@@ -11,9 +12,9 @@ export const fetchUser = cache(async () => {
 
   if (!data) return null;
 
-  const parsed = userSchema.safeParse(mapUser(data.user));
+  const parsed = userRowViewSchema.safeParse(mapUser(data.user));
   if (parsed.error) {
-    throw new Error(parsed.error.message);
+    throw new Error(z.prettifyError(parsed.error));
   }
 
   return parsed.data;

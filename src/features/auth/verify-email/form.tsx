@@ -15,7 +15,11 @@ type Props = {
 
 export default function VerifyEmailForm({ email, onBack }: Props) {
   const { mutate, isSuccess, isPending, error, reset } = useMutation({
-    mutationFn: (email: string) => verifyEmailAction(email),
+    mutationFn: async (email: string) => {
+      const res = await verifyEmailAction(email);
+      if (res?.error) throw new Error(res.error);
+      return res.success;
+    },
   });
 
   return (

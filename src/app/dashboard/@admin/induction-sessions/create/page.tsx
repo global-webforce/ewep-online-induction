@@ -13,7 +13,9 @@ export default async function Page() {
           </Button>
           <BackButton />
         </div>
-        <h1 className="text-xl font-semibold">Create Induction Session</h1>
+        <h1 className="text-xl font-semibold">
+          Create / Update Induction Session
+        </h1>
       </div>
       <FormCreate />
     </>

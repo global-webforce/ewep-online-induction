@@ -2,7 +2,7 @@
 
 import { AlertPanelState } from "@/components/custom/alert-panel-state";
 import { FormSubmitButton } from "@/components/react-hook-form-reusable";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import { FormProvider } from "react-hook-form";
 
@@ -25,7 +25,7 @@ import FormBase from "./form-base";
 export function FormUpdate() {
   const { id } = useParams<{ id: string }>();
 
-  const { data, error, isError, refetch } = useFetchById(id);
+  const { data, error, isError, isLoading, refetch } = useFetchById(id);
 
   const {
     form,
@@ -41,50 +41,53 @@ export function FormUpdate() {
         </AlertPanelState>
       )}
 
-      <Card className="w-full p-4">
-        <FormProvider {...form}>
-          <form className="space-y-4">
-            <FormBase />
-            <div className="flex justify-between gap-4">
-              <FormSubmitButton
-                isSubmitting={isUpserting}
-                onClick={form.handleSubmit((value) => upsertMutation(value))}
-                disabled={!form.formState.isDirty || isError}
-              >
-                Update
-              </FormSubmitButton>
+      <Card className="w-full max-w-2xl">
+        <CardContent>
+          <FormProvider {...form}>
+            <form className="space-y-4">
+              <FormBase />
+              <div className="flex justify-between gap-4">
+                <FormSubmitButton
+                  isFormLoading={isLoading}
+                  isSubmitting={isUpserting}
+                  onClick={form.handleSubmit((value) => upsertMutation(value))}
+                  disabled={!form.formState.isDirty || isError}
+                >
+                  Update
+                </FormSubmitButton>
 
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="icon" disabled={!data}>
-                    <Trash2Icon />
-                  </Button>
-                </AlertDialogTrigger>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="icon" disabled={!data}>
+                      <Trash2Icon />
+                    </Button>
+                  </AlertDialogTrigger>
 
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      this induction record.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => deleteMutation()}
-                      disabled={isDeleting}
-                    >
-                      {isDeleting ? "Deleting..." : "Delete"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </form>
-        </FormProvider>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete this induction record.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteMutation()}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? "Deleting..." : "Delete"}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </form>
+          </FormProvider>
+        </CardContent>
       </Card>
     </div>
   );

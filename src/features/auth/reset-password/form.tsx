@@ -47,7 +47,11 @@ export default function ResetPasswordForm() {
     error,
     isSuccess,
   } = useMutation({
-    mutationFn: (values: ResetPasswordInput) => resetPasswordAction(values),
+    mutationFn: async (values: ResetPasswordInput) => {
+      const res = await resetPasswordAction(values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
     onSuccess: async () => {
       await logoutAction();
       router.push("/sign-in?reset=success");

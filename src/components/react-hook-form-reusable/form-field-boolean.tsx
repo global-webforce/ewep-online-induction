@@ -51,18 +51,25 @@ export function FormFieldTriBoolean<
                 <Select
                   disabled={disabled}
                   value={
-                    value === true ? "true" : value === false ? "false" : "null" // default
+                    value === true
+                      ? "true"
+                      : value === false
+                      ? "false"
+                      : value === null
+                      ? "null"
+                      : ""
                   }
                   onValueChange={(v) => {
                     if (!readOnly) {
                       if (v === "true") field.onChange(true);
                       else if (v === "false") field.onChange(false);
-                      else field.onChange(null); // tri-state
+                      else if (v === "null") field.onChange(null);
+                      else field.onChange(undefined);
                     }
                   }}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Yes / No / None" />
+                    <SelectValue placeholder="Select an option" />
                   </SelectTrigger>
                   <SelectContent className="w-full">
                     <SelectItem disabled value="null">

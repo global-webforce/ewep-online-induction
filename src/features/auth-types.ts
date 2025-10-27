@@ -1,4 +1,5 @@
 import { User } from "@supabase/supabase-js";
+import { format } from "date-fns";
 import z from "zod";
 
 const datetime = z.iso.datetime({ offset: true });
@@ -16,108 +17,81 @@ export const confirm_password = z.object({
   confirm_password: z.string(),
 });
 
+const jsonString = z.string().pipe(
+  z.preprocess((input, ctx) => {
+    try {
+      return JSON.parse(input);
+    } catch (e) {
+      ctx.issues.push({ code: "custom", message: "Invalid JSON", input });
+      return z.NEVER;
+    }
+  }, z.json())
+);
+
+//>>
+export const userProfileSchema = z.object({
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+});
+export type UserProfileSchema = z.infer<typeof userProfileSchema>;
+
+//<<
+
+//>>
+export const userRowSchema = z.object({
+  id: z.uuid(),
+  email: z.email(),
+  app_role: z.enum(["user", "super_admin"]),
+  confirmed_at: datetime.nullable(),
+  created_at: datetime,
+  profile: userProfileSchema,
+  profile_metadata: jsonString.optional(),
+});
+export type UserSchema = z.infer<typeof userRowSchema>;
+//<<
+
+//>>
+export const userRowViewSchema = userRowSchema.transform((user) => ({
+  ...user,
+  extra: {
+    confirmed_at: user.confirmed_at
+      ? format(new Date(user.confirmed_at), "PPp")
+      : "Not Confirmed",
+    created_at: user.created_at
+      ? format(new Date(user.created_at), "PPp")
+      : null,
+  },
+}));
+export type UserRowViewSchema = z.infer<typeof userRowViewSchema>;
+//<<
+
+//>>
 export function mapUser(user: User): UserSchema {
   return <UserSchema>{
     id: user.id,
     email: user.email!,
-    app_role: user.app_metadata.app_role,
-    confirmed_at: user?.confirmed_at || null,
-    created_at: user?.created_at,
-    profile: {
-      first_name: user?.user_metadata?.first_name,
-      last_name: user?.user_metadata?.last_name,
-    },
-  };
-}
-
-export function mapUser__(user: User) {
-  return <User__RowSchema>{
-    id: user.id,
-    email: user.email!,
     app_role: user?.app_metadata?.app_role,
-    first_name: user?.user_metadata?.first_name,
-    last_name: user?.user_metadata?.last_name,
     confirmed_at: user?.confirmed_at || null,
     created_at: user?.created_at,
+    profile: user.user_metadata,
   };
 }
-
-//Base User
-export const baseUserSchema = {
-  id: z.uuid(),
-  email: z.email(),
-  confirmed_at: datetime.nullable(),
-  created_at: datetime,
-};
-
-// Super Admin Profile
-export const superAdmin__ProfileSchema = z.object({
-  first_name: z.string().nullable(),
-  last_name: z.string().nullable(),
-});
-export type SuperAdmin__ProfileSchema = z.infer<
-  typeof superAdmin__ProfileSchema
->;
-
-//>> User Profile
-export const user__ProfileSchema = z.object({
-  first_name: non_empty_string,
-  last_name: non_empty_string,
-});
-
-export type User__ProfileSchema = z.infer<typeof user__ProfileSchema>;
 //<<
 
-//>> Users View
-export const userSchema = z.discriminatedUnion("app_role", [
-  z.object({
-    ...baseUserSchema,
-    app_role: z.literal("super_admin"),
-    profile: superAdmin__ProfileSchema,
-  }),
-  z.object({
-    ...baseUserSchema,
-    app_role: z.literal("user"),
-    profile: user__ProfileSchema,
-  }),
-]);
-
-export type UserSchema = z.infer<typeof userSchema>;
-//<<
-
-export const user__rowSchema = z.object({
-  id: z.uuid(),
+//>>
+export const userCreateFormSchema = z.object({
   email: z.email(),
-  app_role: z.literal("user"),
+  password: password,
   first_name: non_empty_string,
   last_name: non_empty_string,
-  confirmed_at: datetime.nullable(),
-  created_at: datetime.optional(),
+  app_role: z.enum(["user", "super_admin"]),
 });
+export type UserCreateFormSchema = z.infer<typeof userCreateFormSchema>;
+//<<
 
-export type User__RowSchema = z.infer<typeof user__rowSchema>;
-
-export const user__RowViewSchema = user__rowSchema.transform((u) => ({
-  ...u,
-  confirmed: u?.confirmed_at != null ? true : false,
-  password: "",
-}));
-
-export type User__RowViewSchema = z.infer<typeof user__RowViewSchema>;
-
-//>> User Role Form
-export const user__FormSchema = user__rowSchema
-  .omit({
-    id: true,
-    created_at: true,
-    confirmed_at: true,
-  })
-  .extend({
-    confirmed: z.boolean().optional(),
-    password: z.string().optional(),
-  });
-
-export type User__FormSchema = z.infer<typeof user__FormSchema>;
+//>>
+export const userUpdateFormSchema = userCreateFormSchema.partial();
+export type UserUpdateFormSchema = z.infer<typeof userUpdateFormSchema>;
 //<<
 
 //>> Sign In
@@ -133,7 +107,8 @@ export type SignInInput = z.infer<typeof signInInputSchema>;
 export const signUpInputSchema = z
   .object({
     email: z.email(),
-    ...user__ProfileSchema.shape,
+    first_name: non_empty_string,
+    last_name: non_empty_string,
     ...confirm_password.shape,
   })
   .refine((data) => data.password === data.confirm_password, {

@@ -39,7 +39,11 @@ export function FormFieldPassword<T extends FieldValues>({
                 type={showPassword ? "text" : "password"}
                 {...inputProps}
                 value={field.value || ""}
-                onChange={(e) => field.onChange(e.target.value)}
+                onChange={(e) => {
+                  field.onChange(
+                    e.target.value.trim() === "" ? undefined : e.target.value
+                  );
+                }}
                 className={toggleVisibility ? "pr-10" : ""}
               />
               {toggleVisibility && (

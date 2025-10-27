@@ -19,13 +19,22 @@ import {
 export const useFetchAll = (id: string) =>
   useQuery({
     queryKey: ["induction_quizzes"],
-    queryFn: async () => await fetchAll(id),
+
+    queryFn: async () => {
+      const res = await fetchAll(id);
+      if (res?.error) throw new Error(res?.error);
+      return res?.data;
+    },
   });
 
 export const useFetchById = (id: string) =>
   useQuery({
     queryKey: ["induction_quizzes", id],
-    queryFn: async () => await fetchById(id),
+    queryFn: async () => {
+      const res = await fetchById(id);
+      if (res?.error) throw new Error(res?.error);
+      return res?.data;
+    },
   });
 
 export const useQuizForm = (value?: QuizRowSchema | null) => {
@@ -49,7 +58,11 @@ export const useQuizForm = (value?: QuizRowSchema | null) => {
   const formContext = useFormContext<QuizFormSchema>();
 
   const createMutation = useMutation({
-    mutationFn: (values: QuizFormSchema) => createAction(values),
+    mutationFn: async (values: QuizFormSchema) => {
+      const res = await createAction(values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to create quiz.");
     },
@@ -61,7 +74,12 @@ export const useQuizForm = (value?: QuizRowSchema | null) => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (values: QuizFormSchema) => updateAction(quiz_id, values),
+    mutationFn: async (values: QuizFormSchema) => {
+      const res = await updateAction(quiz_id, values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
+
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update quiz.");
     },
@@ -72,7 +90,11 @@ export const useQuizForm = (value?: QuizRowSchema | null) => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async () => await deleteAction(quiz_id),
+    mutationFn: async () => {
+      const res = await deleteAction(quiz_id);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
     onError: (error: Error) => {
       toast.error(error.message || "Something went wrong while deleting.");
     },

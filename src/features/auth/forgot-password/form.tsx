@@ -23,7 +23,11 @@ export default function ForgotPasswordForm() {
   });
   const onSubmit = (values: EmailInput) => mutate(values);
   const { mutate, isPending, error, isSuccess } = useMutation({
-    mutationFn: (values: EmailInput) => forgotPasswordAction(values),
+    mutationFn: async (values: EmailInput) => {
+      const res = await forgotPasswordAction(values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
     onSuccess: () => {
       form.reset();
     },

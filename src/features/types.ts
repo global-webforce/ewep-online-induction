@@ -6,7 +6,7 @@
 
 import { format } from "date-fns";
 import z from "zod";
-import { baseUserSchema, user__ProfileSchema } from "./auth-types";
+import { userRowSchema } from "./auth-types";
 
 const id = z.uuid();
 const datetime = z.iso.datetime({ offset: true });
@@ -44,7 +44,7 @@ export const sessionRowSchema = z.object({
   id: id,
   user_id: id,
   induction_id: id,
-  has_passed: z.boolean(),
+  has_passed: z.boolean().nullable(),
   valid_until: z.iso.date().nullable(),
   created_at: datetime,
 });
@@ -56,8 +56,8 @@ export const sessionFormSchema = sessionRowSchema.omit({
   id: true,
   created_at: true,
 });
-export type SessionFormSchema = z.infer<typeof sessionFormSchema>;
 
+export type SessionFormSchema = z.infer<typeof sessionFormSchema>;
 //<<
 
 //>>
@@ -73,9 +73,9 @@ export type SessionFormRLSSchema = z.infer<typeof sessionFormRLSSchema>;
 //>>
 export const sessionRowViewSchema = sessionRowSchema
   .extend({
-    email: baseUserSchema.email,
-    first_name: user__ProfileSchema.shape.first_name,
-    last_name: user__ProfileSchema.shape.last_name,
+    email: userRowSchema.shape.email,
+    first_name: non_empty_string,
+    last_name: non_empty_string,
     induction_title: inductionRowSchema.shape.title,
     is_expired: z.boolean().nullable(),
   })

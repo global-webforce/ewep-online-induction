@@ -53,7 +53,7 @@ export default function SlideBuilder() {
     moveSlide,
     undo,
     redo,
-  } = useSlideController(id, data || undefined);
+  } = useSlideController(id, data);
 
   const slideItems = () => {
     return (

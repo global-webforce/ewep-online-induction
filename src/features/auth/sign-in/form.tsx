@@ -68,7 +68,7 @@ export default function SignInForm() {
       <FormProvider {...form}>
         <form className="w-full max-w-md">
           <Card>
-            <CardHeader>
+            <CardHeader className="space-y-3">
               {error && (
                 <AlertPanel variant="error">
                   {(error as Error).message}
@@ -101,7 +101,7 @@ export default function SignInForm() {
                 </Link>
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col gap-">
+            <CardFooter className="flex flex-col gap-6">
               <FormSubmitButton
                 isSubmitting={isPending}
                 onClick={form.handleSubmit(onSubmit)}
@@ -110,7 +110,7 @@ export default function SignInForm() {
                 Sign In
               </FormSubmitButton>
 
-              <div className="mt-4 text-center text-sm">
+              <div className="text-center text-sm">
                 Don&apos;t have an account?&nbsp;
                 <Link href="/sign-up" className="underline underline-offset-4">
                   Sign up

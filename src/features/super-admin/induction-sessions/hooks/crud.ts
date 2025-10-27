@@ -13,13 +13,23 @@ import { deleteAction, fetchAll, fetchById, upsertAction } from "../actions";
 export const useFetchAll = () =>
   useQuery({
     queryKey: ["induction_sessions"],
-    queryFn: async () => await fetchAll(),
+
+    queryFn: async () => {
+      const res = await fetchAll();
+      if (res?.error) throw new Error(res?.error);
+      return res?.data;
+    },
   });
 
 export const useFetchById = (id: string) =>
   useQuery({
     queryKey: ["induction_sessions", id],
-    queryFn: async () => await fetchById(id),
+
+    queryFn: async () => {
+      const res = await fetchById(id);
+      if (res?.error) throw new Error(res?.error);
+      return res?.data;
+    },
   });
 
 export const useInductionSessionForm = (value?: SessionRowSchema | null) => {
@@ -33,12 +43,12 @@ export const useInductionSessionForm = (value?: SessionRowSchema | null) => {
   const form = useForm<SessionFormSchema>({
     resolver: zodResolver(sessionFormSchema),
     mode: "onSubmit",
-    defaultValues: value || {
+    values: value || {
       induction_id: "",
       user_id: "",
       valid_until: null,
+      has_passed: null,
     },
-    values: value || undefined,
   });
 
   const formContext = useFormContext<SessionFormSchema>();
@@ -46,12 +56,12 @@ export const useInductionSessionForm = (value?: SessionRowSchema | null) => {
   const upsertMutation = useMutation({
     mutationFn: (values: SessionFormSchema) => upsertAction(values),
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to create session.");
+      toast.error(error.message || "Failed to create/update session.");
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ["induction_sessions"] });
-      toast.success("Session has been established.");
-      form.reset();
+      toast.success("Session has been created/updated.");
+      router.push("/dashboard/induction-sessions/" + data?.data?.id);
     },
   });
 
@@ -63,7 +73,7 @@ export const useInductionSessionForm = (value?: SessionRowSchema | null) => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["induction_sessions"] });
       toast.success("Session has been deleted.");
-      router.push(`/dashboard/induction_sessions/`);
+      router.push(`/dashboard/induction-sessions/`);
     },
   });
 

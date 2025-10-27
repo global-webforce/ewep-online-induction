@@ -1,16 +1,11 @@
 "use server";
 
-import { prettifyError } from "@/adapters/errors-schema-adapter";
+import { formatError } from "@/adapters/errors-schema-adapter";
 import { EmailInput, emailInputSchema } from "@/features/auth-types";
 import { getURL } from "@/utils/get-url";
 import { createClient } from "@/utils/supabase/client-server";
 
-export async function forgotPasswordAction(values: EmailInput) {
-  const parsed = emailInputSchema.safeParse(values);
-  if (!parsed.success) {
-    throw new Error(parsed.error.message);
-  }
-  /*****************************************************
+/*****************************************************
  * 
 NOTE: Important!
 ON Supabase > Authentication > Configuration > Emails > Recovery, update the content with this:
@@ -22,12 +17,24 @@ ON Supabase > Authentication > Configuration > Emails > Recovery, update the con
 
 ****************************************************/
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(
-    parsed.data.email,
-    {
-      redirectTo: getURL(),
+export async function forgotPasswordAction(values: EmailInput) {
+  try {
+    const parsed = emailInputSchema.safeParse(values);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
     }
-  );
-  if (error) throw prettifyError(error);
+
+    const supabase = await createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      parsed.data.email,
+      {
+        redirectTo: getURL(),
+      }
+    );
+    if (error) throw formatError(error);
+    return { success: true };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Unknown error" };
+  }
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   inductionFormSchema,
   InductionFormSchema,
@@ -19,13 +21,21 @@ import {
 export const useFetchAll = () =>
   useQuery({
     queryKey: ["inductions"],
-    queryFn: async () => await fetchAll(),
+    queryFn: async () => {
+      const res = await fetchAll();
+      if (res?.error) throw new Error(res?.error);
+      return res.data;
+    },
   });
 
 export const useFetchById = (id: string) =>
   useQuery({
     queryKey: ["inductions", id],
-    queryFn: async () => await fetchById(id),
+    queryFn: async () => {
+      const res = await fetchById(id);
+      if (res.error) throw new Error(res.error);
+      return res.data;
+    },
   });
 
 export const useInductionForm = (value?: InductionRowSchema | null) => {
@@ -50,19 +60,27 @@ export const useInductionForm = (value?: InductionRowSchema | null) => {
   const formContext = useFormContext<InductionFormSchema>();
 
   const createMutation = useMutation({
-    mutationFn: (values: InductionFormSchema) => createAction(values),
+    mutationFn: async (values: InductionFormSchema) => {
+      const res = await createAction(values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to create induction.");
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ["inductions"] });
       toast.success("Induction has been created.");
-      router.push("/dashboard/inductions/" + data?.id);
+      router.push("/dashboard/inductions/" + data?.data?.id);
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: (values: InductionFormSchema) => updateAction(id, values),
+    mutationFn: async (values: InductionFormSchema) => {
+      const res = await updateAction(id, values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update induction.");
     },
@@ -73,7 +91,11 @@ export const useInductionForm = (value?: InductionRowSchema | null) => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async () => await deleteAction(id),
+    mutationFn: async () => {
+      const res = await deleteAction(id);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
     onError: (error: Error) => {
       toast.error(error.message || "Something went wrong while deleting.");
     },

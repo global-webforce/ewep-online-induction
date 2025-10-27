@@ -24,7 +24,11 @@ import { signUpAction } from "./action";
 
 export default function SignUpForm() {
   const { mutate, isPending, error, reset } = useMutation({
-    mutationFn: (values: SignUpInput) => signUpAction(values),
+    mutationFn: async (values: SignUpInput) => {
+      const res = await signUpAction(values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
   });
 
   const form = useForm<SignUpInput>({

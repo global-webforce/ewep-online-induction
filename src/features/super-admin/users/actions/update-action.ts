@@ -1,24 +1,36 @@
 "use server";
 
-import { mapUser, userSchema } from "@/features/auth-types";
+import { formatError } from "@/adapters/errors-schema-adapter";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
+import { U, updateSchema } from "../constants";
 
-export async function updateAction(id: string, confirm: boolean) {
-  const supabase = createClientAdmin();
-  const { data, error } = await supabase.auth.admin.updateUserById(id, {
-    email_confirm: confirm,
-  });
+export async function updateAction(id: string, values: U) {
+  try {
+    const parsedValue = updateSchema.safeParse(values);
+    if (parsedValue.error) {
+      throw new Error(parsedValue.error.message);
+    }
+    const supabase = createClientAdmin();
+    const { data, error } = await supabase.auth.admin.updateUserById(id, {
+      email: values.email,
+      password: values.password,
+      email_confirm: true,
+      app_metadata: {
+        app_role: values.app_role,
+      },
+      user_metadata: {
+        first_name: values.first_name,
+        last_name: values.last_name,
+      },
+    });
 
-  if (error) {
-    throw new Error(error.message);
+    if (error) throw formatError(error);
+
+    if (!data) return { data: null };
+
+    return { data: data };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Unknown error" };
   }
-
-  if (!data) return null;
-
-  const parsedResult = userSchema.safeParse(mapUser(data.user));
-  if (parsedResult.error) {
-    throw new Error(parsedResult.error.message);
-  }
-
-  return parsedResult.data;
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { prettifyError } from "@/adapters/errors-schema-adapter";
+import { formatError } from "@/adapters/errors-schema-adapter";
 import { getURL } from "@/utils/get-url";
 import { createClient } from "@/utils/supabase/client-server";
 import z from "zod";
@@ -16,18 +16,24 @@ ON Supabase > Authentication > Configuration > Emails > Confirm signup, update t
 
 ********************************************************/
 export async function verifyEmailAction(values: string) {
-  const parsed = z.email().safeParse(values);
-  if (!parsed.success) {
-    throw new Error("Invalid input");
-  }
+  try {
+    const parsed = z.email().safeParse(values);
+    if (parsed.error) {
+      throw new Error(z.prettifyError(parsed.error));
+    }
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.resend({
-    email: values,
-    type: "signup",
-    options: {
-      emailRedirectTo: getURL(),
-    },
-  });
-  if (error) throw prettifyError(error);
+    const supabase = await createClient();
+    const { error } = await supabase.auth.resend({
+      email: values,
+      type: "signup",
+      options: {
+        emailRedirectTo: getURL(),
+      },
+    });
+    if (error) throw formatError(error);
+    return { success: true };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Unknown error" };
+  }
 }

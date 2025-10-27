@@ -1,4 +1,14 @@
-export function prettifyError(error: Error): Error {
+function toSentenceCase(value: string) {
+  if (!value) {
+    return ""; // Handle empty or null strings
+  }
+  // Convert the entire string to lowercase first
+  const lowercasedStr = value.toLowerCase();
+  // Capitalize the first character and append the rest of the lowercase string
+  return lowercasedStr.charAt(0).toUpperCase() + lowercasedStr.slice(1);
+}
+
+export function formatError(error: Error): Error {
   const message = (error?.message || "").toLowerCase();
 
   if (
@@ -28,5 +38,5 @@ export function prettifyError(error: Error): Error {
     );
   }
 
-  return new Error(message || "An unknown error occurred.");
+  return new Error(toSentenceCase(message) || "An unknown error occurred.");
 }

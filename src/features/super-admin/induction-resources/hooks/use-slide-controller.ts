@@ -21,7 +21,7 @@ type HistoryEntry = {
 
 export const useSlideController = (
   induction_id: string,
-  value: ResourceRowSchema[] | undefined
+  value: ResourceRowSchema[] | undefined | null
 ) => {
   const undoStack = useRef<HistoryEntry[]>([]);
   const redoStack = useRef<HistoryEntry[]>([]);
@@ -77,6 +77,9 @@ export const useSlideController = (
         order: index,
         local_id: slidesRef.current[index]?.local_id || randomId(),
       }));
+
+      undoStack.current = [];
+      redoStack.current = [];
 
       setSelectedId((prev) => prev || mapped[0].local_id);
       pristineValue.current = mapped;

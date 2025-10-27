@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { fetchUser } from "@/features/auth/fetch-user";
-import SuperAdmin__ProfileForm from "@/features/super-admin/profile/form";
+import { FormUpdate } from "@/features/super-admin/profile";
 
-export default async function Page() {
-  const user = await fetchUser();
+export default function Page() {
   return (
     <>
       <div className="flex gap-4 items-center mb-4">
@@ -16,7 +14,7 @@ export default async function Page() {
         <h1 className="text-xl font-semibold">Profile</h1>
       </div>
 
-      {user && <SuperAdmin__ProfileForm user={user} />}
+      <FormUpdate />
     </>
   );
 }
