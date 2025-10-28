@@ -82,18 +82,20 @@ export const sessionRowViewSchema = sessionRowSchema
   .transform((s) => ({
     ...s,
 
-    has_valid_induction: s.has_passed === true && s.is_expired === false,
+    has_valid_induction:
+      (s.has_passed === true && s.is_expired === false) ||
+      (s.has_passed === true && s.valid_until == null),
 
     session_is_expired_formatted: s.is_expired === true ? "Expired" : "",
     session_has_passed_formatted:
       s.has_passed === true ? "Passed" : s.has_passed === false ? "Failed" : "",
     session_valid_until_formatted: s.valid_until
       ? format(new Date(s.valid_until), "PP")
-      : null,
+      : s.has_passed === true && s.valid_until == null
+      ? "Lifetime"
+      : "",
     session_created_at_formatted: s.created_at
       ? format(new Date(s.created_at), "PPp")
-      : s.has_passed === true && s.is_expired === false
-      ? "Lifetime"
       : "",
   }));
 
@@ -116,7 +118,8 @@ export const inductionUserViewRowSchema = inductionRowSchema
       ? `${s.validity_days} Days`
       : "Lifetime",
     has_valid_induction:
-      s.session_has_passed === true && s.session_is_expired === false,
+      (s.session_has_passed === true && s.session_is_expired === false) ||
+      (s.session_has_passed === true && s.session_valid_until == null),
 
     session_is_expired_formatted:
       s.session_is_expired === true ? "Expired" : "",
@@ -128,7 +131,9 @@ export const inductionUserViewRowSchema = inductionRowSchema
         : "",
     session_valid_until_formatted: s.session_valid_until
       ? format(new Date(s.session_valid_until), "PP")
-      : null,
+      : s.session_has_passed === true && s.session_valid_until == null
+      ? "Lifetime"
+      : "",
     session_created_at_formatted: s.session_created_at
       ? format(new Date(s.session_created_at), "PPp")
       : null,
