@@ -2,7 +2,7 @@
 
 import { QuizFormSchema, QuizRowSchema } from "@/features/types";
 import { isEqual, shuffle } from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuizStatSchema } from "../types/quiz-schemas";
 
 export const useQuizController = (value: QuizRowSchema[] | undefined) => {
@@ -21,10 +21,12 @@ export const useQuizController = (value: QuizRowSchema[] | undefined) => {
     undefined
   );
 
-  const isAllAnswered = () => {
-    if (!quizzes.length) return false;
-    return quizzes.every((q) => q.answer && q.answer.trim() !== "");
-  };
+  const isAllAnswered = useMemo(() => {
+    return (
+      quizzes.length > 0 &&
+      quizzes.every((q) => q.answer != null && q.answer.trim() !== "")
+    );
+  }, [quizzes]);
 
   const initQuizzes = () => {
     if (!value || value.length === 0) return;

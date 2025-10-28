@@ -62,6 +62,7 @@ export function QuizFormCard({
               )}
             >
               <RadioGroupItem
+                key={opt.value + i}
                 value={opt.value}
                 className="h-4 w-4"
                 disabled={reveal}

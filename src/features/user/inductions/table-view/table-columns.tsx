@@ -71,7 +71,7 @@ export function useColumns(): ColumnDef<T>[] {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ cell }) => <div>{cell.getValue()} days</div>,
+      cell: ({ row }) => <div>{row.original.validity_days_formatted}</div>,
     }),
 
     columnHelper.accessor("session_has_passed", {

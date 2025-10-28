@@ -92,7 +92,9 @@ export const sessionRowViewSchema = sessionRowSchema
       : null,
     session_created_at_formatted: s.created_at
       ? format(new Date(s.created_at), "PPp")
-      : null,
+      : s.has_passed === true && s.is_expired === false
+      ? "Lifetime"
+      : "",
   }));
 
 export type SessionsRowViewSchema = z.infer<typeof sessionRowViewSchema>;
@@ -110,6 +112,9 @@ export const inductionUserViewRowSchema = inductionRowSchema
   .transform((s) => ({
     ...s,
 
+    validity_days_formatted: s.validity_days
+      ? `${s.validity_days} Days`
+      : "Lifetime",
     has_valid_induction:
       s.session_has_passed === true && s.session_is_expired === false,
 

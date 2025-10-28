@@ -61,7 +61,7 @@ export default function QuizPresenter() {
     getResult,
     setShowConfirmQuizDialog,
     isAllAnswered,
-    resetQuiz,
+
     showSuccessDialog,
     setShowSuccessDialog,
   } = useQuizController(data || undefined);
@@ -114,7 +114,8 @@ export default function QuizPresenter() {
         isDirty={
           isDirty() &&
           getResult().hasPassed !== true &&
-          inductionData?.session_has_passed !== true
+          inductionData?.session_has_passed !== true &&
+          showCorrectAnswer === false
         }
       />
       {error && (
@@ -158,7 +159,7 @@ export default function QuizPresenter() {
                 )}
 
               {NEED_INDUCTION_AND_ASSESSMENT_IS_AVAILABLE && (
-                <Card className="  w-full ">
+                <Card className=" w-full mt-2">
                   <CardHeader>
                     <CardTitle>
                       <h1 className="text-2xl font-semibold">
@@ -225,7 +226,8 @@ export default function QuizPresenter() {
                       setOpen={() => setShowQuizResult(false)}
                       result={getResult()}
                       onRetry={() => {
-                        resetQuiz();
+                        window.location.reload();
+                        // resetQuiz();
                       }}
                     />
                   </CardFooter>
@@ -248,7 +250,7 @@ export default function QuizPresenter() {
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <Button
                   disabled={
-                    isAllAnswered() === false || showCorrectAnswer === true
+                    isAllAnswered === false || showCorrectAnswer === true
                   }
                   className="w-full sm:w-[150px]"
                   onClick={() => setShowConfirmQuizDialog(true)}
@@ -256,7 +258,7 @@ export default function QuizPresenter() {
                   Submit Answers
                 </Button>
 
-                {showQuizResult === true && (
+                {showCorrectAnswer === true && (
                   <Button
                     variant="outline"
                     className="w-full sm:w-[150px]"
