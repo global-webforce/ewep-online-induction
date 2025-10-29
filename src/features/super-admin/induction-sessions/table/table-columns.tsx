@@ -83,12 +83,18 @@ export function useColumns(): ColumnDef<T>[] {
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Has Passed?
+          Session Status
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
-        <ColumnBadge value={row.original.session_has_passed_formatted} />
+        <>
+          {row.original.has_valid_induction && <ColumnBadge value={"Passed"} />}
+          {row.original.has_passed === false && (
+            <ColumnBadge value={"Failed"} />
+          )}
+          {row.original.is_expired && <ColumnBadge value={"Expired"} />}
+        </>
       ),
     }),
 
@@ -142,7 +148,7 @@ export function useColumns(): ColumnDef<T>[] {
                 Manage
               </DropdownMenuItem>
 
-              {rowData.has_valid_induction && (
+              {rowData.has_valid_induction === true && (
                 <DropdownMenuItem asChild>
                   <Link target="_blank" href={`/certificate/${rowData.id}`}>
                     Download Certificate

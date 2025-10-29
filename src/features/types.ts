@@ -105,6 +105,7 @@ export type SessionsRowViewSchema = z.infer<typeof sessionRowViewSchema>;
 //>>
 export const inductionUserViewRowSchema = inductionRowSchema
   .extend({
+    has_valid_induction: z.boolean(),
     session_id: sessionRowSchema.shape.id.nullable(),
     session_has_passed: sessionRowSchema.shape.has_passed.nullable(),
     session_valid_until: sessionRowSchema.shape.valid_until.nullable(),
@@ -117,9 +118,6 @@ export const inductionUserViewRowSchema = inductionRowSchema
     validity_days_formatted: s.validity_days
       ? `${s.validity_days} Days`
       : "Lifetime",
-    has_valid_induction:
-      (s.session_has_passed === true && s.session_is_expired === false) ||
-      (s.session_has_passed === true && s.session_valid_until == null),
 
     session_is_expired_formatted:
       s.session_is_expired === true ? "Expired" : "",

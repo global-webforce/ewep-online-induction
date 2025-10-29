@@ -1,7 +1,5 @@
-import { AuthGroupButtons } from "@/features/auth/components/auth-group-buttons";
-import MustBeSignedIn from "@/features/auth/components/must-be-signed-in";
 import { fetchUser } from "@/features/auth/fetch-user";
-import Link from "next/link";
+import LayoutMain from "../layout-main";
 
 export default async function AuthLayout({
   children,
@@ -10,35 +8,8 @@ export default async function AuthLayout({
 }>) {
   const user = await fetchUser();
   return (
-    <div className="min-h-screen flex flex-col relative">
-      <div className="absolute inset-0 bg-background opacity-50" />
-
-      <nav className="relative bg-background bg-opacity-90 shadow-md z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link href="/" className="text-xl font-bold text-foreground">
-                  {process.env.NEXT_PUBLIC_APP_NAME}
-                </Link>
-              </div>
-            </div>
-            <AuthGroupButtons user={user} />
-          </div>
-        </div>
-      </nav>
-
-      <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
-        <MustBeSignedIn user={user}>{children}</MustBeSignedIn>
-      </main>
-
-      <footer className="relative bg-background bg-opacity-90 shadow-md mt-8 z-10">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
-          <p className="text-sm">
-            &copy; 2025 {process.env.NEXT_PUBLIC_APP_NAME}.
-          </p>
-        </div>
-      </footer>
-    </div>
+    <LayoutMain hasUser={user != null} mode="MUST_AUTH">
+      {children}
+    </LayoutMain>
   );
 }

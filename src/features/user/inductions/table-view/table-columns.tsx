@@ -61,6 +61,19 @@ export function useColumns(): ColumnDef<T>[] {
       cell: ({ cell }) => <div>{cell.getValue()}</div>,
     }),
 
+    columnHelper.accessor("description", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Description
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ cell }) => <div>{cell.getValue()}</div>,
+    }),
+
     columnHelper.accessor("validity_days", {
       header: ({ column }) => (
         <Button
@@ -80,16 +93,22 @@ export function useColumns(): ColumnDef<T>[] {
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Has Passed?
+          Session Status
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
-        <ColumnBadge value={row.original.session_has_passed_formatted} />
+        <>
+          {row.original.has_valid_induction && <ColumnBadge value={"Passed"} />}
+          {row.original.session_has_passed === false && (
+            <ColumnBadge value={"Failed"} />
+          )}
+          {row.original.session_is_expired && <ColumnBadge value={"Expired"} />}
+        </>
       ),
     }),
 
-    columnHelper.accessor("session_valid_until", {
+    /*  columnHelper.accessor("session_valid_until", {
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -106,7 +125,7 @@ export function useColumns(): ColumnDef<T>[] {
         </div>
       ),
     }),
-
+  
     columnHelper.accessor("session_created_at", {
       header: ({ column }) => (
         <Button
@@ -118,7 +137,7 @@ export function useColumns(): ColumnDef<T>[] {
         </Button>
       ),
       cell: ({ row }) => row.original.session_created_at_formatted,
-    }),
+    }), */
 
     columnHelper.display({
       id: "actions",
@@ -141,12 +160,12 @@ export function useColumns(): ColumnDef<T>[] {
                   router.push(`/dashboard/inductions/${rowData.id}`);
                 }}
               >
-                {rowData.session_has_passed
+                {rowData.has_valid_induction === true
                   ? "Review Induction"
                   : "Take Induction"}
               </DropdownMenuItem>
 
-              {rowData.has_valid_induction && (
+              {rowData.has_valid_induction === true && (
                 <DropdownMenuItem asChild>
                   <Link
                     target="_blank"

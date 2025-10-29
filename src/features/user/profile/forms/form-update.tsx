@@ -113,7 +113,7 @@ export function FormUpdate() {
 
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="outline" size="icon" disabled={!data}>
+                    <Button variant="outline" size="icon" disabled={true}>
                       <Trash2Icon />
                     </Button>
                   </AlertDialogTrigger>

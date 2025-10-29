@@ -35,9 +35,9 @@ function PresentationLayout({ children }: PresentationLayoutProps) {
     <>
       <div className="flex flex-col flex-1  bg-white text-black rounded-2xl overflow-hidden">
         <SlideHeader />
-        <div className="flex flex-col flex-1  relative">
+        <div className="flex flex-col flex-1  relative  ">
           <div className="absolute top-0 bottom-0 overflow-y-auto w-full flex flex-col flex-1 ">
-            <div className="p-4 flex flex-col gap-0 flex-1">{bodyNode}</div>
+            <div className="p-4 flex flex-col gap-0 flex-1 ">{bodyNode}</div>
           </div>
         </div>
         <div className="bg-background text-white ">{footerNode}</div>

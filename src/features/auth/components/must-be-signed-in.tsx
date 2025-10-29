@@ -14,7 +14,9 @@ export default function MustBeSignedIn({
 }>) {
   return !user ? (
     <Card className="flex flex-col items-center gap-4 p-6">
-      <h1>You must be signed-in to reset your password. </h1>{" "}
+      <h1 className="text-center">
+        You must be signed-in to access this page.{" "}
+      </h1>{" "}
       <div className="flex gap-2 justify-center">
         <Link href="/sign-in">
           <Button variant="default">Sign In</Button>

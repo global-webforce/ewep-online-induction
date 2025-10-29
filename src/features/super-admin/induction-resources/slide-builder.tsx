@@ -18,6 +18,7 @@ import {
 import { FormSubmitButton } from "@/components/react-hook-form-reusable";
 import { ResourceFormSchema } from "@/features/types";
 import { isEqual } from "lodash";
+import ExitDialog from "./components/exit-dialog";
 import FormComponent from "./form/form";
 import { useFetchById, useUpsertMutation } from "./hooks/crud";
 import { useSlideController } from "./hooks/use-slide-controller";
@@ -166,6 +167,7 @@ export default function SlideBuilder() {
 
   return (
     <>
+      <ExitDialog isDirty={isDirty()} />
       {error && (
         <AlertPanelState onRetry={async () => await refetch()} variant="error">
           {error.message}

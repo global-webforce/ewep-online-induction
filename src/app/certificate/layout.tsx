@@ -12,7 +12,7 @@ export default async function AuthLayout({
     <div className="min-h-screen flex flex-col relative">
       <div className="absolute inset-0 bg-background opacity-50" />
 
-      <main className="flex flex-grow items-center justify-center  container mx-auto px-4 py-8 relative z-10">
+      <main className="flex flex-grow items-center justify-center  container mx-auto p-4 relative z-10">
         <MustBeSignedIn user={user}>{children}</MustBeSignedIn>
       </main>
 

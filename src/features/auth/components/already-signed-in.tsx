@@ -2,22 +2,21 @@
 
 import { Card } from "@/components/ui/card";
 
-import { UserSchema } from "@/features/auth-types";
 import { AuthGroupButtons } from "./auth-group-buttons";
 
 export default function AlreadySignedIn({
-  user,
+  hasUser,
   children,
 }: Readonly<{
-  user: UserSchema | null;
+  hasUser: boolean;
   children: React.ReactNode;
 }>) {
   return (
     <>
-      {user ? (
+      {hasUser ? (
         <Card className="flex flex-col items-center gap-4 p-6">
           <h1>You&apos;re already signed-in!!</h1>{" "}
-          <AuthGroupButtons user={user} />
+          <AuthGroupButtons hasUser={hasUser} />
         </Card>
       ) : (
         children

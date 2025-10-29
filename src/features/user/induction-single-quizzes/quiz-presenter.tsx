@@ -73,7 +73,7 @@ export default function QuizPresenter() {
       toast.error(error.message);
     },
     onSuccess: async (data) => {
-      setCertificateLink(data?.id);
+      setCertificateLink(data?.data?.id);
 
       if (NEED_INDUCTION_BUT_NO_ASSESSMENT_AVAILABLE) {
         setShowSuccessDialog(true);

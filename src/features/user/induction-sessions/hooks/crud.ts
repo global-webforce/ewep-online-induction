@@ -10,20 +10,33 @@ import { fetchAll, fetchById, upsertAction } from "../actions";
 export const useFetchAll = () =>
   useQuery({
     queryKey: ["induction_sessions_view"],
-    queryFn: async () => await fetchAll(),
+    queryFn: async () => {
+      const res = await fetchAll();
+      if (res?.error) throw new Error(res?.error);
+      return res.data;
+    },
   });
 
 export const useFetchById = (id: string) =>
   useQuery({
     queryKey: ["induction_sessions_view", id],
-    queryFn: () => fetchById(id),
+    queryFn: async () => {
+      const res = await fetchById(id);
+      if (res.error) throw new Error(res.error);
+      return res.data;
+    },
   });
 
 export const useUpsert = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (values: SessionFormRLSSchema) => upsertAction(values),
+    mutationFn: async (values: SessionFormRLSSchema) => {
+      const res = await upsertAction(values);
+      if (res?.error) throw new Error(res.error);
+      return res;
+    },
+
     onError: (error) => {
       toast.error(error.message);
     },
@@ -32,7 +45,7 @@ export const useUpsert = () => {
         queryKey: ["induction_sessions_view"],
       });
       toast.success("Record has been created.");
-      router.replace("/dashboard/induction-sessions/" + data?.id);
+      router.replace("/dashboard/induction-sessions/" + data.data?.id);
     },
   });
 };
