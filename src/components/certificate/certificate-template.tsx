@@ -9,22 +9,15 @@ export const CertificateTemplate = forwardRef<
     <div
       ref={ref}
       className={`w-full max-w-2xl bg-white rounded-lg shadow-2xl overflow-hidden relative ${
-        session.is_expired ? " grayscale border-neutral-400" : "border-gray-400"
+        session.is_expired ? "grayscale border-neutral-400" : "border-gray-400"
       }`}
     >
       {/* Decorative Top Border */}
       <div className="h-2 bg-gradient-to-r from-[#0D4D68] via-[#86B049] to-[#0D4D68]"></div>
 
       {/* Background Watermark */}
-      {/* <img
-        src="/logo.svg" // replace with your watermark image path
-        alt="Watermark"
-        className="absolute inset-0 m-auto opacity-5 w-1/2 pointer-events-none select-none"
-      /> */}
-
-      {/* Background Watermark */}
       <div className="absolute inset-0 z-1 flex items-center justify-center pointer-events-none select-none">
-        <span className="text-[#0D4D68]/6 text-9xl font-extrabold tracking-widest rotate-[-25deg]  text-center max-w-[600px]">
+        <span className="text-[#0D4D68]/6 text-9xl font-extrabold tracking-widest rotate-[-25deg] text-center max-w-[600px]">
           {process.env.NEXT_PUBLIC_APP_NAME_ABBREV}
         </span>
       </div>
@@ -74,7 +67,7 @@ export const CertificateTemplate = forwardRef<
           <div className="flex justify-around items-end mt-8 pt-8 border-t border-slate-200">
             <div className="text-center">
               <div className="h-12 mb-2"></div>
-              <p className=" font-semibold text-slate-700">
+              <p className="font-semibold text-slate-700">
                 {session.session_created_at_formatted_2}
               </p>
               <p className="text-sm text-slate-500">Date Awarded</p>
@@ -83,7 +76,7 @@ export const CertificateTemplate = forwardRef<
             {session.valid_until && (
               <div className="text-center">
                 <div className="h-12 mb-2"></div>
-                <p className=" font-semibold text-slate-700">
+                <p className="font-semibold text-slate-700">
                   {session.session_valid_until_formatted}
                 </p>
                 <p className="text-sm text-slate-500">Valid Until</p>
@@ -92,8 +85,7 @@ export const CertificateTemplate = forwardRef<
 
             <div className="text-center">
               <div className="h-12 mb-2"></div>
-              <p className=" font-semibold text-slate-700"></p>
-
+              <p className="font-semibold text-slate-700"></p>
               <p className="text-sm text-slate-500 border-t border-dashed border-slate-400 italic">
                 Authorized Signature
               </p>
@@ -114,3 +106,6 @@ export const CertificateTemplate = forwardRef<
     </div>
   );
 });
+
+// ✅ Add this line:
+CertificateTemplate.displayName = "CertificateTemplate";
