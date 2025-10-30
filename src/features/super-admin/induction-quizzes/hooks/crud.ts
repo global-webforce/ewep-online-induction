@@ -99,9 +99,9 @@ export const useQuizForm = (value?: QuizRowSchema | null) => {
       toast.error(error.message || "Something went wrong while deleting.");
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["induction_quizzes"] });
       toast.success("Record has been deleted.");
       router.push(`/dashboard/inductions/${id}/quizzes`);
+      await queryClient.invalidateQueries({ queryKey: ["induction_quizzes"] });
     },
   });
 

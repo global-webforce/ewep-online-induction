@@ -100,9 +100,9 @@ export const useInductionForm = (value?: InductionRowSchema | null) => {
       toast.error(error.message || "Something went wrong while deleting.");
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["inductions"] });
       toast.success("Induction has been deleted.");
       router.push(`/dashboard/inductions/`);
+      await queryClient.invalidateQueries({ queryKey: ["inductions"] });
     },
   });
 

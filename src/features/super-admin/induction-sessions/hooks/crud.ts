@@ -71,9 +71,9 @@ export const useInductionSessionForm = (value?: SessionRowSchema | null) => {
       toast.error(error.message || "Something went wrong while deleting.");
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["induction_sessions"] });
       toast.success("Session has been deleted.");
       router.push(`/dashboard/induction-sessions/`);
+      await queryClient.invalidateQueries({ queryKey: ["induction_sessions"] });
     },
   });
 

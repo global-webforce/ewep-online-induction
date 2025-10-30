@@ -64,7 +64,7 @@ export const CertificateTemplate = forwardRef<
             In witness whereof, this certificate is awarded on
           </p>
 
-          <div className="flex justify-around items-end mt-8 pt-8 border-t border-slate-200">
+          <div className="flex justify-around mt-8 pt-8 border-t border-slate-200 flex-col md:flex-row items-center">
             <div className="text-center">
               <div className="h-12 mb-2"></div>
               <p className="font-semibold text-slate-700">

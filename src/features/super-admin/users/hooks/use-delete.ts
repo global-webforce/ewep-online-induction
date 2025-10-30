@@ -26,9 +26,9 @@ export const useDelete = () => {
       toast.error(error.message || "Something went wrong while deleting.");
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success("User has been deleted.");
       router.push(`/dashboard/users/`);
+      await queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 };
