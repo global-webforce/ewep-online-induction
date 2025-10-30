@@ -1,7 +1,7 @@
 "use server";
 
 import { formatError } from "@/adapters/errors-schema-adapter";
-import { sessionRowSchema } from "@/features/types";
+import { sessionRowViewSchema } from "@/features/types";
 import { createClientAdmin } from "@/utils/supabase/client-server-admin";
 import z from "zod";
 
@@ -17,7 +17,7 @@ export async function fetchById(id: string) {
 
     if (!data) return { data: null };
 
-    const parsedResult = sessionRowSchema.safeParse(data);
+    const parsedResult = sessionRowViewSchema.safeParse(data);
     if (parsedResult.error) {
       throw new Error(z.prettifyError(parsedResult.error));
     }

@@ -69,7 +69,9 @@ export default function SideBarAdmin() {
                   <BookText className="size-4" />
                 </div>
                 <div className="flex flex-col gap-1 leading-none">
-                  <span className="font-semibold">EWEP</span>
+                  <span className="font-semibold">
+                    {process.env.NEXT_PUBLIC_APP_NAME_ABBREV}
+                  </span>
                   <span className="">Admin Portal</span>
                 </div>
               </Link>

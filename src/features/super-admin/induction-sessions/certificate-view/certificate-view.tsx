@@ -3,7 +3,7 @@
 import { CertificateTemplate } from "@/components/certificate/certificate-template";
 import { Button } from "@/components/ui/button";
 
-import { useFetchById } from "@/features/user/induction-sessions/hooks/crud";
+import { useFetchById } from "@/features/super-admin/induction-sessions/hooks/crud";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import domtoimage from "@intactile/dom-to-image-next";

@@ -53,7 +53,7 @@ PresentationLayout.Footer = Footer;
 export default PresentationLayout as typeof PresentationLayout &
   PresentationLayoutCompound;
 
-function SlideHeader() {
+export function SlideHeader() {
   return (
     <div className="relative h-[20px] w-full overflow-hidden">
       <div
@@ -76,7 +76,7 @@ function SlideHeader() {
   );
 }
 
-function SlideFooter() {
+export function SlideFooter() {
   return (
     <div className="relative h-[20px] w-full overflow-hidden ">
       <div

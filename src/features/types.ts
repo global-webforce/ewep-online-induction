@@ -97,6 +97,9 @@ export const sessionRowViewSchema = sessionRowSchema
     session_created_at_formatted: s.created_at
       ? format(new Date(s.created_at), "PPp")
       : "",
+    session_created_at_formatted_2: s.created_at
+      ? format(new Date(s.created_at), "MMMM d, yyyy")
+      : "",
   }));
 
 export type SessionsRowViewSchema = z.infer<typeof sessionRowViewSchema>;
