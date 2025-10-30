@@ -9,7 +9,7 @@ export async function fetchAll() {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from("metric_cards_super_admin_view")
+      .from("metric_cards_user_view")
       .select("*")
       .single();
 
