@@ -45,7 +45,7 @@ export const CertificateTemplate = forwardRef<
           <p className="text-slate-600 text-lg">This is to certify that</p>
 
           <div className="py-4 border-b-2 border-slate-300">
-            <p className="text-3xl font-bold text-slate-900 drop-shadow-sm">
+            <p className="text-3xl font-bold text-slate-900 ">
               {session.first_name + " " + session.last_name}
             </p>
           </div>
@@ -64,7 +64,7 @@ export const CertificateTemplate = forwardRef<
             In witness whereof, this certificate is awarded on
           </p>
 
-          <div className="flex justify-around mt-8 pt-8 border-t border-slate-200 flex-col md:flex-row items-center">
+          <div className="flex justify-around mt-8  border-t border-slate-200 flex-col md:flex-row items-center">
             <div className="text-center">
               <div className="h-12 mb-2"></div>
               <p className="font-semibold text-slate-700">
