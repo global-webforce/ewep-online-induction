@@ -74,7 +74,7 @@ export default function ResourcesPresenter() {
 
                       <CardTitle className="text-2xl font-semibold max-w-[500px]">
                         You&apos;ve reached the end of learning modules of this
-                        induction.
+                        Course.
                       </CardTitle>
                       {inductionData?.has_valid_induction === false && (
                         <CardDescription className="text-muted-foreground">
@@ -88,7 +88,7 @@ export default function ResourcesPresenter() {
                       <CardFooter className="justify-center mt-4">
                         <Button asChild size="lg" className="gap-2">
                           <Link
-                            href={`/dashboard/inductions/${id}/resources/assessment`}
+                            href={`/dashboard/courses/${id}/resources/assessment`}
                           >
                             Start Assessment
                           </Link>

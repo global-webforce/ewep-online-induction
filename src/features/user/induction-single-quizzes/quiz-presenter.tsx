@@ -275,7 +275,7 @@ export default function QuizPresenter() {
               className="w-full sm:w-auto"
               onClick={() => router.replace("/dashboard/")}
             >
-              Exit Induction
+              Exit Course
             </Button>
           </div>
         </PresentationLayout.Footer>

@@ -20,10 +20,10 @@ export function ExitDialog({ isDirty = false }: { isDirty: boolean }) {
     <Dialog open={confirmExit.active}>
       <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>Exit Induction?</DialogTitle>
+          <DialogTitle>Exit Course?</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Your induction progress will be lost.
+          Your Course progress will be lost.
         </DialogDescription>
         <DialogFooter>
           <DialogClose asChild>

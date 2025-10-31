@@ -45,7 +45,7 @@ export const useUpsert = () => {
         queryKey: ["induction_sessions_view"],
       });
       toast.success("Record has been created.");
-      router.replace("/dashboard/induction-sessions/" + data.data?.id);
+      router.replace("/dashboard/course-sessions/" + data.data?.id);
     },
   });
 };

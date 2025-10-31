@@ -33,7 +33,7 @@ export function ReadView() {
               <FormFieldText
                 control={form.control}
                 name="induction_title"
-                label="Induction Title"
+                label="Course Title"
                 readOnly
               />
               <FormFieldText

@@ -13,7 +13,7 @@ export default function Page() {
           </Button>
           <BackButton />
         </div>
-        <h1 className="text-xl font-semibold">Induction Resources</h1>
+        <h1 className="text-xl font-semibold">Course Resources</h1>
       </div>
 
       <ResourcesPresenter />

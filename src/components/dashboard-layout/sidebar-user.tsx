@@ -26,15 +26,15 @@ export default function SideBarUser() {
     },
 
     {
-      title: "Inductions",
+      title: "Courses",
       icon: UserCheck, // More relevant for the Induction section
-      href: "/dashboard/inductions",
+      href: "/dashboard/courses",
     },
 
     {
-      title: "My Sessions",
+      title: "Sessions",
       icon: Calendar, // Better represents sessions or events
-      href: "/dashboard/induction-sessions",
+      href: "/dashboard/course-sessions",
     },
 
     {

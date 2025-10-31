@@ -73,8 +73,7 @@ export function ReadView() {
           <CardHeader>
             <CardTitle>Before We Start</CardTitle>
             <CardDescription>
-              Please confirm you agree to the terms before starting your
-              induction presentation.
+              Please confirm you agree to the terms before starting this course.
             </CardDescription>
           </CardHeader>
 
@@ -88,17 +87,16 @@ export function ReadView() {
               htmlFor="agreement"
               className="text-sm leading-tight  cursor-pointer select-none"
             >
-              By taking this induction, I agree to comply with all company
-              policies and safety procedures as outlined in the induction
-              materials.
+              By taking this course, I agree to comply with all company policies
+              and safety procedures as outlined in the course materials.
             </label>
           </CardContent>
 
           {agreed && (
             <CardFooter>
               <Button asChild className="w-full max-w-xs ">
-                <Link href={`/dashboard/inductions/${id}/resources`}>
-                  <span className="font-semibold">PROCEED TO INDUCTION</span>{" "}
+                <Link href={`/dashboard/courses/${id}/resources`}>
+                  <span className="font-semibold">PROCEED </span>{" "}
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>

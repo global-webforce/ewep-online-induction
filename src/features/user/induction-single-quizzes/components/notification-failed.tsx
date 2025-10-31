@@ -10,7 +10,7 @@ export function NotificationFailed() {
         </div>
 
         <div className="flex-1">
-          <h3 className="text-lg">Last Induction Failed</h3>
+          <h3 className="text-lg">Last Course Assessment Failed</h3>
           <p className="text-muted-foreground text-sm">
             Please retake and pass the assessment to generate your certificate.
           </p>

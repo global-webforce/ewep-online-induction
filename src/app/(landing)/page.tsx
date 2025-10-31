@@ -24,7 +24,7 @@ export default function Home() {
           </div>
           <Link href="/sign-up">
             <Button size="lg" variant="default">
-              Start Induction
+              Get Started
             </Button>
           </Link>
         </div>

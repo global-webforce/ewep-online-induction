@@ -17,7 +17,7 @@ export function MetricCardsGridUser() {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <MetricCard
-        title="Total Induction Sessions"
+        title="Total Course Sessions"
         metricValue={data?.total_induction_sessions}
         breakdown={[
           { label: "Valid", value: data?.total_valid_induction_sessions },

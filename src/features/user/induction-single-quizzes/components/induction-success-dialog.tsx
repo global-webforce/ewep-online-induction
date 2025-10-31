@@ -27,7 +27,7 @@ export function InductionSuccessDialog({
       <DialogContent className="sm:max-w-md p-0 overflow-hidden">
         {/* Accessibility */}
         <DialogHeader className="sr-only">
-          <DialogTitle>Induction Complete</DialogTitle>
+          <DialogTitle>Course Complete</DialogTitle>
           <DialogDescription>
             Completion message and certificate link
           </DialogDescription>
@@ -37,11 +37,11 @@ export function InductionSuccessDialog({
           <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
 
           <h2 className="text-2xl font-semibold text-green-600 dark:text-green-400">
-            Induction Completed!
+            Course Completed!
           </h2>
 
           <p className="text-muted-foreground mt-2">
-            You have successfully completed the induction. You may now download
+            You have successfully completed the course. You may now download
             your certificate.
           </p>
 

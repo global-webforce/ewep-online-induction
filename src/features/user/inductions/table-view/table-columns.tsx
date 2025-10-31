@@ -157,12 +157,12 @@ export function useColumns(): ColumnDef<T>[] {
 
               <DropdownMenuItem
                 onClick={() => {
-                  router.push(`/dashboard/inductions/${rowData.id}`);
+                  router.push(`/dashboard/courses/${rowData.id}`);
                 }}
               >
                 {rowData.has_valid_induction === true
-                  ? "Review Induction"
-                  : "Take Induction"}
+                  ? "Review Course"
+                  : "Take Course"}
               </DropdownMenuItem>
 
               {rowData.has_valid_induction === true && (

@@ -10,9 +10,9 @@ export function NotificationExpired() {
         </div>
 
         <div className="flex-1">
-          <h3 className="text-lg">Renew your Expired Induction</h3>
+          <h3 className="text-lg">Renew your Expired Course Assessment</h3>
           <p className="text-muted-foreground text-sm">
-            Please retake and pass the assessment to renew your induction.
+            Please retake and pass the assessment to renew your Course.
           </p>
         </div>
       </div>

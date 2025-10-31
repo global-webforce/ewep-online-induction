@@ -27,10 +27,10 @@ export function NotificationCompleted({
         </div>
 
         <div className="flex-1">
-          <h3 className="text-lg">You already completed this induction</h3>
+          <h3 className="text-lg">You already completed this Course</h3>
           {validUntil && (
             <p className="text-muted-foreground text-sm">
-              You can renew this induction starting on:{" "}
+              You can renew this Course starting on:{" "}
               <strong>{formattedDate}</strong>
             </p>
           )}

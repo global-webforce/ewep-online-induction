@@ -49,14 +49,13 @@ export function useColumns(): ColumnDef<T>[] {
       enableHiding: false,
     }),
 
-    // ✅ Induction title
     columnHelper.accessor("induction_title", {
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Induction ID
+          Course ID
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -133,20 +132,12 @@ export function useColumns(): ColumnDef<T>[] {
 
               <DropdownMenuItem
                 onClick={() => {
-                  router.push(`/dashboard/inductions/${rowData.induction_id}`);
+                  router.push(`/dashboard/courses/${rowData.induction_id}`);
                 }}
               >
                 {rowData.has_valid_induction === true
-                  ? "Review Induction"
-                  : "Take Induction"}
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={() =>
-                  router.push(`/dashboard/induction-sessions/${rowData.id}`)
-                }
-              >
-                View
+                  ? "Review Course"
+                  : "Take Course"}
               </DropdownMenuItem>
 
               {rowData.has_valid_induction && (
